@@ -4,10 +4,32 @@ import vm from 'node:vm';
 
 const context = { window: {} };
 vm.runInNewContext(readFileSync(new URL('../batch-size/rule-axis.js', import.meta.url), 'utf8'), context);
-const { domains, percentileRank } = context.window.RuleAtlasAxis;
+const { domains, percentileRank, scaleUpSetting } = context.window.RuleAtlasAxis;
 const data = JSON.parse(readFileSync(new URL('../batch-size/data/scaling-rules.json', import.meta.url), 'utf8'));
+const original = JSON.stringify(data);
+const settings = Object.fromEntries(Object.entries(data.settings).map(([key,value])=>[key,scaleUpSetting(value)]));
+assert.deepEqual(Array.from(settings.cifar.batches), [512,1024,2048,4096]);
+assert.equal(settings.cifar.referenceBatch,256);
+assert.equal(settings.cifar.measurementCount,2592);
+assert.equal(settings.cifar.commonRuleId,'mlrq-alrf-mmf-b1s-b2f-mwdf-awdf');
+assert.equal(settings.llm.commonRuleId,data.settings.llm.commonRuleId);
+assert.deepEqual(Array.from(settings.llm.trainSteps),data.settings.llm.trainSteps);
+for (const [key,setting] of Object.entries(settings)) {
+  const source = data.settings[key];
+  assert(setting.batches.every(batch=>batch>setting.referenceBatch));
+  for (const rule of setting.rules) {
+    const originalRule = source.rules.find(r=>r.id===rule.id);
+    setting.batches.forEach((batch,i)=>assert.equal(rule.losses[i],originalRule.losses[source.batches.indexOf(batch)]));
+    const mean = rule.losses.reduce((sum,loss,i)=>sum+loss-setting.gridMinimum[i],0)/4;
+    assert(Math.abs(rule.meanRegret-mean)<1e-12);
+    assert(rule.meanRegret>=setting.rules[0].meanRegret);
+  }
+  setting.batches.forEach((_,i)=>assert.equal(setting.rules.find(r=>r.id===setting.bestAtBatch[i]).losses[i],setting.gridMinimum[i]));
+}
+assert.equal(JSON.stringify(data),original,'Filtering the display must preserve all downloadable measurements and paper ranks.');
+console.log('PASS: scale-up cohorts exclude smaller batches, retain measured values, recalculate selection, and preserve original downloads.');
 let checked = 0;
-for (const [name, setting] of Object.entries(data.settings)) {
+for (const [name, setting] of Object.entries(settings)) {
   const best = setting.batches.map((_, i) => Math.min(setting.gridMinimum[i], setting.retunedBaseline[i]?.loss ?? Infinity));
   for (const zero of [true, false]) {
     const references = zero ? [0,...best.map(() => 0)] : [setting.referenceLoss,...best];

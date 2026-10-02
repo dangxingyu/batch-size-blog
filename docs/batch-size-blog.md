@@ -36,15 +36,13 @@ their plotted marks.
 CIFAR uses the final-ten-evaluation mean, not final loss or seed uncertainty.
 The original run count excludes retuning references and partial auxiliary-decay extensions. Full-retuning baseline points are now kept in `retunedBaseline`, separately from the original rules.
 
-The rule fan chart retains every curve and every measured point, with faint
+The rule fan chart retains every curve and every scale-up measurement, with faint
 background marks and an emphasized selected rule. Click chooses the nearest
 polyline; arrow keys traverse rules ranked by mean gap. The builder resolves all
 coordinate combinations to actual rules. A smooth cursor plays tested batch
 changes; motion between endpoints is visual interpolation, not training history.
 Hidden/offscreen pages suspend playback; reduced motion advances discretely.
-The default y axis is validation loss; the optional loss-gap view is the nonnegative loss gap to the lowest recorded loss at each batch across the original grid and available full-retuning medians. Both views use linear y axes, and both retain all 4/6 batches and all original endpoints. No negative differences are clipped and no missing retuning data are fabricated. Original retuning medians/proxy points remain separate in `retunedBaseline`. Displayed mean gaps equally weight every target batch; grid ranks and common-rule selection retain the original all-target grid-regret definition. The distinction appears beside the plot as well as in the protocol. Axis names and quantities use 17–26px type, SVG ticks render at 16px, and legend swatches match each plotted line. Common selection
-minimizes equally weighted regret across all target batches, including CIFAR's
-64/128-image targets. This differs from the winner at any one batch. The bound
+The default y axis is validation loss; the optional loss-gap view is the nonnegative loss gap to the lowest recorded loss at each batch across the original grid and available full-retuning medians. Both views use linear y axes and show the shared reference followed by four larger target batches. CIFAR starts at 256 images and shows 512/1024/2048/4096; the 64/128-image scale-down runs remain in the original downloadable data. The derived display cohort recomputes common-rule selection, grid ranks, preset completions, mean gaps, and measured-run counts over just the larger targets (864 LLM runs; 2,592 CIFAR runs). The shared reference is excluded from these statistics. Original data and paper ranks are never mutated. CIFAR’s scale-up common winner uses square-root matrix LR, fixed auxiliary LR and weight decays, fixed Muon momentum, EMA first-moment retention and fixed second-moment retention; the article distinguishes this from the paper’s six-target winner. No negative differences are clipped and no missing retuning data are fabricated. This differs from the winner at any one batch. The bound
 and SDE presets use the best completion of their matrix prescription within each
 grid, rather than claiming to reproduce the paper's separate comparison cohorts.
 
@@ -171,7 +169,7 @@ The three prescription cards compare SDE matching, bound minimization, and Power
 
 The SignSGD panel has 22 actually tuned CNR conditions and 16 batch sizes, retaining all 27 original paper measurements and their original fitted exponents. There are 325 additional toy-model tuning cells. `tune-signsgd-dense.py` generates shared PCG64 Gaussian arrays and calls the vectorized C++ recursion. Searches use 121 broad candidates with 512 paths, three refined neighborhoods, 2,048 fresh selection paths, and eight held-out groups of 1,024 paths for the chosen rate. Supplemental batches 3/6/12/24/48/96/192 use floor(4,096/B) updates. The slider snaps to tuned conditions and the chart connects actual points without CNR interpolation or splines. Dense data identify original versus supplemental sources per point. The protocol records seeds, actual sample counts, hashes, and search stages. Full computation initially took 6.3 seconds with 12 workers on the local Mac; a complete parallel rerun took 3.094 seconds and reproduced all 352 endpoints exactly. The 22 CNRs comprise two endpoints and 20 interior conditions. Three NumPy reference cells matched C++ to within 1.4e-16. Original downloads remain unchanged.
 
-All rule curves include the shared reference configuration: 128K tokens for the language model and 256 images for CIFAR-5M. Its raw loss is `referenceLoss`, and its displayed gap is zero. It is a single shared run, excluded from target-batch controls, rankings, averages and the 864/3,888 transfer-run counts. CIFAR places it between the two smaller and four larger tested batches.
+All rule curves include the shared reference configuration: 128K tokens for the language model and 256 images for CIFAR-5M. Its raw loss is `referenceLoss`, and its displayed gap is zero. It is a single shared run, excluded from target-batch controls, rankings, averages and the 864/3,888 transfer-run counts. CIFAR places it at the left edge before the four larger tested batches; smaller batches are available only in the complete download.
 
 ## Batch-size branching figure
 

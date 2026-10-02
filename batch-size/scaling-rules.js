@@ -6,7 +6,8 @@
   const choiceNames = { fixed: 'Fixed', sqrt: 'Square-root', linear: 'Linear', retention: 'EMA' };
   const variables = { etaM: mathVariable('η','M'), etaA: mathVariable('η','A'), lambdaM: mathVariable('λ','M'), lambdaA: mathVariable('λ','A'), mu: mathVariable('μ'), beta1: mathVariable('β',1), beta2: mathVariable('β',2) };
   const state = { task: 'llm', view: 'loss', range: 'detail', index: 0, selected: '', preset: 'common', running: false, visible: false, frame: 0, last: 0, elapsed: 0, holding: true, from: 0, to: 0, geometry: null };
-  const setting = () => data.settings[state.task];
+  const settings = Object.fromEntries(Object.entries(data.settings).map(([key,value])=>[key,window.RuleAtlasAxis.scaleUpSetting(value)]));
+  const setting = () => settings[state.task];
   const selected = () => setting().rules.find(rule => rule.id === state.selected);
   const batchLabel = batch => state.task === 'llm' ? ({131072:'128K',262144:'256K',524288:'512K',1048576:'1M',2097152:'2M'})[batch] : batch>=1024 ? `${batch/1024}K` : fmt(batch);
   const indices = () => setting().batches.map((_,i)=>i);
@@ -114,7 +115,7 @@
     node('rule-mean').textContent = decimal(meanGap(r));
     node('rule-percentile').textContent = window.RuleAtlasAxis.percentileRank(s.rules.map(rule=>rule.losses[state.index]),r.losses[state.index]).toFixed(1)+'%';
     const rank = String(r.rank).replace('.5','½');
-    node('rule-verdict').textContent = `Overall grid rank ${rank} of ${s.rules.length}. `+(r.id===s.bestAtBatch[state.index]?'This rule attains the lowest grid loss at the selected batch.':r.id===s.commonRuleId?'The best common rule does not win this batch.':`The best grid rule at this batch has loss ${decimal(s.gridMinimum[state.index])} nats.`);
+    node('rule-verdict').textContent = `Scale-up grid rank ${rank} of ${s.rules.length}. `+(r.id===s.bestAtBatch[state.index]?'This rule attains the lowest grid loss at the selected batch.':r.id===s.commonRuleId?'The best common rule does not win this batch.':`The best grid rule at this batch has loss ${decimal(s.gridMinimum[state.index])} nats.`);
     s.coords.forEach(c => {
       const v = variables[c.key], choice = r.choices[c.key];
       const factor = choice==='sqrt'?'<msqrt><mi>κ</mi></msqrt>':choice==='linear'?'<mi>κ</mi>':'';

@@ -25,5 +25,19 @@
   function percentileRank(values, value) {
     return 100 * values.filter(v=>v<=value).length / values.length;
   }
-  window.RuleAtlasAxis = { domains, percentileRank };
+  // A derived display cohort: keep the downloadable measurements and paper ranks intact.
+  function scaleUpSetting(source) {
+    const indices = source.batches.flatMap((batch, i) => batch > source.referenceBatch ? [i] : []);
+    const subset = values => indices.map(i => values[i]);
+    const rules = source.rules.map(rule => {
+      const regrets = indices.map(i => rule.losses[i] - source.gridMinimum[i]);
+      return { ...rule, losses: subset(rule.losses), meanRegret: regrets.reduce((a,b)=>a+b,0)/indices.length, maxRegret: Math.max(...regrets) };
+    }).sort((a,b)=>a.meanRegret-b.meanRegret);
+    rules.forEach(rule => { rule.rank = 1 + rules.filter(other=>other.meanRegret<rule.meanRegret).length; });
+    return { ...source, batches: subset(source.batches), rules, gridMinimum: subset(source.gridMinimum),
+      retunedBaseline: subset(source.retunedBaseline), bestAtBatch: subset(source.bestAtBatch),
+      ...(source.trainSteps ? { trainSteps: subset(source.trainSteps) } : {}),
+      commonRuleId: rules[0].id, measurementCount: rules.length * indices.length };
+  }
+  window.RuleAtlasAxis = { domains, percentileRank, scaleUpSetting };
 })();
