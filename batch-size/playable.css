@@ -317,3 +317,81 @@ body{--ui-label-size:15px;--ui-button-size:14px;--ui-detail-size:14px}
 
 /* A visible zero reference remains when a proportional loss segment is subpixel. */
 .risk-track{position:relative;background:var(--line)}.risk-origin{position:absolute;left:1px;top:3px;width:6px;height:6px;box-sizing:border-box;background:var(--surface);border:1.5px solid currentColor;border-radius:50%}
+
+/* Feedback pass: keep each comparison beside its question and controls. */
+.hero{display:block;min-height:0;padding-top:80px;padding-bottom:64px}
+.hero h1{max-width:1000px;font-size:clamp(48px,6.3vw,88px)}
+.hero-deck{max-width:700px;font-size:20px}
+.mechanism-intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;align-items:center;margin:36px 0}
+.mechanism-intro .hero-art{height:auto;min-height:570px}
+.mechanism-guide{font-size:16px;line-height:1.8;color:var(--muted)}
+.mechanism-guide h3{color:var(--ink);margin-bottom:20px}
+.mechanism-guide ol{padding-left:22px;margin:22px 0}
+.mechanism-guide li{padding-left:8px;margin:16px 0}
+.mechanism-guide strong{color:var(--ink)}
+:root{--rule-cloud:#aa7c24}
+:root[data-theme=dark]{--rule-cloud:#d6b25f}
+.rule-cloud .rule-ghost{stroke:var(--rule-cloud);opacity:.17;stroke-width:1.2}
+.rule-cloud .rule-run{fill:var(--rule-cloud);opacity:.23}
+.rule-overview-cloud path{stroke:var(--rule-cloud);opacity:.15}
+.rule-background-swatch{color:var(--rule-cloud);opacity:.8}
+.rule-batch-action{grid-column:1/-1;display:flex;justify-content:flex-end}
+.rule-batch-action button{border:1px solid var(--orange);border-radius:6px;background:var(--surface);color:var(--orange);font:inherit;font-size:14px;min-height:40px;padding:8px 14px}
+.rule-batch-action button.active{background:var(--soft-accent);box-shadow:inset 0 0 0 1px var(--orange)}
+.comparison-heading{flex-wrap:wrap;gap:12px}
+.comparison-heading .figure-axis-name::before{content:none}
+.comparison-heading .figure-axis-quantity{min-height:36px;margin-top:4px}
+.comparison-heading .blog-math{font-size:23px}
+#rankings .ranking-grid{grid-template-columns:minmax(0,1fr) 290px;gap:28px}
+#rankings .leaderboard{padding-left:24px}
+#rankings .batch-controls{max-width:750px}
+#rankings .pair-lab{margin-top:28px}
+.sandbox>.sim-loss-panel{border-top:1px solid var(--line);padding-top:24px;margin-top:28px}
+.sandbox>.sim-loss-panel svg{width:100%;height:auto;display:block}
+.sandbox>.sim-loss-panel .small-text{margin-top:12px}
+.sandbox>.sim-loss-panel .figure-axis-heading{margin-bottom:12px}
+.sandbox>.sim-loss-panel .figure-axis-reference{display:block;margin-top:6px}
+.movement-equation{padding:20px 0;color:var(--ink);overflow-x:auto}
+.movement-equation .blog-math{font-size:24px}
+.directional-comparison{display:block}
+.directional-paper-column{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:36px;align-items:center;margin-bottom:32px}
+.directional-local-panel .panel-top{min-height:0}
+.movement-visuals{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(0,1.6fr);gap:32px;align-items:start;margin-top:24px}
+.movement-quadratic{min-width:0;border-right:1px solid var(--line);padding-right:24px}
+.movement-quadratic h4{font-size:17px;font-weight:600;margin-bottom:16px}
+#movement-quadratic{width:100%;height:auto;display:block}
+.directional-local-panel .scaling-grid{display:block;min-width:0}
+.directional-local-panel .scaling-controls{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.directional-local-panel .scaling-rule-formula{grid-column:1/-1;margin:8px 0}
+.directional-local-panel .scaling-controls .control{margin:0}
+.directional-local-panel .scaling-controls #scale-presets{align-self:center}
+.directional-local-panel .scaling-controls>.control:has(#scale-batch){grid-column:1/-1}
+@media(max-width:1000px){
+ #rankings .ranking-grid{grid-template-columns:minmax(0,1fr) 240px}
+ .mechanism-intro{gap:28px}
+ .movement-visuals{grid-template-columns:minmax(230px,.8fr) minmax(0,1.3fr);gap:20px}
+}
+@media(max-width:760px){
+ .hero{padding-top:44px;padding-bottom:42px}.hero h1{font-size:49px}.hero-deck{font-size:18px}
+ .mechanism-intro,.directional-paper-column,.movement-visuals{grid-template-columns:1fr;gap:24px}
+ .mechanism-intro .hero-art{min-height:0}.mechanism-guide{font-size:15px}
+ #rankings .ranking-grid{grid-template-columns:1fr}#rankings .leaderboard{padding-left:0}
+ .movement-quadratic{border-right:0;border-bottom:1px solid var(--line);padding:0 0 20px}
+ #movement-quadratic{max-width:380px;margin:auto}
+ .comparison-heading .segmented{flex-wrap:wrap}.comparison-heading .segmented button{padding:8px;font-size:13px}
+ .directional-local-panel .scaling-controls{grid-template-columns:1fr}.directional-local-panel .scaling-controls>*{grid-column:1}
+ .movement-equation .blog-math{font-size:19px}.rule-batch-action{justify-content:flex-start}
+}
+@media(min-width:761px){
+ .directional-local-panel .scaling-controls>.control:has(#scale-alpha){grid-column:1}
+ .directional-local-panel .scaling-controls #scale-presets{grid-column:2;grid-row:2;justify-self:end;margin:0}
+ .directional-local-panel .scaling-challenge{grid-template-columns:1.2fr 1fr;gap:28px}
+}
+.directional-local-panel .scaling-controls{row-gap:14px}
+.directional-local-panel .scaling-controls .movement-readout{margin:0}
+@media(max-width:760px){
+ .rule-workspace .rule-chart-view{position:static;box-shadow:none}
+}
+
+.leaderboard #pair-chart{height:210px}
+.leaderboard #pair-axis-quantity .blog-math{font-size:16px}

@@ -38,7 +38,10 @@
     template.innerHTML = render(element.innerHTML, element.getAttribute('display') === 'block' || Boolean(element.closest('.rule-candidates,.figure-axis-quantity,.formula-badge')));
     const replacement = template.content.firstElementChild;
     if (element.getAttribute('display') === 'block') replacement.classList.add('math-block');
-    if (element.hasAttribute('aria-label')) replacement.setAttribute('aria-label',element.getAttribute('aria-label'));
+    if (element.hasAttribute('aria-label')) {
+      replacement.setAttribute('role','math');
+      replacement.setAttribute('aria-label',element.getAttribute('aria-label'));
+    }
     element.replaceWith(replacement);
   });
 })();

@@ -29,6 +29,7 @@
     if (name === 'common') return s.commonRuleId;
     if (name === 'batch') return s.bestAtBatch[state.index];
     if (name === 'none') return s.noScalingRuleId;
+    if (name === 'power') return s.rules.find(r => r.choices.etaM === 'fixed' && r.choices.lambdaM === 'linear' && r.choices.mu === 'fixed').id;
     // A matrix prescription leaves auxiliary choices unspecified: select its best grid completion.
     return s.rules.find(r => r.choices.etaM === (name === 'bound' ? 'sqrt' : 'linear') && r.choices.lambdaM === 'fixed' && r.choices.mu === (name === 'bound' ? 'fixed' : 'retention')).id;
   };
@@ -193,7 +194,7 @@
     const choices=Object.fromEntries([...node('rule-builder').querySelectorAll('select')].map(select=>[select.dataset.coordinate,select.value]));
     const r=setting().rules.find(r=>Object.entries(choices).every(([key,value])=>r.choices[key]===value));choose(r.id);
   });
-  node('rule-lab').querySelector('.rule-presets').addEventListener('click',e=>{const b=e.target.closest('[data-rule-preset]');if(b)choose(presetId(b.dataset.rulePreset),b.dataset.rulePreset);});
+  node('rule-lab').addEventListener('click',e=>{const b=e.target.closest('[data-rule-preset]');if(b)choose(presetId(b.dataset.rulePreset),b.dataset.rulePreset);});
   node('rule-batch').addEventListener('input',()=>{pause();updateBatch(indices()[+node('rule-batch').value]);});
   node('rule-batch-ticks').addEventListener('click',e=>{const b=e.target.closest('[data-rule-batch]');if(b){pause();updateBatch(+b.dataset.ruleBatch);}});
   function selectFromPlot(e, id, geometry) {

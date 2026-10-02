@@ -43,25 +43,25 @@
     const points = rankBatches.map(batch => ({ batch,
       value: measurements.find(r => r.batch === batch && r.optimizer === second).loss
         - measurements.find(r => r.batch === batch && r.optimizer === first).loss }));
-    const width = Math.max(200, el('pair-chart').clientWidth || 320);
-    el('pair-chart').setAttribute('viewBox', `0 0 ${width} 176`);
-    const f = frame(width, 176, { l: 48, r: 18, t: 10, b: 30 });
-    const limit = Math.max(.004, ...points.map(p => Math.abs(p.value))) * 1.25;
+    const width = Math.max(240, el('pair-chart').clientWidth || 320);
+    el('pair-chart').setAttribute('viewBox', `0 0 ${width} 210`);
+    const f = frame(width, 210, { l: 60, r: 18, t: 16, b: 35 });
+    const limit = Math.ceil(Math.max(.004, ...points.map(p => Math.abs(p.value))) * 1.15 / .005) * .005;
     const x = b => f.l + Math.log2(b / rankBatches[0]) / 4 * f.iw;
     const y = v => f.t + f.ih * (.5 - v / (2 * limit));
     let markup = `<rect x="${f.l}" y="${y(.002)}" width="${f.iw}" height="${y(-.002)-y(.002)}" fill="${token('--sunken')}"/>`;
     [-limit, 0, limit].forEach(v => {
       markup += `<line x1="${f.l}" x2="${f.w-f.r}" y1="${y(v)}" y2="${y(v)}" stroke="${gridStroke()}" ${v===0?'stroke-width="1.5"':'stroke-dasharray="2 5"'}/>`;
-      markup += text(f.l-9, y(v)+4, (v*1000).toFixed(1), 'text-anchor="end"');
+      markup += svgText(f.l-12, y(v)+5, v.toFixed(3), 'font-size="13" text-anchor="end"');
     });
-    el('pair-quantity').innerHTML = `<span style="color:${colors[second]}">${second}</span> − <span style="color:${colors[first]}">${first}</span>`;
+    el('pair-axis-quantity').innerHTML=mathMarkup(`<msub><mi>L</mi><mtext>${second}</mtext></msub><mo>−</mo><msub><mi>L</mi><mtext>${first}</mtext></msub>`);
     markup += `<path d="${line(points, p=>x(p.batch), p=>y(p.value))}" fill="none" stroke="${token('--ink')}" stroke-width="2.3" stroke-linejoin="round"/>`;
     points.forEach(p => {
       const sign = p.value > 0 ? first : p.value < 0 ? second : 'Tie';
       markup += `<circle cx="${x(p.batch)}" cy="${y(p.value)}" r="${p.batch===rankBatches[rankState.index]?5.5:3.5}" fill="${sign==='Tie'?token('--muted'):colors[sign]}" stroke="${token('--surface')}" stroke-width="2"><title>${batchName(p.batch)}: ${sign}${sign==='Tie'?'':` leads by ${Math.abs(p.value).toFixed(4)} nats`}</title></circle>`;
-      markup += text(x(p.batch), f.h-10, batchName(p.batch), 'text-anchor="middle"');
+      markup += svgText(x(p.batch), f.h-13, batchName(p.batch), `font-size="13" text-anchor="${p.batch===rankBatches.at(-1)?'end':'middle'}"`);
     });
-    el('pair-chart').innerHTML = `<title>${first} versus ${second}: positive values favor ${first}, negative values favor ${second}</title>${markup}`;
+    el('pair-chart').innerHTML = `<title>${first} versus ${second}: positive values favor ${first}, negative values favor ${second}</title>${markup}${researchAxes(f)}`;
     const start = points[0].value, end = points[3].value;
     const signedWinner = v => v > 0 ? first : second;
     el('pair-verdict').textContent = first === second ? 'Same optimizer: zero difference.'

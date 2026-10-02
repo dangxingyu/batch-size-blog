@@ -33,19 +33,27 @@ function axes(f, ymin,ymax, xticks, xmap, options={}) {
   xticks.forEach(([v,t],i)=>s+=svgText(xmap(v),f.h-12,t,`${tickStyle} text-anchor="${i===xticks.length-1?'end':'middle'}"`));
   return {svg:s,y};
 }
-const rankState={family:'standard_wd',index:0,matrix:true};
+const rankState={family:'standard_wd',index:0,matrix:true,view:'loss'};
 const rankBatches=[131072,524288,1048576,2097152];
 function drawRankings(){
   const oldRanks=new Map([...document.querySelectorAll('.rank-row')].map(row=>[row.dataset.optimizer,row.getBoundingClientRect().top]));
   const {family,index,matrix}=rankState, selected=rankBatches[index];
   const all=DATA.rankings.filter(r=>r.family===family), names=matrix?['SOAP','Muon','Shampoo']:['SOAP','Muon','Shampoo','Adam','Lion'];
   const rows=all.filter(r=>names.includes(r.optimizer));
-  const f=chartFrame('ranking-chart',650,310),x=b=>f.l+Math.log2(b/131072)/4*f.iw;
-  const ymin=3.24, ymax=matrix?3.40:3.59;
-  const a=axes(f,ymin,ymax,rankBatches.map(b=>[b,batchName(b)]),x);let s=a.svg;
-  s+=`<rect x="${x(selected)-15}" y="${f.t-7}" width="30" height="${f.ih+7}" fill="#c6d5c0" opacity=".2" rx="6"/><line x1="${x(selected)}" x2="${x(selected)}" y1="${f.t}" y2="${f.t+f.ih}" stroke="#859585" stroke-dasharray="3 4"/>`;
-  names.forEach(name=>{const pts=rows.filter(r=>r.optimizer===name).sort((a,b)=>a.batch-b.batch);s+=`<path d="${line(pts,p=>x(p.batch),p=>a.y(p.loss))}" fill="none" stroke="${colors[name]}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`;pts.forEach(p=>{if(p.min!==null&&p.max!==null&&p.n>1)s+=`<path d="M${x(p.batch)},${a.y(p.min)}V${a.y(p.max)}M${x(p.batch)-3},${a.y(p.min)}h6M${x(p.batch)-3},${a.y(p.max)}h6" stroke="${colors[name]}" fill="none"/>`;s+=`<circle cx="${x(p.batch)}" cy="${a.y(p.loss)}" r="${p.batch===selected?5.5:3.6}" fill="${colors[name]}" stroke="#fffefa" stroke-width="2"><title>${name}, ${batchName(p.batch)}: ${p.loss.toFixed(6)} nats</title></circle>`;});});
-  $('ranking-chart').innerHTML=`<title id="ranking-chart-title">Measured validation losses under ${family==='standard_wd'?'weight decay':'HyperBall'}; ${batchName(selected)} selected</title>${s}`;
+  const f=researchFrame('ranking-chart',1100,280,{l:72,r:22,t:20,b:43}),x=b=>f.l+Math.log2(b/131072)/4*f.iw;
+  const best=b=>Math.min(...all.filter(r=>r.batch===b).map(r=>r.loss));
+  const value=(loss,batch)=>rankState.view==='gap'?loss-best(batch):loss;
+  const bounds=rows.flatMap(r=>[r.loss,...(r.n>1&&r.min!==null&&r.max!==null?[r.min,r.max]:[])].map(loss=>value(loss,r.batch)));
+  const {bottom:ymin,top:ymax,step,precision}=window.RuleAtlasAxis.domains(bounds,rankState.view==='gap'?[0]:[],bounds,rankState.view==='gap'&&Math.min(...bounds)>=0).full;
+  const y=v=>f.t+f.ih*(1-(v-ymin)/(ymax-ymin));let s='';
+  for(let i=0;i<=Math.round((ymax-ymin)/step);i++){const v=ymin+step*i;s+=`<line x1="${f.l}" x2="${f.w-f.r}" y1="${y(v)}" y2="${y(v)}" stroke="${token('--line')}" stroke-dasharray="2 5"/>`+svgText(f.l-12,y(v)+5,v.toFixed(precision),'font-size="17" text-anchor="end"');}
+  rankBatches.forEach(b=>{s+=`<line x1="${x(b)}" x2="${x(b)}" y1="${f.t}" y2="${f.h-f.b}" stroke="${token('--line')}" stroke-dasharray="2 6"/>`+svgText(x(b),f.h-13,batchName(b),`font-size="17" text-anchor="${b===rankBatches.at(-1)?'end':'middle'}"`);});
+  s+=`<line x1="${x(selected)}" x2="${x(selected)}" y1="${f.t}" y2="${f.t+f.ih}" stroke="${token('--orange')}" stroke-dasharray="3 5" opacity=".5"/>`;
+  names.forEach(name=>{const pts=rows.filter(r=>r.optimizer===name).sort((a,b)=>a.batch-b.batch);s+=`<path d="${line(pts,p=>x(p.batch),p=>y(value(p.loss,p.batch)))}" fill="none" stroke="${colors[name]}" stroke-width="2.8" stroke-linejoin="round"/>`;pts.forEach(p=>{if(p.min!==null&&p.max!==null&&p.n>1)s+=`<path d="M${x(p.batch)},${y(value(p.min,p.batch))}V${y(value(p.max,p.batch))}M${x(p.batch)-3},${y(value(p.min,p.batch))}h6M${x(p.batch)-3},${y(value(p.max,p.batch))}h6" stroke="${colors[name]}" fill="none"/>`;s+=`<circle cx="${x(p.batch)}" cy="${y(value(p.loss,p.batch))}" r="${p.batch===selected?6:4.5}" fill="${colors[name]}" stroke="${token('--surface')}" stroke-width="1.5"><title>${name}, ${batchName(p.batch)}: ${p.loss.toFixed(6)} nats</title></circle>`;});});
+  $('ranking-axis-title').textContent=rankState.view==='gap'?'Loss gap to best optimizer':'Validation loss';
+  $('ranking-axis-quantity').innerHTML=mathMarkup('<mi>L</mi>'+(rankState.view==='gap'?'<mo>−</mo><msub><mi>L</mi><mtext>best</mtext></msub>':''))+'<span class="figure-axis-unit">nats</span>';
+  $('ranking-chart').dataset.view=rankState.view;
+  $('ranking-chart').innerHTML=`<title id="ranking-chart-title">Measured ${rankState.view==='gap'?'loss gaps to the lowest loss among all five optimizers':'validation losses'} under ${family==='standard_wd'?'weight decay':'HyperBall'}; ${batchName(selected)} selected</title>${s}${researchAxes(f)}`;
   $('rank-legend').innerHTML=names.map(n=>`<span><i class="trace-swatch" style="color:${colors[n]}" aria-hidden="true"></i>${n}</span>`).join('');
   const sorted=all.filter(r=>r.batch===selected).sort((a,b)=>a.loss-b.loss);
   $('rank-list').innerHTML=sorted.map((r,i)=>`<div data-optimizer="${r.optimizer}" class="rank-row ${i===0?'first':''}"><span class="rank-name"><span class="rank-number">${i+1}</span><i class="dot" style="background:${colors[r.optimizer]}"></i>${r.optimizer}</span><span class="rank-value">${r.loss.toFixed(4)}</span></div>`).join('');
@@ -60,6 +68,7 @@ $('rank-batch').addEventListener('input',e=>{rankState.index=+e.target.value;dra
 document.querySelectorAll('#rank-ticks button').forEach(b=>b.addEventListener('click',()=>{$('rank-batch').value=b.dataset.index;rankState.index=+b.dataset.index;drawRankings();}));
 document.querySelectorAll('#family-tabs button').forEach(b=>b.addEventListener('click',()=>{rankState.family=b.dataset.family;document.querySelectorAll('#family-tabs button').forEach(btn=>{btn.classList.toggle('active',btn===b);btn.setAttribute('aria-pressed',String(btn===b));});drawRankings();}));
 $('matrix-only').addEventListener('change',e=>{rankState.matrix=e.target.checked;drawRankings();});
+$('ranking-view-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-ranking-view]');if(!b)return;rankState.view=b.dataset.rankingView;document.querySelectorAll('[data-ranking-view]').forEach(button=>{const active=button===b;button.classList.toggle('active',active);button.setAttribute('aria-pressed',active);});drawRankings();});
 
 function canvasSize(canvas){const rect=canvas.getBoundingClientRect(),dpr=Math.min(Math.max(window.devicePixelRatio||1,2),3);if(canvas.width!==Math.round(rect.width*dpr)||canvas.height!==Math.round(rect.height*dpr)){canvas.width=Math.round(rect.width*dpr);canvas.height=Math.round(rect.height*dpr);}const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);return {ctx,w:rect.width,h:rect.height,dpr};}
 const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -221,7 +230,11 @@ function configureSimulation(){
   const steps=NQM.settlingSteps(sim,sim.tuned);
   ['sgd','newton'].forEach(m=>{sim.paths[m]=NQM.trajectory(sim,m,sim.tuned[m].eta,sim.seed,steps);});
   const maxLoss=Math.max(.5*(sim.start[0]**2+sim.sharp*sim.start[1]**2),...Object.values(sim.paths).map(ps=>Math.max(...ps.map(p=>p.loss))),1e-2);
-  sim.lossBounds={ymax:Math.ceil(Math.log10(maxLoss)),ymin:Math.min(-4,Math.floor(Math.log10(Math.max(Math.min(sim.tuned.sgd.total,sim.tuned.newton.total),1e-6)))-1)};
+  const minLoss=Math.min(...Object.values(sim.paths).map(ps=>Math.min(...ps.map(p=>Math.max(p.loss,1e-15)))),...['sgd','newton'].map(m=>Math.max(NQM.moments(sim,m,sim.tuned[m].eta,steps).total,1e-15)));
+  sim.runLossBounds={ymax:Math.ceil(Math.log10(maxLoss)),ymin:Math.floor(Math.log10(minLoss))};
+  const expectedLosses=['sgd','newton'].flatMap(m=>Array.from({length:241},(_,i)=>NQM.moments(sim,m,sim.tuned[m].eta,Math.round(steps*(i/240)**2)).total));
+  sim.lossBounds={ymax:Math.ceil(Math.log10(Math.max(...expectedLosses,1e-14))),ymin:Math.floor(Math.log10(Math.max(Math.min(...expectedLosses),1e-15)))};
+  if(sim.lossBounds.ymax<=sim.lossBounds.ymin)sim.lossBounds.ymax=sim.lossBounds.ymin+1;
   syncSimPlayback();
   $('sim-batch-output').textContent=fmt(sim.batch);$('sim-sharp-output').textContent=sim.sharp+'×';$('sim-noise-output').textContent=sim.noise;$('sim-updates').textContent=fmt(steps);$('sim-seed').textContent='SEED '+sim.seed;
   $('sim-batch').setAttribute('aria-valuetext',`${sim.batch} samples per batch; ${steps} trajectory updates`);
@@ -355,17 +368,19 @@ function setSimulationView(mode){
   renderLandscape();
 }
 function renderLoss(){
-  const chart=$('sim-loss'),width=Math.max(240,Math.min(480,chart.clientWidth));
-  const key=`${width}:${document.documentElement.dataset.theme}`;
-  const {ymax,ymin}=sim.lossBounds;
+  const chart=$('sim-loss'),width=Math.max(240,Math.min(1100,chart.clientWidth));
+  const showRun=$('sim-show-run').checked;
+  const key=`${width}:${document.documentElement.dataset.theme}:${showRun}`;
+  const {ymax,ymin}=showRun?(sim.runLossBounds||sim.lossBounds):sim.lossBounds;
   if(simLoss.key!==key||simLoss.paths!==sim.paths){
     simLoss.key=key;simLoss.paths=sim.paths;simLoss.end=-1;
-    chart.setAttribute('viewBox',`0 0 ${width} 170`);
+    chart.setAttribute('viewBox',`0 0 ${width} 240`);
     const samples=sim.paths.sgd.at(-1).samples;
-    const f=frame(width,170,{l:43,r:12,t:12,b:28}),x=s=>f.l+s/samples*f.iw;
+    const f=frame(width,240,{l:58,r:22,t:20,b:38}),x=s=>f.l+s/samples*f.iw;
     const xticks=width<340?[[0,'0'],[samples,fmt(samples)+' samples']]:[[0,'0'],[samples/2,fmt(samples/2)],[samples,fmt(samples)+' samples']];
     const a=axes(f,ymin,ymax,xticks,x,{dark:true,format:v=>scientificSVG(10**v)});
-    chart.innerHTML=a.svg+`<line class="comparison-budget" x1="${x(NQM.T)}" x2="${x(NQM.T)}" y1="${f.t}" y2="${f.h-f.b}" stroke="${token('--muted')}" stroke-dasharray="3 4" opacity=".7"/>`+svgText(x(NQM.T)+5,f.t+11,'4K','font-size="10"')+['sgd','newton'].map(m=>`<path id="sim-loss-${m}" fill="none" stroke="${colors[m]}" stroke-width="1.6"/>`).join('');
+    const expected=['sgd','newton'].map(m=>{const count=sim.paths[m].length-1,indices=[...new Set([0,...Array.from({length:241},(_,i)=>Math.round(count*(i/240)**2)),Math.round(NQM.T/sim.batch)])].sort((a,b)=>a-b);const d=indices.map((k,i)=>`${i?'L':'M'}${x(k*sim.batch).toFixed(2)},${a.y(Math.log10(Math.max(NQM.moments(sim,m,sim.tuned[m].eta,k).total,1e-15))).toFixed(2)}`).join(' ');return `<path class="sim-expectation" data-method="${m}" d="${d}" fill="none" stroke="${colors[m]}" stroke-width="2.5" stroke-dasharray="7 5"/>`;}).join('');
+    chart.innerHTML=a.svg+expected+`<line class="comparison-budget" x1="${x(NQM.T)}" x2="${x(NQM.T)}" y1="${f.t}" y2="${f.h-f.b}" stroke="${token('--muted')}" stroke-dasharray="3 4" opacity=".7"/>`+svgText(x(NQM.T)+5,f.t+11,'4K','font-size="14"')+['sgd','newton'].map(m=>`<path id="sim-loss-${m}" visibility="${showRun?'visible':'hidden'}" fill="none" stroke="${colors[m]}" stroke-width="1.3" opacity=".75"/>`).join('');
     ['sgd','newton'].forEach(m=>{
       const pts=sim.paths[m],stride=Math.max(1,Math.ceil((pts.length-1)/350));
       const coordinates=pts.map(p=>`${x(p.samples).toFixed(2)},${a.y(Math.max(ymin,Math.log10(Math.max(p.loss,1e-15)))).toFixed(2)}`);
@@ -383,6 +398,7 @@ function renderLoss(){
     curve.element.setAttribute('d',path);
   });
 }
+$('sim-show-run').addEventListener('change',renderLoss);
 function renderSim(){
   renderLandscape();renderLoss();
   const steps=sim.paths.sgd.length-1,samples=Math.floor(sim.progress*steps)*sim.batch,total=steps*sim.batch;
@@ -430,8 +446,29 @@ function drawScaling(){
   vals.forEach((pts,i)=>{const color=i?colors.newton:colors.sgd;s+=`<path d="${line(pts,p=>x(p.r),p=>a.y(p.v))}" fill="none" stroke="${color}" stroke-width="2.7"/><circle cx="${x(ratio)}" cy="${a.y(NQM.displacement(cnrs[i],ratio,alpha))}" r="5" fill="${color}" stroke="#fffefa" stroke-width="2"/>`;});
   s+=researchAxes(f);$('scaling-chart').innerHTML=s;
   $('movement-readout').innerHTML=cnrs.map((c,i)=>{const v=NQM.displacement(c,ratio,alpha);return `<div class="movement-value"><span>${i?'Low':'High'} CNR</span><strong>${v.toFixed(2)}×</strong><small>${Math.abs(v-1)<.02?'Almost preserved':v<1?'Less movement / sample':'More movement / sample'}</small></div>`;}).join('');
+  drawMovementQuadratic(alpha,ratio);
   dispatchEvent(new Event('batchsize:scaling'));
   document.querySelectorAll('#scale-presets button').forEach(b=>{b.classList.toggle('active',+b.dataset.alpha===alpha);b.setAttribute('aria-pressed',String(+b.dataset.alpha===alpha));});
+}
+function drawMovementQuadratic(alpha,ratio){
+  const svg=$('movement-quadratic'),w=Math.max(240,Math.min(440,svg.clientWidth)),h=390;
+  svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
+  const x=v=>24+(v+1.2)/2.8*(w-48);
+  const arrowUnit=.7/Math.max(1,...[1,.001].map(c=>NQM.displacement(c,ratio,alpha)));
+  let markup=`<title>Local movement at batch ratio ${ratio}, exponent ${alpha.toFixed(2)}. Arrows are normalized to each direction's batch-1 movement.</title>`;
+  [1,.001].forEach((cnr,i)=>{
+    const top=i*195,color=i?colors.newton:colors.sgd,movement=NQM.displacement(cnr,ratio,alpha),end=1-arrowUnit*movement;
+    const y=v=>top+127-58*v*v,points=Array.from({length:81},(_,k)=>-1.2+2.6*k/80);
+    markup+=svgText(16,top+20,`${i?'Low':'High'} CNR · ${cnr}`,`font-size="16" fill="${color}" font-weight="600"`);
+    markup+=`<path d="${line(points,v=>x(v),y)}" fill="none" stroke="${token('--grid-strong')}" stroke-width="1.5"/><line x1="24" x2="${w-24}" y1="${top+127}" y2="${top+127}" stroke="${token('--line')}"/><circle cx="${x(1)}" cy="${y(1)}" r="4" fill="${token('--ink')}"/>`;
+    markup+=svgText(x(1)+7,y(1)-10,'w = 1','font-size="13"')+svgText(x(0),top+144,'0','font-size="13" text-anchor="middle"');
+    const arrow=(end,cy,stroke,dashed)=>`<path d="M${x(1)} ${cy}H${x(end)}" fill="none" stroke="${stroke}" stroke-width="${dashed?1.5:3}" ${dashed?'stroke-dasharray="4 3"':''}/><path d="M${x(end)+5} ${cy-4}L${x(end)} ${cy}L${x(end)+5} ${cy+4}" fill="none" stroke="${stroke}" stroke-width="1.5"/>`;
+    const local=Array.from({length:21},(_,k)=>end+(1-end)*k/20);
+    markup+=`<path d="${line(local,v=>x(v),y)}" fill="none" stroke="${color}" stroke-width="3"/><circle cx="${x(end)}" cy="${y(end)}" r="4" fill="${color}"/>`;
+    markup+=arrow(1-arrowUnit,top+156,token('--muted'),true)+arrow(end,top+175,color,false);
+    markup+=svgText(16,top+158,'Batch 1','font-size="12"')+svgText(16,top+180,`${ratio}× batch · ${movement.toFixed(2)}×`,`font-size="12" fill="${color}"`);
+  });
+  svg.dataset.alpha=alpha;svg.dataset.ratio=ratio;svg.innerHTML=markup;
 }
 ['scale-alpha','scale-batch'].forEach(id=>$(id).addEventListener('input',drawScaling));
 document.querySelectorAll('#scale-presets button').forEach(b=>b.addEventListener('click',()=>{$('scale-alpha').value=b.dataset.alpha;drawScaling();}));
