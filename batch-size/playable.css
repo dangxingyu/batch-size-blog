@@ -352,11 +352,11 @@ body{--ui-label-size:15px;--ui-button-size:14px;--ui-detail-size:14px}
 #rankings .leaderboard{padding-left:24px}
 #rankings .batch-controls{max-width:750px}
 #rankings .pair-lab{margin-top:28px}
-.sandbox>.sim-loss-panel{border-top:1px solid var(--line);padding-top:24px;margin-top:28px}
-.sandbox>.sim-loss-panel svg{width:100%;height:auto;display:block}
-.sandbox>.sim-loss-panel .small-text{margin-top:12px}
-.sandbox>.sim-loss-panel .figure-axis-heading{margin-bottom:12px}
-.sandbox>.sim-loss-panel .figure-axis-reference{display:block;margin-top:6px}
+.sim-controls>.sim-loss-panel{border-top:1px solid var(--line);padding-top:18px;margin-top:22px}
+.sim-controls>.sim-loss-panel svg{width:100%;height:auto;display:block}
+.sim-controls>.sim-loss-panel .small-text{margin-top:12px}
+.sim-controls>.sim-loss-panel .figure-axis-heading{margin-bottom:12px}
+.sim-controls>.sim-loss-panel .figure-axis-reference{display:block;margin-top:6px}
 .movement-equation{padding:20px 0;color:var(--ink);overflow-x:auto}
 .movement-equation .blog-math{font-size:24px}
 .directional-comparison{display:block}

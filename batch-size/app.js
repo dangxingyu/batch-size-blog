@@ -230,11 +230,9 @@ function configureSimulation(){
   const steps=NQM.settlingSteps(sim,sim.tuned);
   ['sgd','newton'].forEach(m=>{sim.paths[m]=NQM.trajectory(sim,m,sim.tuned[m].eta,sim.seed,steps);});
   const maxLoss=Math.max(.5*(sim.start[0]**2+sim.sharp*sim.start[1]**2),...Object.values(sim.paths).map(ps=>Math.max(...ps.map(p=>p.loss))),1e-2);
-  const minLoss=Math.min(...Object.values(sim.paths).map(ps=>Math.min(...ps.map(p=>Math.max(p.loss,1e-15)))),...['sgd','newton'].map(m=>Math.max(NQM.moments(sim,m,sim.tuned[m].eta,steps).total,1e-15)));
+  const minLoss=Math.min(...Object.values(sim.paths).map(ps=>Math.min(...ps.map(p=>Math.max(p.loss,1e-15)))));
   sim.runLossBounds={ymax:Math.ceil(Math.log10(maxLoss)),ymin:Math.floor(Math.log10(minLoss))};
-  const expectedLosses=['sgd','newton'].flatMap(m=>Array.from({length:241},(_,i)=>NQM.moments(sim,m,sim.tuned[m].eta,Math.round(steps*(i/240)**2)).total));
-  sim.lossBounds={ymax:Math.ceil(Math.log10(Math.max(...expectedLosses,1e-14))),ymin:Math.floor(Math.log10(Math.max(Math.min(...expectedLosses),1e-15)))};
-  if(sim.lossBounds.ymax<=sim.lossBounds.ymin)sim.lossBounds.ymax=sim.lossBounds.ymin+1;
+  if(sim.runLossBounds.ymax<=sim.runLossBounds.ymin)sim.runLossBounds.ymax=sim.runLossBounds.ymin+1;
   syncSimPlayback();
   $('sim-batch-output').textContent=fmt(sim.batch);$('sim-sharp-output').textContent=sim.sharp+'×';$('sim-noise-output').textContent=sim.noise;$('sim-updates').textContent=fmt(steps);$('sim-seed').textContent='SEED '+sim.seed;
   $('sim-batch').setAttribute('aria-valuetext',`${sim.batch} samples per batch; ${steps} trajectory updates`);
@@ -369,9 +367,8 @@ function setSimulationView(mode){
 }
 function renderLoss(){
   const chart=$('sim-loss'),width=Math.max(240,Math.min(1100,chart.clientWidth));
-  const showRun=$('sim-show-run').checked;
-  const key=`${width}:${document.documentElement.dataset.theme}:${showRun}`;
-  const {ymax,ymin}=showRun?(sim.runLossBounds||sim.lossBounds):sim.lossBounds;
+  const key=`${width}:${document.documentElement.dataset.theme}`;
+  const {ymax,ymin}=sim.runLossBounds;
   if(simLoss.key!==key||simLoss.paths!==sim.paths){
     simLoss.key=key;simLoss.paths=sim.paths;simLoss.end=-1;
     chart.setAttribute('viewBox',`0 0 ${width} 240`);
@@ -379,8 +376,7 @@ function renderLoss(){
     const f=frame(width,240,{l:58,r:22,t:20,b:38}),x=s=>f.l+s/samples*f.iw;
     const xticks=width<340?[[0,'0'],[samples,fmt(samples)+' samples']]:[[0,'0'],[samples/2,fmt(samples/2)],[samples,fmt(samples)+' samples']];
     const a=axes(f,ymin,ymax,xticks,x,{dark:true,format:v=>scientificSVG(10**v)});
-    const expected=['sgd','newton'].map(m=>{const count=sim.paths[m].length-1,indices=[...new Set([0,...Array.from({length:241},(_,i)=>Math.round(count*(i/240)**2)),Math.round(NQM.T/sim.batch)])].sort((a,b)=>a-b);const d=indices.map((k,i)=>`${i?'L':'M'}${x(k*sim.batch).toFixed(2)},${a.y(Math.log10(Math.max(NQM.moments(sim,m,sim.tuned[m].eta,k).total,1e-15))).toFixed(2)}`).join(' ');return `<path class="sim-expectation" data-method="${m}" d="${d}" fill="none" stroke="${colors[m]}" stroke-width="2.5" stroke-dasharray="7 5"/>`;}).join('');
-    chart.innerHTML=a.svg+expected+`<line class="comparison-budget" x1="${x(NQM.T)}" x2="${x(NQM.T)}" y1="${f.t}" y2="${f.h-f.b}" stroke="${token('--muted')}" stroke-dasharray="3 4" opacity=".7"/>`+svgText(x(NQM.T)+5,f.t+11,'4K','font-size="14"')+['sgd','newton'].map(m=>`<path id="sim-loss-${m}" visibility="${showRun?'visible':'hidden'}" fill="none" stroke="${colors[m]}" stroke-width="1.3" opacity=".75"/>`).join('');
+    chart.innerHTML=a.svg+`<line class="comparison-budget" x1="${x(NQM.T)}" x2="${x(NQM.T)}" y1="${f.t}" y2="${f.h-f.b}" stroke="${token('--muted')}" stroke-dasharray="3 4" opacity=".7"/>`+svgText(x(NQM.T)+5,f.t+11,'4K','font-size="14"')+['sgd','newton'].map(m=>`<path id="sim-loss-${m}" fill="none" stroke="${colors[m]}" stroke-width="1.8"/>`).join('');
     ['sgd','newton'].forEach(m=>{
       const pts=sim.paths[m],stride=Math.max(1,Math.ceil((pts.length-1)/350));
       const coordinates=pts.map(p=>`${x(p.samples).toFixed(2)},${a.y(Math.max(ymin,Math.log10(Math.max(p.loss,1e-15)))).toFixed(2)}`);
@@ -398,7 +394,6 @@ function renderLoss(){
     curve.element.setAttribute('d',path);
   });
 }
-$('sim-show-run').addEventListener('change',renderLoss);
 function renderSim(){
   renderLandscape();renderLoss();
   const steps=sim.paths.sgd.length-1,samples=Math.floor(sim.progress*steps)*sim.batch,total=steps*sim.batch;

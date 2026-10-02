@@ -16,7 +16,7 @@ function canvas(){
   for(const prop of ['width','height'])Object.defineProperty(result,prop,{get:()=>result['_'+prop],set:v=>{result['_'+prop]=v;context.segments=[];}});
   return result;
 }
-const nodes={'sim-show-run':{checked:true,addEventListener(){}},landscape:canvas(),'landscape-overview':canvas(),'sim-overview':{},'sim-window':{},'sim-zoom':{},'sim-auto-view':{setAttribute(){}},'sim-full-view':{setAttribute(){}},'sim-loss':{clientWidth:480,setAttribute(){},
+const nodes={landscape:canvas(),'landscape-overview':canvas(),'sim-overview':{},'sim-window':{},'sim-zoom':{},'sim-auto-view':{setAttribute(){}},'sim-full-view':{setAttribute(){}},'sim-loss':{clientWidth:480,setAttribute(){},
   set innerHTML(value){this.markup=value;for(const method of ['sgd','newton'])nodes['sim-loss-'+method]={setAttribute(name,value){this[name]=value;}};},
   get innerHTML(){return this.markup;}},'sim-progress':{},'sim-progress-bar':{style:{}},'sim-play-label':{},'sim-play-icon':{}};
 const compassNodes=Object.fromEntries(['flat','sharp','origin'].map(name=>[name,{attributes:{},setAttribute(key,value){this.attributes[key]=String(value);}}]));
@@ -52,7 +52,7 @@ vm.runInContext(`
     sim.tuned={sgd:NQM.tune(sim,'sgd'),newton:NQM.tune(sim,'newton')};
     const steps=NQM.settlingSteps(sim,sim.tuned);
     sim.paths=Object.fromEntries(['sgd','newton'].map(m=>[m,NQM.trajectory(sim,m,sim.tuned[m].eta,sim.seed,steps)]));
-    sim.lossBounds={ymin:-5,ymax:2};
+    sim.runLossBounds={ymin:-5,ymax:2};
   }
   ${renderer}
   ${tuning}
@@ -93,19 +93,9 @@ nodes.landscape.getBoundingClientRect=()=>({width:720,height:320});
 vm.runInContext('sim.seed=8;setup()',context);checkEnd(.3); // Reseeding invalidates trajectories.
 assert.equal(vm.runInContext('sim.paths.sgd.length',context),16385);
 assert(nodes['sim-loss'].markup.includes('comparison-budget'),'The loss chart marks the original comparison budget.');
-for (const method of ['sgd','newton']) {
-  const expected=vm.runInContext(`NQM.moments(sim,'${method}',sim.tuned.${method}.eta).total`,context);
-  const samples=vm.runInContext('sim.paths.sgd.at(-1).samples',context);
-  const point=`${(58+4096/samples*400).toFixed(2)},${(20+182*(1-(Math.log10(expected)+5)/7)).toFixed(2)}`;
-  const curve=nodes['sim-loss'].markup.match(new RegExp(`class="sim-expectation" data-method="${method}" d="([^"]+)"`))[1];
-  assert(curve.includes(point),'The expected curve contains the exact independently tuned 4K comparison point.');
-  assert(curve.split(/[ML]/).length<=244,'Expected-curve display work is bounded independently of trajectory length.');
-}
-console.log('PASS: expected-loss curves include the exact 4K tuned results, independently of playback.');
-nodes['sim-show-run'].checked=false;vm.runInContext('renderLoss()',context);
-assert(nodes['sim-loss'].markup.includes('visibility="hidden"'),'Default expected-loss view hides sample paths.');
-nodes['sim-show-run'].checked=true;vm.runInContext('renderLoss()',context);
-assert(nodes['sim-loss'].markup.includes('visibility="visible"'),'The sample-path control restores the random run.');
+assert(!nodes['sim-loss'].markup.includes('sim-expectation'),'The live loss chart must not include expected-loss curves.');
+assert(!nodes['sim-loss'].markup.includes('visibility="hidden"'),'Live loss paths are always visible.');
+console.log('PASS: live loss paths follow playback and retain the 4K comparison marker without expected curves.');
 for(const speed of [1,2,4]){
   const progress=vm.runInContext(`sim.speed=${speed};sim.progress=0;sim.playing=true;sim.last=100;tickSim(140);sim.progress`,context);
   assert.ok(Math.abs(progress-40*speed/60000)<1e-12);

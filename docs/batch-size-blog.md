@@ -88,7 +88,7 @@ protocol, endpoint fields and hashes are included in the downloadable dataset.
   their view is hidden or the document loses visibility. Manual pause freezes the
   current frame. Reduced-motion startup shows a static completed hero trajectory.
 - The sandbox runs for 60 seconds at the default 1× (30 seconds at 2×, 15 seconds at 4×) and uses the same extended horizon as the hero. Its loss curve marks the original 4K comparison point and reports actual processed samples. The noise button reads “Resample noise.”
-- The loss figure spans the full sandbox width below the landscape and parameter controls. It defaults to exact expected losses; an explicit checkbox reveals the animated sample paths and expands the vertical range to include their extrema. The actual update count remains beneath the controls. The 4,096-sample learning-rate tuning budget is explained in the figure footnote. Expected-loss bars and the tuning explanation stay in the results row. Narrow screens stack the controls below the landscape; the loss plot keeps readable tick sizes and omits its middle sample tick when space is limited.
+- The live loss figure sits beneath the parameter sliders at the bottom right of the landscape. It always shows the two sampled paths, synchronized with playback, with a fixed logarithmic range containing their extrema. There are no expected-loss curve overlays or visibility toggle. The original 4K tuning budget is marked; expected-loss bars stay in the results row. On narrow screens the controls and live chart stack below the landscape.
 - The sandbox caches its contours and appends every newly revealed trajectory segment
   to offscreen canvases. The loss plot retains its axes and precomputes a bounded
   display curve, with the exact current update as its endpoint. Theme, size, replay,
@@ -204,11 +204,11 @@ Expected-loss bars retain a neutral full-length track and a small origin marker 
   also offer a loss-gap view, referenced to the best of all five optimizers at each
   measured batch. Observed min–max whiskers remain visible, even when they extend
   below the median-loss reference. No downloadable measurement has changed.
-- The full-width quadratic loss figure defaults to exact expectations. Sampled
-  curves are optional, have a separate range that includes all generated losses,
-  and retain their exact current endpoint. On the log axis, zero or underflowed
-  losses use the numerical floor 1e-15. Expected curves explicitly include the
-  original 4,096-sample comparison point, independently of animation progress.
+- The quadratic loss chart shows the live sampled run at the bottom right, with
+  no expected-loss curve overlay. Curves retain their exact current endpoint and
+  share a fixed range containing all generated losses. On the log axis, zero or
+  underflowed losses use the numerical floor 1e-15. A dashed vertical marker
+  locates the original 4,096-sample comparison budget.
 - The directional narrative now gives the gradient, SignSGD update, stationary
   expected sign, movement per sample, and the two asymptotic exponents in visible
   equations. Beside the local movement chart, two quadratic slices display the
