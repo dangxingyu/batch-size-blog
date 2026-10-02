@@ -1,0 +1,14 @@
+{
+  "name": "batch-size-blog",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "test": "node scripts/check-batch-playable.mjs && node scripts/check-scaling-rule-view.mjs",
+    "build": "node scripts/build.mjs"
+  }
+}
