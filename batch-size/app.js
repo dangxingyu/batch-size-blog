@@ -86,7 +86,7 @@ function configureHero(){
   $('hero-batch-output').textContent=fmt(hero.batch);
   $('hero-batch').setAttribute('aria-valuetext',`${hero.batch} samples per batch`);
   const winningMethod=hero.tuned.sgd.total<hero.tuned.newton.total?'sgd':'newton';
-  $('hero-winner').innerHTML=`<span class="hero-method-${winningMethod}">${winningMethod==='sgd'?'SGD':'Newton'}</span> leads at 4K in expectation`;
+  $('hero-winner').innerHTML=`<span class="hero-method-${winningMethod}">${winningMethod==='sgd'?'SGD':'Newton'}</span> leads`;
   heroTime=heroPaused?hero.duration:0;updateHeroMotion();drawHero(heroTime);syncHeroPlayback();
 }
 function syncHeroCompass(horizontal,vertical){
