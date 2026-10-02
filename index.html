@@ -6,7 +6,7 @@
   <meta name="description" content="Turn the batch-size dial. Race optimizers through a noisy landscape. Explore why a tiny set of sharp directions can change the result.">
   <meta name="theme-color" content="#f5f3ec">
   <link rel="icon" href="batch-size/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="batch-size/vendor/katex/katex.min.css?v=d4ab5b8e"><link rel="stylesheet" href="batch-size/fonts.css"><link rel="stylesheet" href="batch-size/style.css"><link rel="stylesheet" href="batch-size/editorial.css?v=22dcf985"><link rel="stylesheet" href="batch-size/playable.css?v=08ba9449"><link rel="stylesheet" href="batch-size/branching.css?v=0134537c">
+  <link rel="stylesheet" href="batch-size/vendor/katex/katex.min.css?v=d4ab5b8e"><link rel="stylesheet" href="batch-size/fonts.css"><link rel="stylesheet" href="batch-size/style.css"><link rel="stylesheet" href="batch-size/editorial.css?v=22dcf985"><link rel="stylesheet" href="batch-size/playable.css?v=42d971ac"><link rel="stylesheet" href="batch-size/branching.css?v=0134537c">
   <link rel="preload" href="batch-size/fonts/fraunces-essay.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="batch-size/fonts/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="canonical" href="https://dangxingyu.github.io/batch-size-blog/">
@@ -51,7 +51,7 @@
   <p>We transfer a tuned reference configuration to four larger batches in language modeling and six target batches in one-pass CIFAR-5M training with a GroupNorm ResNet. The reference batches are 128K tokens and 256 examples, respectively. Within each setting, all rules share the model, data budget, and schedule shape. The paper selects a common rule by its mean batch-size regret, the equally weighted mean validation-loss gap to the best tested grid rule at each batch. The figure below uses the lowest recorded loss at each batch across the original grid and the paper’s full-retuning results. Full retuning independently adjusts every hyperparameter at each batch by coordinate descent.</p>
 </div>
  <div id="rule-lab" class="light-panel rule-lab">
-  <div class="panel-top"><div><h3>Scaling-rule search.</h3></div><div id="rule-task-tabs" class="segmented" role="group" aria-label="Scaling-rule experiment"><button data-task="llm" class="active" aria-pressed="true">Language model</button><button data-task="cifar" aria-pressed="false">CIFAR-5M</button></div></div>
+  <div class="panel-top rule-lab-header"><h3>Scaling-rule search.</h3><div id="rule-task-tabs" class="segmented" role="group" aria-label="Scaling-rule experiment"><button data-task="llm" class="active" aria-pressed="true">Language model</button><button data-task="cifar" aria-pressed="false">CIFAR-5M</button></div></div>
   <div class="rule-search-summary"><strong id="rule-count">864<span>measured runs</span></strong><div><p id="rule-product">3³ × 2³</p><span id="rule-budget">Reference: 128K tokens / update</span></div><p>Click a curve to inspect its rule.<small>Compare transfers to larger batches. Selection and mean gaps use the four target batches shown.</small></p></div>
   <div class="rule-workspace">
    <div class="rule-chart-pane">
