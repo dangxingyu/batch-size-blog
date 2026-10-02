@@ -75,7 +75,7 @@
   "display": "Slider snaps to one of 22 actually tuned CNR conditions; all 16 batch points are shown. No CNR interpolation.",
   "numpy_version": "2.0.2",
   "compiler": "/usr/bin/clang++",
-  "runtime_seconds": 6.304,
+  "runtime_seconds": 3.094,
   "scripts": [
     "scripts/tune-signsgd-dense.py",
     "scripts/tune-signsgd-dense.cpp"
