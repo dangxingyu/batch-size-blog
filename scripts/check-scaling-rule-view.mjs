@@ -4,7 +4,7 @@ import vm from 'node:vm';
 
 const context = { window: {} };
 vm.runInNewContext(readFileSync(new URL('../batch-size/rule-axis.js', import.meta.url), 'utf8'), context);
-const { domains, percentileRank, scaleUpSetting } = context.window.RuleAtlasAxis;
+const { domains, lossRank, scaleUpSetting } = context.window.RuleAtlasAxis;
 const data = JSON.parse(readFileSync(new URL('../batch-size/data/scaling-rules.json', import.meta.url), 'utf8'));
 const original = JSON.stringify(data);
 const settings = Object.fromEntries(Object.entries(data.settings).map(([key,value])=>[key,scaleUpSetting(value)]));
@@ -54,21 +54,22 @@ for (const [name, setting] of Object.entries(settings)) {
 }
 console.log(`PASS: ${checked} rule/view combinations retain all endpoints in the overview and Full range, and fit the selected curve on linear axes.`);
 
-// Empirical loss percentiles use the current batch and count ties together.
-assert.equal(percentileRank([1,2,2,4],2),75);
-assert.equal(percentileRank([1,2,2,4],4),100);
+// Loss ranks use the current batch: the best loss ranks first and ties share a rank.
+assert.equal(lossRank([1,2,2,4],1),1);
+assert.equal(lossRank([1,2,2,4],2),2);
+assert.equal(lossRank([1,2,2,4],4),4);
 for (const setting of Object.values(data.settings)) {
   for (let i=0;i<setting.batches.length;i++) {
     const losses=setting.rules.map(r=>r.losses[i]);
     const minimum=Math.min(...losses);
     for (const loss of losses) {
-      const expected=losses.reduce((n,v)=>n+Number(v<=loss),0)/losses.length*100;
-      assert(Math.abs(percentileRank(losses,loss)-expected)<1e-12);
-      assert(Math.abs(percentileRank(losses.map(v=>v-minimum),loss-minimum)-expected)<1e-12,'Loss and loss-gap views report the same percentile.');
+      const expected=1+losses.reduce((n,v)=>n+Number(v<loss),0);
+      assert(Math.abs(lossRank(losses,loss)-expected)<1e-12);
+      assert(Math.abs(lossRank(losses.map(v=>v-minimum),loss-minimum)-expected)<1e-12,'Loss and loss-gap views report the same loss rank.');
     }
   }
 }
-console.log('PASS: batch-specific empirical percentiles preserve ties and do not change plot ranges.');
+console.log('PASS: batch-specific loss ranks start at 1 and preserve ties and do not change plot ranges.');
 
 // Drive the production animation with a deterministic frame clock. Endpoint
 // holds must leave the measured batch and readout unchanged while readers compare.

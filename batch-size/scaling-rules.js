@@ -113,7 +113,7 @@
     node('rule-baseline-loss').textContent = decimal(bestLoss(state.index));
     node('rule-regret').textContent = decimal(gap(r,state.index));
     node('rule-mean').textContent = decimal(meanGap(r));
-    node('rule-percentile').textContent = window.RuleAtlasAxis.percentileRank(s.rules.map(rule=>rule.losses[state.index]),r.losses[state.index]).toFixed(1)+'%';
+    node('rule-loss-rank').textContent = `${window.RuleAtlasAxis.lossRank(s.rules.map(rule=>rule.losses[state.index]),r.losses[state.index])} / ${s.rules.length}`;
     const rank = String(r.rank).replace('.5','½');
     node('rule-verdict').textContent = `Scale-up grid rank ${rank} of ${s.rules.length}. `+(r.id===s.bestAtBatch[state.index]?'This rule attains the lowest grid loss at the selected batch.':r.id===s.commonRuleId?'The best common rule does not win this batch.':`The best grid rule at this batch has loss ${decimal(s.gridMinimum[state.index])} nats.`);
     s.coords.forEach(c => {

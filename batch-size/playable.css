@@ -281,7 +281,7 @@ body{--ui-label-size:15px;--ui-button-size:14px;--ui-detail-size:14px}
  .rule-workspace .rule-coordinate-formula .blog-math{font-size:18px}
 }
 
-.rule-percentile-label strong{font-weight:600;color:var(--orange);margin-left:5px;font-variant-numeric:tabular-nums}
+.rule-loss-rank-label strong{font-weight:600;color:var(--orange);margin-left:5px;font-variant-numeric:tabular-nums}
 .hero-result{flex-wrap:wrap;gap:12px 20px;font-size:15px}
 .hero-result #hero-winner{flex-basis:100%;font-size:18px;font-weight:500;margin-left:0;line-height:1.4}
 .hero-method-sgd{color:var(--coral)}

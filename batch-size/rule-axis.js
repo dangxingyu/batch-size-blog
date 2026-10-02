@@ -1,4 +1,4 @@
-/* Linear loss axes and the selected point's percentile among tested rules. */
+/* Linear loss axes and the selected point's loss rank among tested rules. */
 'use strict';
 (function () {
   function domain(low, high, zero, padding) {
@@ -22,8 +22,8 @@
     detail.top = Math.min(detail.top, full.top);
     return { full, detail };
   }
-  function percentileRank(values, value) {
-    return 100 * values.filter(v=>v<=value).length / values.length;
+  function lossRank(values, value) {
+    return 1 + values.filter(v=>v<value).length;
   }
   // A derived display cohort: keep the downloadable measurements and paper ranks intact.
   function scaleUpSetting(source) {
@@ -39,5 +39,5 @@
       ...(source.trainSteps ? { trainSteps: subset(source.trainSteps) } : {}),
       commonRuleId: rules[0].id, measurementCount: rules.length * indices.length };
   }
-  window.RuleAtlasAxis = { domains, percentileRank, scaleUpSetting };
+  window.RuleAtlasAxis = { domains, lossRank, scaleUpSetting };
 })();
