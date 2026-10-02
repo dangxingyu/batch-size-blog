@@ -172,3 +172,9 @@ The three prescription cards compare SDE matching, bound minimization, and Power
 The SignSGD panel retains all 27 original measurements. Shape-preserving cubic Hermite curves pass through those endpoints in log-log coordinates. A continuous CNR slider geometrically blends normalized learning-rate ratios between adjacent measured conditions and linearly blends their OLS exponents in log CNR. Intermediate curves show “Interpolated” and no measurement dots. The three presets restore original measured conditions; the downloadable data remain unchanged.
 
 All rule curves include the shared reference configuration: 128K tokens for the language model and 256 images for CIFAR-5M. Its raw loss is `referenceLoss`, and its displayed gap is zero. It is a single shared run, excluded from target-batch controls, rankings, averages and the 864/3,888 transfer-run counts. CIFAR places it between the two smaller and four larger tested batches.
+
+## Batch-size branching figure
+
+`branching.js` renders the paper's 53 base-run points and 2,273 branch-loss measurements from the original `figure6_data` CSVs. All twelve checkpoints are selectable; the focused view shares the existing anchor and held-subspace controls. Raw measurements are connected without smoothing or extrapolation. Checkpoint 12,000 ends at recorded step 12,992. Curve evaluations use 1M held-out tokens; the endpoint widget retains its separate 10.5M-token evaluations. Data hashes and evaluation settings live in `data/branch-curves.json`; original CSV downloads are preserved. The protocol diagram distinguishes control, fully scaled, and held-subspace updates. Directional CBS is explained as a conceptual diminishing-return threshold; no numerical per-direction CBS is claimed.
+
+The SDE and bound headers link to Malladi et al. (NeurIPS 2022) and Shulgin et al. (arXiv 2603.15958), respectively, as framework sources. Muon-specific candidates remain the accompanying paper's derivations.
