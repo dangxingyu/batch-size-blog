@@ -231,8 +231,8 @@ function configureSimulation(){
   dispatchEvent(new Event('batchsize:simulation'));
 }
 function renderRisk(){
-  const max=Math.max(sim.tuned.sgd.total,sim.tuned.newton.total,1e-15);
-  $('sim-risk').innerHTML=['sgd','newton'].map(m=>{const r=sim.tuned[m];return `<div class="risk-label"><span><i class="dot" style="background:${colors[m]}"></i>${m==='sgd'?'SGD':'Newton'} <small>${mathMarkup(mathVariable("η")+`<mo>=</mo><mn>${r.eta.toPrecision(3)}</mn>`)}</small></span><span>${r.total.toPrecision(3)}</span></div><div class="risk-track"><div style="background-color:${colors[m]};width:${r.bias/max*100}%" title="Initialization bias ${r.bias}"></div><div class="variance" style="background-color:${colors[m]};width:${r.variance/max*100}%" title="Noise contribution ${r.variance}"></div></div>`;}).join('');
+  const max=Math.max(sim.tuned.sgd.total,sim.tuned.newton.total)||1;
+  $('sim-risk').innerHTML=['sgd','newton'].map(m=>{const r=sim.tuned[m],value=r.total===0?'≈ 0':r.total<.001?r.total.toExponential(2):r.total.toPrecision(3);return `<div class="risk-label"><span><i class="dot" style="background:${colors[m]}"></i>${m==='sgd'?'SGD':'Newton'} <small>${mathMarkup(mathVariable("η")+`<mo>=</mo><mn>${r.eta.toPrecision(3)}</mn>`)}</small></span><span>${value}</span></div><div class="risk-track"><div style="background-color:${colors[m]};width:${r.bias/max*100}%" title="Initialization bias ${r.bias}"></div><div class="variance" style="background-color:${colors[m]};width:${r.variance/max*100}%" title="Noise contribution ${r.variance}"></div>${r.total/max<.004?`<i class="risk-origin" style="color:${colors[m]}" title="Near-zero expected loss" aria-label="Near-zero expected loss"></i>`:''}</div>`;}).join('');
   const winner=sim.tuned.sgd.total<sim.tuned.newton.total?'SGD':'Newton',a=sim.tuned.sgd.total,b=sim.tuned.newton.total;
   $('sim-takeaway').innerHTML=Math.abs(a-b)<1e-12?'<strong>The methods are effectively tied in this setting.</strong> Change the geometry or the noise to explore another regime.':`<strong>${winner} has lower expected final loss here.</strong> ${sim.batch<=16?'With many noisy updates, the two methods balance residual error and injected noise differently. Try the large-batch preset.':'With fewer, cleaner updates, curvature rescaling can become more valuable. Try changing the noise or the starting point.'}`;
 }
@@ -421,8 +421,8 @@ function drawScaling(){
   const f=researchFrame('scaling-chart',640,340),x=r=>f.l+Math.log2(r)/6*f.iw;
   const cnrs=[1,.001],vals=cnrs.map(c=>Array.from({length:121},(_,i)=>({r:2**(i/20),v:NQM.displacement(c,2**(i/20),alpha)})));
   const peak=Math.max(1,...vals.flat().map(p=>p.v)),step=peak<=2?.5:peak<=4?1:2;
-  const ymax=Math.ceil(peak*1.05/step)*step,a={y:v=>f.t+f.ih*(1-v/ymax)};
-  const ticks=[...new Set([...Array.from({length:Math.round(ymax/step)+1},(_,i)=>i*step),1])].sort((a,b)=>a-b);
+  const ymax=peak*1.06,a={y:v=>f.t+f.ih*(1-v/ymax)};
+  const ticks=[...new Set([...Array.from({length:Math.floor(ymax/step)+1},(_,i)=>i*step),1])].sort((a,b)=>a-b);
   let s='';
   ticks.forEach(v=>{s+=`<line x1="${f.l}" x2="${f.w-f.r}" y1="${a.y(v)}" y2="${a.y(v)}" stroke="${token(v===1?'--muted':'--line')}"${v===1?' stroke-dasharray="5 4"':''}/>`+svgText(f.l-12,a.y(v)+5,v+'×',`font-size="16" text-anchor="end"${v===1?' font-weight="600"':''}`);});
   [1,4,16,64].forEach(r=>{s+=svgText(x(r),f.h-13,String(r),`font-size="16" text-anchor="${r===64?'end':'middle'}"`);});
@@ -448,14 +448,14 @@ function drawIntervention(){
   $('recovery-number').innerHTML=selected&&recovery!==undefined?`${recovery.toFixed(1)}<span>%</span>`:'Not run';
   $('recovery-number').classList.toggle('missing',!selected);
   $('recovery-text').textContent=!selected?'This branch was not run at this anchor. Choose another subspace or training step; no result is inferred.':arm==='fully scaled'?'All matrix directions use large-batch updates. This is the baseline penalty.':anchor>=11000?'Near the end of training, preserving these directions changes little. The early-training recovery does not persist throughout training.':arm==='random-768 held'?'A random subspace barely changes the penalty. Negative recovery means the measured loss gap got slightly larger.':`At step ${fmt(anchor)}, keeping ${fmt(selected.rank)} sharp directions on small-batch updates ${recovery>=0?'reduces':'increases'} the local penalty. This is a measured endpoint, not a projected final-training gain.`;
-  $('anchor-strip').innerHTML=Array.from({length:12},(_,i)=>{const a=(i+1)*1000,r=DATA.recovery.find(r=>r.anchor===a&&r.arm==='top-768 held');return `<button class="anchor-cell ${a===anchor?'active':''}" data-anchor="${i+1}" aria-pressed="${a===anchor}" aria-label="Step ${a}, top 768 recovery ${r.percent}%"><span>${i+1}K</span><i><span style="height:${Math.max(1,r.percent/65*100)}%"></span></i><strong>${r.percent.toFixed(1)}%</strong></button>`;}).join('');
+  $('anchor-strip').innerHTML=Array.from({length:6},(_,i)=>{const checkpoint=2*i+1,a=checkpoint*1000,r=DATA.recovery.find(r=>r.anchor===a&&r.arm==='top-768 held');return `<button class="anchor-cell ${a===anchor?'active':''}" data-anchor="${checkpoint}" aria-pressed="${a===anchor}" aria-label="Step ${a}, top 768 recovery ${r.percent}%"><span>${checkpoint}K</span><i><span style="height:${Math.max(1,r.percent/65*100)}%"></span></i><strong>${r.percent.toFixed(1)}%</strong></button>`;}).join('');
   document.querySelectorAll('.anchor-cell').forEach(b=>b.addEventListener('click',()=>{$('anchor').value=b.dataset.anchor;drawIntervention();}));
   dispatchEvent(new Event('batchsize:intervention'));
   $('endpoint-table').innerHTML='<table><caption>Available branch endpoints at step '+fmt(anchor)+'</caption><thead><tr><th scope="col">Branch</th><th scope="col">Validation loss</th><th scope="col">Penalty (10<sup>−3</sup> nats)</th></tr></thead><tbody>'+rows.map(r=>`<tr><th scope="row">${r.arm}</th><td>${r.loss.toFixed(6)}</td><td>${r.penalty.toFixed(2)}</td></tr>`).join('')+'</tbody></table>';
 }
 $('anchor').addEventListener('input',drawIntervention);$('held').addEventListener('change',drawIntervention);
 $('show-random').addEventListener('click',()=>{$('held').value='random-768 held';drawIntervention();});
-$('show-late').addEventListener('click',()=>{$('anchor').value=12;drawIntervention();});
+$('show-late').addEventListener('click',()=>{$('anchor').value=11;drawIntervention();});
 
 // Theme switches redraw the canvases and scientific series as one visual system.
 function updatePalette(){

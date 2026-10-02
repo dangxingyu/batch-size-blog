@@ -5,7 +5,9 @@
   const el=id=>document.getElementById(id),chart=el('branch-trajectory-chart');
   if(!chart||!data)return;
   let closeView=false,frame=0;
-  const anchors=Object.keys(data.anchors).map(Number).sort((a,b)=>a-b);
+  // Odd checkpoints have the most complete rank sweeps. Keep all raw data downloadable.
+  const anchors=Object.keys(data.anchors).map(Number).filter(a=>(a/1000)%2===1).sort((a,b)=>a-b);
+  const ranks=[16,64,128,256,768],rankColors=['#1a73e8','#9334e6','#e37400','#1e8e3e','#087c75'];
   const fmt=n=>n.toLocaleString('en-US');
   const token=name=>getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   const path=(points,x,y)=>points.map(([step,loss],i)=>`${i?'L':'M'}${x(step).toFixed(2)},${y(loss).toFixed(2)}`).join(' ');
@@ -22,7 +24,7 @@
     const box={left:width<500?49:64,right:width-14,top:35,bottom:height-37};
     const colors={control:token('--ink'),full:token('--coral'),held:token('--teal'),random:token('--muted'),grid:token('--line'),surface:token('--surface')};
     const xmin=closeView?anchor:1000,xmax=closeView?anchor+1024:13000;
-    const shownArms=['control (128K)','fully scaled',...(arm!=='fully scaled'?[arm]:[]),...(arm!=='random-768 held'?['random-768 held']:[])];
+    const shownArms=['control (128K)','fully scaled',...ranks.map(k=>`top-${k} held`),'random-768 held'];
     const shown=closeView?shownArms.flatMap(a=>selected[a]||[]):data.base.filter(([s])=>s>=xmin);
     if(!shown.length)return;
     const values=shown.map(p=>p[1]);
@@ -40,17 +42,19 @@
     svg+=`<path d="M${box.left},${box.top}V${box.bottom}H${box.right}" fill="none" stroke="${token('--grid-strong')}" stroke-width="1.3"/>`;
     function curve(a,k,opacity=1,strokeWidth=2.2){
       const points=data.anchors[a][k];if(!points)return '';
-      const color=k==='control (128K)'?colors.control:k==='fully scaled'?colors.full:k==='random-768 held'?colors.random:colors.held;
+      const rank=ranks.indexOf(Number(k.match(/^top-(\d+)/)?.[1]));
+      const color=k==='control (128K)'?colors.control:k==='fully scaled'?colors.full:k==='random-768 held'?colors.random:rankColors[rank];
       const last=points.at(-1),dash=k==='random-768 held'?'stroke-dasharray="4 4"':'';
       return `<g class="branch-measured-curve" data-anchor="${a}" data-arm="${k}" opacity="${opacity}" clip-path="url(#branch-plot-clip)"><path d="${path(points,x,y)}" fill="none" stroke="${color}" stroke-width="${strokeWidth}" stroke-linejoin="round" ${dash}/>${opacity===1?`<circle cx="${x(last[0])}" cy="${y(last[1])}" r="3.3" fill="${color}"/>`:''}</g>`;
     }
     if(!closeView){
       const points=data.base.filter(([s])=>s>=xmin);
       svg+=`<path class="branch-base-curve" d="${path(points,x,y)}" fill="none" stroke="${colors.control}" stroke-width="2.1" clip-path="url(#branch-plot-clip)"/>`;
-      anchors.filter(a=>a!==anchor).forEach(a=>shownArms.filter(k=>k!=='control (128K)').forEach(k=>{svg+=curve(a,k,.45,1.6);}));
+      anchors.filter(a=>a!==anchor).forEach(a=>shownArms.filter(k=>k!=='control (128K)').forEach(k=>{svg+=curve(a,k,.35,1.4);}));
     }
     svg+=`<line x1="${x(anchor)}" x2="${x(anchor)}" y1="${box.top}" y2="${box.bottom}" stroke="${colors.control}" opacity=".2" stroke-dasharray="3 5"/>`;
-    shownArms.forEach(k=>{svg+=curve(anchor,k);});
+    shownArms.filter(k=>k!==arm).forEach(k=>{svg+=curve(anchor,k,1,1.7);});
+    svg+=curve(anchor,arm,1,3.1);
     if(!closeView){
       anchors.forEach(a=>{
         const loss=data.anchors[a]['control (128K)'][0][1];
@@ -67,12 +71,13 @@
       node.addEventListener('click',choose);node.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose();}});
     });
     const armLabel=arm==='fully scaled'?'Fully scaled':arm==='random-768 held'?'Random 768 held':arm.replace('top-','Sharpest ').replace(' held',' held');
-    const entry=(name,color,dashed=false)=>`<span><i class="branch-line ${dashed?'dashed':''}" style="color:${color}" aria-hidden="true"></i>${name}</span>`;
-    el('branch-curve-legend').innerHTML=entry(closeView?'128K control':'128K base / control',colors.control)+entry('Fully scaled to 2M',colors.full)+(arm!=='fully scaled'?entry(armLabel,arm==='random-768 held'?colors.random:colors.held,arm==='random-768 held'):'')+(arm!=='random-768 held'?entry('Random 768 held',colors.random,true):'');
+    const entry=(name,color,key,dashed=false)=>`<button type="button" data-branch-arm="${key}" aria-pressed="${key===arm}" ${closeView&&!selected[key]?'disabled':''}><i class="branch-line ${dashed?'dashed':''}" style="color:${color}" aria-hidden="true"></i>${name}${closeView&&!selected[key]?' · not run':''}</button>`;
+    el('branch-curve-legend').innerHTML=`<span><i class="branch-line" style="color:${colors.control}" aria-hidden="true"></i>${closeView?'128K control':'128K base / control'}</span>`+entry('Fully scaled to 2M',colors.full,'fully scaled')+ranks.map((k,i)=>entry(`Top-${k}`,rankColors[i],`top-${k} held`)).join('')+entry('Random 768',colors.random,'random-768 held',true);
+    el('branch-curve-legend').querySelectorAll('[data-branch-arm]').forEach(button=>button.addEventListener('click',()=>{el('held').value=button.dataset.branchArm;el('held').dispatchEvent(new Event('change'));}));
     el('branch-curve-state').textContent=`Checkpoint ${fmt(anchor)}`;
-    el('branch-curve-caption').textContent=!selected[arm]?`${armLabel} was not run at this checkpoint; no curve is inferred.`:closeView?(anchor===12000?'Recorded curves end at step 12,992. Endpoints below use a separate evaluation.':'Each continuation sees the same ~134M additional tokens.'): 'Click a checkpoint to compare its continuations. Faint branches show other checkpoints.';
+    el('branch-curve-caption').textContent=!selected[arm]?`${armLabel} was not run at this checkpoint; no curve is inferred.`:closeView?'All measured ranks from this checkpoint. Select a legend entry to highlight it.':'Branches at 1K, 3K, 5K, 7K, 9K, and 11K. Click a checkpoint to compare all its continuations.';
     el('branch-close').setAttribute('aria-pressed',String(closeView));el('branch-all').setAttribute('aria-pressed',String(!closeView));
-    chart.setAttribute('aria-label',`${closeView?'Branch loss curves from':'Base run and branches; selected checkpoint'} ${fmt(anchor)}. ${selected[arm]?armLabel+' compared with fully scaled and small-batch control.':armLabel+' was not run.'}`);
+    chart.setAttribute('aria-label',`${closeView?'All measured branch loss curves from':'Base run and all measured ranks at odd checkpoints; selected checkpoint'} ${fmt(anchor)}. ${selected[arm]?armLabel+' highlighted.':armLabel+' was not run.'}`);
   }
   function schedule(){if(!frame)frame=requestAnimationFrame(render);}
   el('branch-all').addEventListener('click',()=>{closeView=false;render();});

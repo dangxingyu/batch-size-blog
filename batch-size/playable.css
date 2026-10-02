@@ -288,3 +288,32 @@ body{--ui-label-size:15px;--ui-button-size:14px;--ui-detail-size:14px}
 .rule-workspace .rule-coordinate-formula{padding-right:4px}
 
 .legend-shared-mark{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--ink);flex:none}
+
+/* Pair comparison stays beside the optimizer ranking it explains. */
+.leaderboard .pair-lab{margin-top:20px;padding:18px 0 0;min-width:0}
+.leaderboard .pair-lab h4{font-size:16px;font-weight:600;letter-spacing:-.025em;margin:0 0 13px}
+.leaderboard .pair-controls{display:grid;grid-template-columns:minmax(0,1fr) 14px minmax(0,1fr);gap:8px;margin:0 0 15px;align-items:end}
+.leaderboard .pair-controls label{font-size:12px;min-width:0;gap:5px}
+.leaderboard .pair-controls>span{font-size:11px;padding:0 0 12px;align-self:end}
+.leaderboard .pair-controls select{width:100%;min-width:0;min-height:40px;font-size:13px;padding:8px 20px 8px 9px}
+.pair-axis{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:12px;line-height:1.6}
+.pair-axis strong{font-size:13px;font-weight:500}.pair-axis>span{color:var(--muted)}
+.pair-quantity{font-size:12px;line-height:1.6;margin:3px 0 8px}
+.leaderboard #pair-chart{width:100%;height:176px;min-height:0;display:block;overflow:visible}
+.leaderboard .pair-verdict{font-size:12px;font-weight:500;line-height:1.65;margin:10px 0;max-width:none}
+.leaderboard .pair-note{border:0;padding:0;margin:0;font-size:11px}.leaderboard .pair-note summary{font-size:11px}.leaderboard .pair-note p{font-size:12px;line-height:1.7;margin-top:10px}
+@media(max-width:760px){.leaderboard .pair-lab{margin-top:17px;padding-top:17px}.leaderboard .pair-controls{max-width:380px}.leaderboard .pair-controls select{min-height:44px}.leaderboard .pair-lab h4{font-size:16px}}
+
+/* Visible NQM definitions and exact constant-step loss decomposition. */
+.mechanism-exposition{max-width:850px}.mechanism-equation{overflow-x:auto;max-width:100%;padding:18px 2px;margin:10px 0 22px;font-size:20px;line-height:1.6}.mechanism-equation .math-block{white-space:nowrap;text-align:left}.mechanism-equations{display:grid;grid-template-columns:1fr 1.2fr;gap:28px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:24px 0}.mechanism-equations .mechanism-equation{margin:0;padding-top:23px;padding-bottom:23px}.mechanism-loss{padding-top:22px;padding-bottom:22px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+@media(max-width:760px){.mechanism-equations{grid-template-columns:1fr;gap:0}.mechanism-equations .mechanism-equation{padding-top:15px;padding-bottom:15px}.mechanism-equation{font-size:17px;padding:15px 1px;margin-bottom:18px}.mechanism-loss{font-size:16px}}
+
+/* Remove forced header gaps; the displacement graph uses data-driven headroom. */
+.directional-comparison .panel-top{min-height:32px;margin-bottom:18px}.directional-comparison .figure-axis-heading{min-height:64px;margin-bottom:8px}.directional-local-panel .scaling-grid{gap:16px}.movement-definition{border-top:1px solid var(--line);padding-top:20px;margin:22px 0 4px}.movement-definition p{font-size:15px;line-height:1.75;color:var(--muted);margin:0 0 12px}.movement-definition p .blog-math{font-size:16px;color:var(--ink)}.movement-equation{font-size:19px;line-height:1.8;overflow-x:auto;padding:3px 0 13px}.movement-equation .math-block{text-align:left;white-space:nowrap}
+@media(max-width:760px){.directional-comparison .panel-top{min-height:0;margin-bottom:20px}.directional-comparison .figure-axis-heading{min-height:64px}.movement-definition p{font-size:14px}.movement-equation{font-size:18px}}
+
+#rule-lab>.panel-top{display:flex;justify-content:flex-start;align-items:center;gap:28px;flex-wrap:wrap}#rule-task-tabs{margin:0;flex:none}
+@media(max-width:760px){#rule-lab>.panel-top{gap:14px}#rule-task-tabs{margin:0}}
+
+/* A visible zero reference remains when a proportional loss segment is subpixel. */
+.risk-track{position:relative;background:var(--line)}.risk-origin{position:absolute;left:1px;top:3px;width:6px;height:6px;box-sizing:border-box;background:var(--surface);border:1.5px solid currentColor;border-radius:50%}

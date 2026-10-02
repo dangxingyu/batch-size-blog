@@ -2,7 +2,7 @@
 'use strict';
 (function () {
   const cache = new Map();
-  const symbols = { 'η':'\\eta ', 'λ':'\\lambda ', 'μ':'\\mu ', 'κ':'\\kappa ', 'ρ':'\\rho ', 'β':'\\beta ', 'α':'\\alpha ', '′':'\\prime ', '−':'-', '≈':'\\approx ', '∼':'\\sim ', '·':'\\cdot ', '←':'\\leftarrow ', '∑':'\\sum ', '⌈':'\\lceil ', '⌉':'\\rceil ' };
+  const symbols = { '{':'\\{', '}':'\\}', 'η':'\\eta ', 'λ':'\\lambda ', 'μ':'\\mu ', 'κ':'\\kappa ', 'ρ':'\\rho ', 'β':'\\beta ', 'α':'\\alpha ', '′':'\\prime ', '−':'-', '≈':'\\approx ', '∼':'\\sim ', '·':'\\cdot ', '←':'\\leftarrow ', '∑':'\\sum ', '⌈':'\\lceil ', '⌉':'\\rceil ' };
   const escapeText = text => text.replace(/[{}_%&#$]/g, '\\$&');
   function toTex(element) {
     const children = Array.from(element.children).map(toTex), text = element.textContent;

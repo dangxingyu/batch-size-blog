@@ -43,9 +43,9 @@
     const points = rankBatches.map(batch => ({ batch,
       value: measurements.find(r => r.batch === batch && r.optimizer === second).loss
         - measurements.find(r => r.batch === batch && r.optimizer === first).loss }));
-    const width = Math.max(360, Math.min(940, el('pair-chart').clientWidth));
-    el('pair-chart').setAttribute('viewBox', `0 0 ${width} 230`);
-    const f = frame(width, 230, { l: 60, r: 24, t: 24, b: 35 });
+    const width = Math.max(200, el('pair-chart').clientWidth || 320);
+    el('pair-chart').setAttribute('viewBox', `0 0 ${width} 176`);
+    const f = frame(width, 176, { l: 48, r: 18, t: 10, b: 30 });
     const limit = Math.max(.004, ...points.map(p => Math.abs(p.value))) * 1.25;
     const x = b => f.l + Math.log2(b / rankBatches[0]) / 4 * f.iw;
     const y = v => f.t + f.ih * (.5 - v / (2 * limit));
@@ -54,19 +54,19 @@
       markup += `<line x1="${f.l}" x2="${f.w-f.r}" y1="${y(v)}" y2="${y(v)}" stroke="${gridStroke()}" ${v===0?'stroke-width="1.5"':'stroke-dasharray="2 5"'}/>`;
       markup += text(f.l-9, y(v)+4, (v*1000).toFixed(1), 'text-anchor="end"');
     });
-    markup += text(f.l, 12, `Loss of ${second} − loss of ${first} (10<tspan baseline-shift="super" font-size="9">−3</tspan> nats)`);
+    el('pair-quantity').innerHTML = `<span style="color:${colors[second]}">${second}</span> − <span style="color:${colors[first]}">${first}</span>`;
     markup += `<path d="${line(points, p=>x(p.batch), p=>y(p.value))}" fill="none" stroke="${token('--ink')}" stroke-width="2.3" stroke-linejoin="round"/>`;
     points.forEach(p => {
       const sign = p.value > 0 ? first : p.value < 0 ? second : 'Tie';
-      markup += `<circle cx="${x(p.batch)}" cy="${y(p.value)}" r="6" fill="${sign==='Tie'?token('--muted'):colors[sign]}" stroke="${token('--surface')}" stroke-width="2"><title>${batchName(p.batch)}: ${sign}${sign==='Tie'?'':` leads by ${Math.abs(p.value).toFixed(4)} nats`}</title></circle>`;
+      markup += `<circle cx="${x(p.batch)}" cy="${y(p.value)}" r="${p.batch===rankBatches[rankState.index]?5.5:3.5}" fill="${sign==='Tie'?token('--muted'):colors[sign]}" stroke="${token('--surface')}" stroke-width="2"><title>${batchName(p.batch)}: ${sign}${sign==='Tie'?'':` leads by ${Math.abs(p.value).toFixed(4)} nats`}</title></circle>`;
       markup += text(x(p.batch), f.h-10, batchName(p.batch), 'text-anchor="middle"');
     });
     el('pair-chart').innerHTML = `<title>${first} versus ${second}: positive values favor ${first}, negative values favor ${second}</title>${markup}`;
     const start = points[0].value, end = points[3].value;
     const signedWinner = v => v > 0 ? first : second;
-    el('pair-verdict').textContent = first === second ? 'The same optimizer has zero difference at every batch.'
-      : start*end < 0 ? `${signedWinner(start)} leads at 128K by ${Math.abs(start).toFixed(4)} nats. At 2M, ${signedWinner(end)} leads by ${Math.abs(end).toFixed(4)} nats. The ordering reverses.`
-      : `${signedWinner(end)} leads at 2M by ${Math.abs(end).toFixed(4)} nats. Explore another pair to see how the ordering changes.`;
+    el('pair-verdict').textContent = first === second ? 'Same optimizer: zero difference.'
+      : start*end < 0 ? `${signedWinner(start)} leads at 128K; ${signedWinner(end)} leads at 2M.`
+      : end===0?'Tied at 2M.':`${signedWinner(end)} leads at 2M by ${Math.abs(end).toFixed(4)} nats.`;
   }
   ['pair-a', 'pair-b'].forEach(id => el(id).addEventListener('change', drawMatchup));
   addEventListener('batchsize:rankings', drawMatchup);

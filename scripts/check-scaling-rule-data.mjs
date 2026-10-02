@@ -81,28 +81,57 @@ for(const group of cnr.groups){
 }
 console.log('PASS: 27 original 1D SignSGD tuning results and independently recomputed 0.588/0.794/0.904 exponents.');
 
-// Check interpolated displays against the untouched scientific measurements.
-const playableSource=readFileSync(new URL('../cnr-playable.js',root),'utf8');
-const interpolationContext={data:cnr};
-vm.runInNewContext(playableSource.slice(playableSource.indexOf('  function smoothCurve('),playableSource.indexOf('  function draw(')),interpolationContext);
-const {smoothCurve,conditionAt}=interpolationContext;
-for(let position=0;position<=400;position++){
-  const p=position/200,curve=conditionAt(p),lo=Math.min(Math.floor(p),1),hi=lo+1;
-  assert.equal(curve.measuredIndex,Number.isInteger(p)?p:-1);
-  assert.equal(curve.ratios[0],1,'Every interpolated curve retains its batch-one normalization.');
-  assert(curve.fittedExponent>=cnr.groups[lo].fittedExponent-1e-12&&curve.fittedExponent<=cnr.groups[hi].fittedExponent+1e-12);
-  const points=cnr.batches.map((b,i)=>[Math.log2(b),Math.log(curve.ratios[i])]);
-  const numbers=smoothCurve(points).match(/-?\d+\.\d+/g).map(Number);
-  const bezier=(a,b,c,d,t)=>(1-t)**3*a+3*(1-t)**2*t*b+3*(1-t)*t*t*c+t**3*d;
-  for(let i=0;i<points.length-1;i++){
-    const offset=2+6*i,[cx1,cy1,cx2,cy2,ex,ey]=numbers.slice(offset,offset+6);
-    assert(Math.abs(ex-points[i+1][0])<.000051&&Math.abs(ey-points[i+1][1])<.000051,'Smoothing passes through the original display endpoints.');
-    for(let j=0;j<=40;j++){
-      const value=bezier(points[i][1],cy1,cy2,ey,j/40);
-      assert(value>=Math.min(points[i][1],points[i+1][1])-.0001&&value<=Math.max(points[i][1],points[i+1][1])+.0001,'No interpolated curve overshoots the measured interval.');
-      assert(cx1<cx2&&cx2<ex);
+// Supplemental computations preserve all paper endpoints and select tuned CNRs.
+const dense=JSON.parse(readFileSync(new URL('signsgd-cnr-dense.json',root),'utf8'));
+const denseContext={window:{}};vm.runInNewContext(readFileSync(new URL('signsgd-cnr-dense.js',root),'utf8'),denseContext);
+assert.deepEqual(JSON.parse(JSON.stringify(denseContext.window.SIGNSGD_CNR_DENSE_DATA)),dense);
+assert.equal(dense.groups.length,22);assert.equal(dense.groups.reduce((n,g)=>n+g.rows.length,0),352);
+assert.deepEqual(dense.batches,[1,2,3,4,6,8,12,16,24,32,48,64,96,128,192,256]);
+let paperCount=0,supplementalCount=0;
+for(const group of dense.groups){
+  assert.deepEqual(group.rows.map(r=>r.batch),dense.batches);
+  assert(group.rows.every(r=>r.beta===.9&&r.cnr===group.cnr));
+  const paper=cnr.groups.find(g=>g.cnr===group.cnr);
+  if(paper){
+    assert.equal(group.fittedExponent,paper.fittedExponent);
+    assert.equal(group.fitIntercept,paper.fitIntercept);
+    for(const originalRow of paper.rows){
+      const copy=group.rows.find(r=>r.batch===originalRow.batch);
+      for(const [key,value] of Object.entries(originalRow))assert.equal(copy[key],value,'All original paper fields are unchanged.');
     }
   }
-  if(Number.isInteger(p))cnr.groups[p].relativeEta.forEach((v,i)=>assert(Math.abs(curve.ratios[i]-v)<1e-10,'Presets restore the unchanged original ratios.'));
+  for(const row of group.rows){
+    assert(row.source==='paper'||row.source==='supplemental_computation');
+    assert.equal(row.updates,Math.floor(4096/row.batch));
+    assert.equal(row.processedSamples,row.updates*row.batch);
+    assert(row.processedSamples<=4096&&row.processedSamples>3900);
+    assert(Number.isFinite(row.loss)&&Number.isFinite(row.loss_se)&&row.eta>1e-6&&row.eta<2);
+    if(row.source==='paper')paperCount++;
+    else {
+      supplementalCount++;
+      assert(row.refined_candidates>=40&&row.refined_candidates<=57);
+      assert(row.selection_near5_eta_min<=row.eta&&row.eta<=row.selection_near5_eta_max);
+    }
+  }
+  const fit=group.rows.filter(r=>cnr.batches.includes(r.batch));
+  const x=fit.map(r=>Math.log(r.batch)),y=fit.map(r=>Math.log(r.eta));
+  const mx=x.reduce((a,b)=>a+b)/9,my=y.reduce((a,b)=>a+b)/9;
+  const slope=x.reduce((sum,v,i)=>sum+(v-mx)*(y[i]-my),0)/x.reduce((sum,v)=>sum+(v-mx)**2,0);
+  assert(Math.abs(slope-group.fittedExponent)<1e-12);
+  group.relativeEta.forEach((ratio,i)=>assert(Math.abs(ratio-group.rows[i].eta/group.rows[0].eta)<1e-12));
 }
-console.log('PASS: continuous CNR display preserves measured ratios, normalization, and interval bounds across 401 slider positions.');
+assert.equal(paperCount,27);assert.equal(supplementalCount,325);
+assert.equal(dense.protocol.independent_selection_paths,2048);
+assert.equal(dense.protocol.heldout_groups*dense.protocol.heldout_paths_per_group,8192);
+const playableSource=readFileSync(new URL('../cnr-playable.js',root),'utf8');
+const tuningContext={data:dense};
+vm.runInNewContext(playableSource.slice(playableSource.indexOf('  function conditionAt('),playableSource.indexOf('  function draw(')),tuningContext);
+for(let position=-20;position<=440;position++){
+  const p=position/20,curve=tuningContext.conditionAt(p),expected=Math.max(0,Math.min(21,Math.round(p)));
+  assert.equal(curve.measuredIndex,expected);
+  assert.equal(curve.cnr,dense.groups[expected].cnr);
+  assert.equal(curve.fittedExponent,dense.groups[expected].fittedExponent);
+  dense.groups[expected].relativeEta.forEach((v,i)=>assert.equal(curve.ratios[i],v,'The slider only selects an actual tuned condition.'));
+}
+assert(!playableSource.includes('smoothCurve('),'The figure connects actual tuning points without a spline.');
+console.log('PASS: 27 unchanged paper measurements, 325 supplemental finite-budget tuning cells, 22 CNRs, 16 batches, and slider snapping with no CNR interpolation.');
