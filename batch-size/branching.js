@@ -20,6 +20,7 @@
   function render(){
     frame=0;
     const anchor=+el('anchor').value*1000,arm=el('held').value,selected=data.anchors[anchor];
+    const hasHighlight=Boolean(selected[arm]?.length);
     const width=chart.clientWidth||800,height=width<500?310:370;
     const box={left:width<500?49:64,right:width-14,top:35,bottom:height-37};
     const colors={control:token('--ink'),full:token('--coral'),held:token('--teal'),random:token('--muted'),grid:token('--line'),surface:token('--surface')};
@@ -49,11 +50,12 @@
     }
     if(!closeView){
       const points=data.base.filter(([s])=>s>=xmin);
-      svg+=`<path class="branch-base-curve" d="${path(points,x,y)}" fill="none" stroke="${colors.control}" stroke-width="2.1" clip-path="url(#branch-plot-clip)"/>`;
-      anchors.filter(a=>a!==anchor).forEach(a=>shownArms.filter(k=>k!=='control (128K)').forEach(k=>{svg+=curve(a,k,.35,1.4);}));
+      anchors.filter(a=>a!==anchor).forEach(a=>shownArms.filter(k=>k!=='control (128K)').forEach(k=>{svg+=curve(a,k,hasHighlight?.1:.35,1.4);}));
+      svg+=`<path class="branch-base-curve" d="${path(points,x,y)}" fill="none" stroke="${colors.control}" stroke-width="2.1" opacity="${hasHighlight?.45:1}" clip-path="url(#branch-plot-clip)"/>`;
     }
     svg+=`<line x1="${x(anchor)}" x2="${x(anchor)}" y1="${box.top}" y2="${box.bottom}" stroke="${colors.control}" opacity=".2" stroke-dasharray="3 5"/>`;
-    shownArms.filter(k=>k!==arm).forEach(k=>{svg+=curve(anchor,k,1,1.7);});
+    shownArms.filter(k=>k!==arm&&k!=='control (128K)').forEach(k=>{svg+=curve(anchor,k,hasHighlight?.2:1,1.7);});
+    if(arm!=='control (128K)')svg+=curve(anchor,'control (128K)',hasHighlight?.6:1,1.9);
     svg+=curve(anchor,arm,1,3.1);
     if(!closeView){
       anchors.forEach(a=>{
