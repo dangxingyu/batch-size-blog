@@ -286,3 +286,5 @@ body{--ui-label-size:15px;--ui-button-size:14px;--ui-detail-size:14px}
 .hero h1 span{color:inherit}
 
 .rule-workspace .rule-coordinate-formula{padding-right:4px}
+
+.legend-shared-mark{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--ink);flex:none}

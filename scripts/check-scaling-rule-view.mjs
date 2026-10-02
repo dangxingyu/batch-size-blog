@@ -10,10 +10,10 @@ let checked = 0;
 for (const [name, setting] of Object.entries(data.settings)) {
   const best = setting.batches.map((_, i) => Math.min(setting.gridMinimum[i], setting.retunedBaseline[i]?.loss ?? Infinity));
   for (const zero of [true, false]) {
-    const references = zero ? best.map(() => 0) : best;
+    const references = zero ? [0,...best.map(() => 0)] : [setting.referenceLoss,...best];
     const values = setting.rules.flatMap(rule => rule.losses.map((loss, i) => zero ? loss - best[i] : loss));
     for (const rule of setting.rules) {
-      const selected = rule.losses.map((loss, i) => zero ? loss - best[i] : loss);
+      const selected = [zero?0:setting.referenceLoss,...rule.losses.map((loss, i) => zero ? loss - best[i] : loss)];
       const { full, detail } = domains(values, references, selected, zero);
       assert(values.every(v => v >= full.bottom - 1e-12 && v <= full.top + 1e-12), 'Full range retains every original endpoint.');
       assert([...selected, ...references].every(v => v >= detail.bottom - 1e-12 && v <= detail.top + 1e-12), 'The full selected curve and baseline fit inside the detail plot.');
