@@ -20,3 +20,35 @@ body{font-size:17px;-webkit-font-smoothing:antialiased}h1,h2{font-variation-sett
 .hero-paper-link:hover{color:var(--orange);text-decoration-color:currentColor}
 .hero-paper-link+.hero-deck{margin-top:20px}
 @media(max-width:760px){.hero-paper-link{margin-top:18px;font-size:14px}}
+
+/* Reading guides use the article typeface, with short verbal formulas. */
+.preset-guide{list-style:none;margin:22px 0;padding:0;display:grid;gap:13px}
+.preset-guide li{margin:0}
+.preset-guide a{text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line)}
+.preset-guide a:hover{text-decoration-color:currentColor;color:var(--orange)}
+.pseudo-inline{color:var(--ink);font-weight:500}
+.pseudo-equation{font-family:var(--sans);font-size:16px;line-height:1.65;color:var(--ink);font-weight:500;letter-spacing:-.015em;overflow-wrap:break-word}
+.essay-prose p.pseudo-equation{margin-top:15px;margin-bottom:15px}
+.pseudo-formulas{display:grid;gap:12px;margin:20px 0}
+.essay-prose .pseudo-formulas p+p,.component-copy .pseudo-formulas p+p{margin-top:0}
+.mechanism-exposition .pseudo-equation{display:grid;grid-template-columns:72px minmax(0,1fr);gap:14px}
+.method-sgd{color:var(--coral)}
+.method-newton{color:var(--teal)}
+.component-copy{font-size:16px;line-height:1.85;color:var(--muted);max-width:760px}
+.component-copy strong{color:var(--ink);font-weight:600}
+.component-copy p+p{margin-top:15px}
+.component-intro{margin-bottom:28px}
+.component-outro{margin:27px 0}
+.component-copy .pseudo-equation{margin-top:12px;margin-bottom:12px}
+.simulation-results .component-copy p{font-size:16px;line-height:1.85}
+.simulation-results .component-copy .pseudo-equation{line-height:1.65;color:var(--ink)}
+.directional-text-block.component-copy{max-width:none}
+.branch-reading{margin:26px 0}
+.rank-lens .component-copy p{margin-top:13px}
+.pseudo-equation sup{font-size:.72em;vertical-align:super;margin-left:1px}
+@media(max-width:600px){
+ .preset-guide{gap:12px;margin:18px 0}
+ .mechanism-exposition .pseudo-equation{grid-template-columns:1fr;gap:3px}
+ .component-copy,.simulation-results .component-copy p,.pseudo-equation{font-size:16px}
+ .component-intro{margin-bottom:23px}
+}
