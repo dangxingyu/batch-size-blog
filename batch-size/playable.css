@@ -501,3 +501,8 @@ body{--ui-label-size:15px;--ui-button-size:14px;--ui-detail-size:14px}
 .rule-preset-description strong{font-weight:600;color:var(--ink)}
 .rule-preset-description a{text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line)}
 .rule-preset-description a:hover{text-decoration-color:currentColor}
+
+.rule-candidates h3{min-height:0;margin:0 0 10px}
+.rule-candidates h3 a{font:inherit;color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:5px;text-decoration-color:var(--line)}
+.rule-candidates h3 a:hover{text-decoration-color:currentColor}
+.rule-candidates .rule-rate-label{display:block;font-size:14px;margin-bottom:18px}
