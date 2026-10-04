@@ -16,7 +16,9 @@
   }
   function draw() {
     const selected=conditionAt(+$('paper-cnr').value);
-    const f=researchFrame('cnr-paper-chart',560,340);
+    const width=Math.max(240,Math.min(1000,$('cnr-paper-chart').clientWidth));
+    const height=Math.round(Math.max(190,Math.min(260,width*.32)));
+    const f=researchFrame('cnr-paper-chart',width,height,{l:58,r:20,t:16,b:34});
     const x=b=>f.l+Math.log2(b)/8*f.iw,y=ratio=>f.t+f.ih*(1-Math.log10(ratio)/Math.log10(400));
     const cnrLabel=Number(selected.cnr.toPrecision(3)).toString();
     let markup=`<title>Independently tuned SignSGD learning-rate ratios, CNR ${cnrLabel}, fixed momentum 0.9 and 4,096 samples</title>`;

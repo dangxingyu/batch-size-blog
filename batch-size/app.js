@@ -429,7 +429,8 @@ $('landscape').addEventListener('keydown',e=>{const d={ArrowLeft:[-.1,0],ArrowRi
 function drawScaling(){
   const alpha=+$('scale-alpha').value,ratio=2**+$('scale-batch').value;
   $('scale-alpha-output').textContent=alpha.toFixed(2);$('scale-batch-output').textContent=ratio+'×';
-  const f=researchFrame('scaling-chart',640,340),x=r=>f.l+Math.log2(r)/6*f.iw;
+  const chartWidth=Math.max(240,Math.min(1000,$('scaling-chart').clientWidth)),chartHeight=Math.round($('scaling-chart').clientHeight||300);
+  const f=researchFrame('scaling-chart',chartWidth,chartHeight,{l:58,r:20,t:18,b:34}),x=r=>f.l+Math.log2(r)/6*f.iw;
   const cnrs=[1,.001],vals=cnrs.map(c=>Array.from({length:121},(_,i)=>({r:2**(i/20),v:NQM.displacement(c,2**(i/20),alpha)})));
   const peak=Math.max(1,...vals.flat().map(p=>p.v)),step=peak<=2?.5:peak<=4?1:2;
   const ymax=peak*1.06,a={y:v=>f.t+f.ih*(1-v/ymax)};
@@ -446,22 +447,22 @@ function drawScaling(){
   document.querySelectorAll('#scale-presets button').forEach(b=>{b.classList.toggle('active',+b.dataset.alpha===alpha);b.setAttribute('aria-pressed',String(+b.dataset.alpha===alpha));});
 }
 function drawMovementQuadratic(alpha,ratio){
-  const svg=$('movement-quadratic'),w=Math.max(240,Math.min(440,svg.clientWidth)),h=390;
+  const svg=$('movement-quadratic'),w=Math.max(240,Math.min(440,svg.clientWidth)),h=300;
   svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
   const x=v=>24+(v+1.2)/2.8*(w-48);
   const arrowUnit=.7/Math.max(1,...[1,.001].map(c=>NQM.displacement(c,ratio,alpha)));
   let markup=`<title>Local movement at batch ratio ${ratio}, exponent ${alpha.toFixed(2)}. Arrows are normalized to each direction's batch-1 movement.</title>`;
   [1,.001].forEach((cnr,i)=>{
-    const top=i*195,color=i?colors.newton:colors.sgd,movement=NQM.displacement(cnr,ratio,alpha),end=1-arrowUnit*movement;
-    const y=v=>top+127-58*v*v,points=Array.from({length:81},(_,k)=>-1.2+2.6*k/80);
-    markup+=svgText(16,top+20,`${i?'Low':'High'} CNR · ${cnr}`,`font-size="16" fill="${color}" font-weight="600"`);
-    markup+=`<path d="${line(points,v=>x(v),y)}" fill="none" stroke="${token('--grid-strong')}" stroke-width="1.5"/><line x1="24" x2="${w-24}" y1="${top+127}" y2="${top+127}" stroke="${token('--line')}"/><circle cx="${x(1)}" cy="${y(1)}" r="4" fill="${token('--ink')}"/>`;
-    markup+=svgText(x(1)+7,y(1)-10,'w = 1','font-size="13"')+svgText(x(0),top+144,'0','font-size="13" text-anchor="middle"');
+    const top=i*150,color=i?colors.newton:colors.sgd,movement=NQM.displacement(cnr,ratio,alpha),end=1-arrowUnit*movement;
+    const y=v=>top+91-38*v*v,points=Array.from({length:81},(_,k)=>-1.2+2.6*k/80);
+    markup+=svgText(16,top+18,`${i?'Low':'High'} CNR · ${cnr}`,`font-size="16" fill="${color}" font-weight="600"`);
+    markup+=`<path d="${line(points,v=>x(v),y)}" fill="none" stroke="${token('--grid-strong')}" stroke-width="1.5"/><line x1="24" x2="${w-24}" y1="${top+91}" y2="${top+91}" stroke="${token('--line')}"/><circle cx="${x(1)}" cy="${y(1)}" r="4" fill="${token('--ink')}"/>`;
+    markup+=svgText(x(1)+7,y(1)-10,'w = 1','font-size="13"')+svgText(x(0),top+105,'0','font-size="13" text-anchor="middle"');
     const arrow=(end,cy,stroke,dashed)=>`<path d="M${x(1)} ${cy}H${x(end)}" fill="none" stroke="${stroke}" stroke-width="${dashed?1.5:3}" ${dashed?'stroke-dasharray="4 3"':''}/><path d="M${x(end)+5} ${cy-4}L${x(end)} ${cy}L${x(end)+5} ${cy+4}" fill="none" stroke="${stroke}" stroke-width="1.5"/>`;
     const local=Array.from({length:21},(_,k)=>end+(1-end)*k/20);
     markup+=`<path d="${line(local,v=>x(v),y)}" fill="none" stroke="${color}" stroke-width="3"/><circle cx="${x(end)}" cy="${y(end)}" r="4" fill="${color}"/>`;
-    markup+=arrow(1-arrowUnit,top+156,token('--muted'),true)+arrow(end,top+175,color,false);
-    markup+=svgText(16,top+158,'Batch 1','font-size="12"')+svgText(16,top+180,`${ratio}× batch · ${movement.toFixed(2)}×`,`font-size="12" fill="${color}"`);
+    markup+=arrow(1-arrowUnit,top+118,token('--muted'),true)+arrow(end,top+140,color,false);
+    markup+=svgText(16,top+121,'Batch 1','font-size="12"')+svgText(16,top+143,`${ratio}× batch · ${movement.toFixed(2)}×`,`font-size="12" fill="${color}"`);
   });
   svg.dataset.alpha=alpha;svg.dataset.ratio=ratio;svg.innerHTML=markup;
 }

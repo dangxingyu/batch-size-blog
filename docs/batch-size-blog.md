@@ -216,3 +216,6 @@ Expected-loss bars retain a neutral full-length track and a small origin marker 
   same high/low-CNR movement ratios. Each direction is normalized to its own
   batch-1 movement; a shared adaptive arrow scale keeps both visible. These are
   frozen-coordinate local increments, not training trajectories or new data.
+
+The SignSGD learning-rate panel uses a wide chart with the CNR slider and fitted exponent in a compact sidebar. Its SVG height adapts to its rendered width (190–260px), retaining all independently tuned dots and the same log axes. Narrow layouts stack the chart and settings.
+The local movement panel aligns the quadratic illustration and response chart above one shared controls row. Direction readouts use the same method colors; the exponent rail and compromise action share a compact feedback strip. Both panels preserve the existing definitions and numerical results.
