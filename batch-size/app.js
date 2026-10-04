@@ -397,7 +397,7 @@ function renderLoss(){
 function renderSim(){
   renderLandscape();renderLoss();
   const steps=sim.paths.sgd.length-1,samples=Math.floor(sim.progress*steps)*sim.batch,total=steps*sim.batch;
-  const progress=`${fmt(samples)} / ${fmt(total)} samples`,label=sim.playing?'Pause':sim.progress>=1?'Replay':'Run experiment',icon=sim.playing?'Ⅱ':sim.progress>=1?'↻':'▶';
+  const progress=`${fmt(samples)} / ${fmt(total)} samples`,label=sim.playing?'Pause':sim.progress>=1?'Replay':'Run',icon=sim.playing?'Ⅱ':sim.progress>=1?'↻':'▶';
   $('landscape').dataset.steps=String(steps);$('landscape').dataset.samples=String(samples);
   if($('sim-progress').textContent!==progress)$('sim-progress').textContent=progress;
   $('sim-progress-bar').style.width=(sim.progress*100)+'%';

@@ -426,13 +426,27 @@ body{--ui-label-size:15px;--ui-button-size:14px;--ui-detail-size:14px}
 /* One shared experiment: controls, selected paths, and the winner map. */
 .geometry-lab .panel-top{align-items:center}
 .geometry-lab h4{font-size:18px;line-height:1.4;letter-spacing:-.025em;font-weight:600;margin:0 0 16px}
-.geometry-controls{padding:22px 0 24px;margin-bottom:26px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.geometry-sliders{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:30px}
+.geometry-controls{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:24px 22px;padding:22px 0 24px;margin-bottom:26px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.geometry-sliders{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:30px}
 .geometry-controls .control{margin:0}
 .geometry-controls .control label{font-size:15px;gap:8px;flex-wrap:wrap}
 .geometry-controls .control output{font-size:17px;margin-left:auto}
 .geometry-controls .range-ends{font-size:11px}
-.geometry-controls .phase-starts{margin-top:24px}
+.geometry-controls .phase-starts{grid-column:1;grid-row:2;margin-top:0;gap:7px;align-self:center}
+.geometry-controls .phase-starts>span{font-size:12px;margin-right:3px}
+.geometry-controls .phase-starts button{font-size:12px;min-height:40px;padding:9px 11px}
+.geometry-controls>.geometry-transport{grid-column:2;grid-row:2;align-self:center;min-width:0}
+.geometry-controls .geometry-transport .transport{display:grid;grid-template-columns:repeat(5,max-content) minmax(0,1fr);gap:6px;padding:7px 8px;align-items:center}
+.geometry-controls .geometry-transport .transport .button{justify-content:center;font-size:11px;padding:8px 9px;min-height:36px}
+.geometry-controls .geometry-transport .sim-speed{margin:0;font-size:10px;gap:5px}
+.geometry-controls .geometry-transport .sim-speed select{width:48px;min-height:36px;font-size:11px;padding:5px}
+.geometry-controls .geometry-transport .transport #sim-progress{margin:0;width:auto;align-self:center;text-align:right;font-size:10px;white-space:nowrap}
+.geometry-controls .geometry-transport .share-feedback{padding-inline:8px}
+@media(max-width:1100px){
+ .geometry-controls{grid-template-columns:minmax(0,1fr)}
+ .geometry-controls .phase-starts{grid-row:auto}
+ .geometry-controls>.geometry-transport{grid-column:1;grid-row:auto;width:100%}
+}
 .geometry-views{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:30px;align-items:start}
 .geometry-paths,.geometry-map{min-width:0}
 .geometry-lab .phase-lab{border:0;margin:0;padding:0}
@@ -465,9 +479,13 @@ body{--ui-label-size:15px;--ui-button-size:14px;--ui-detail-size:14px}
  .geometry-lab .panel-top{align-items:start}
  .geometry-sliders{grid-template-columns:minmax(0,1fr);gap:26px}
  .geometry-controls{padding:22px 0;margin-bottom:23px}
- .geometry-controls .phase-starts{gap:7px;margin-top:26px}
+ .geometry-controls .phase-starts{gap:7px;margin-top:0}
  .geometry-controls .phase-starts>span{width:100%;margin:0 0 4px}
  .geometry-controls .phase-starts button{font-size:12px;min-height:44px;padding:9px 11px}
+ .geometry-controls .geometry-transport .transport{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ .geometry-controls .geometry-transport .transport .button{min-height:44px;font-size:12px}
+ .geometry-controls .geometry-transport .sim-speed select{min-height:44px;width:60px}
+ .geometry-controls .geometry-transport .transport #sim-progress{width:auto;margin:0;font-size:11px}
  .geometry-view-heading{align-items:start;flex-direction:column;gap:10px}
  .geometry-results{grid-template-columns:minmax(0,1fr);gap:26px}
  .geometry-lab .arena canvas#landscape{height:290px}
