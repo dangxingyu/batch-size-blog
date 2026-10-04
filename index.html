@@ -89,9 +89,8 @@
   <div class="chapter-head"><div><h2>Optimizer rankings across batch sizes.</h2></div></div><aside class="research-pitch"><span class="pitch-number" aria-hidden="true">02</span><div><h3>Mediating the Muon and Shampoo debate.</h3><p>Muon leads Shampoo at 128K under HyperBall; Shampoo wins at 2M under both norm controls. SOAP has the lowest loss at 128K.</p></div></aside>
 <div class="prose essay-prose">
   <p>An optimizer decides how a model updates its weights. We compare five optimizers <strong>from 128K to 2M tokens</strong> per update, using the same total amount of training data. We retune each optimizer at every batch size.</p>
-  <p>Move the slider to compare their rankings, or choose two methods in <strong>Pairwise comparison</strong>:</p>
-  <p class="pseudo-equation">loss difference = second optimizer’s loss − first optimizer’s loss</p>
-  <p>Positive values favor the first optimizer; negative values favor the second. The tabs compare two ways of controlling weight size: <strong>Weight decay</strong> shrinks weights, while <strong>HyperBall</strong> keeps each weight matrix at a fixed size.</p>
+  <p>Move the slider to compare their rankings, or choose two methods in <strong>Pairwise comparison</strong>.</p>
+  <p>The tabs compare two ways of controlling weight size: <strong>Weight decay</strong> shrinks weights, while <strong>HyperBall</strong> keeps each weight matrix at a fixed size.</p>
 </div>
   <div class="experiment light-panel">
     <div class="panel-top"><div><h3>Optimizer rankings.</h3></div><div class="segmented" id="family-tabs" aria-label="Weight norm control"><button class="active" data-family="standard_wd" aria-pressed="true">Weight decay</button><button data-family="hyperball" aria-pressed="false">HyperBall</button></div></div>
