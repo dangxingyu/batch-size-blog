@@ -494,8 +494,8 @@ body{--ui-label-size:15px;--ui-button-size:14px;--ui-detail-size:14px}
 
 /* Lead with the scientific question; keep the experiment guide after the figure. */
 .scaling-intro{margin-bottom:0}
-.scaling-question{max-width:980px;margin:32px auto 36px;text-align:center;color:var(--ink);font-size:24px;line-height:1.55;font-weight:400;text-wrap:balance}
-@media(max-width:760px){.scaling-intro{margin-bottom:0}.scaling-question{margin:26px auto 30px;font-size:21px}}
+.scaling-question{max-width:760px;margin:32px 0 36px;text-align:center;color:var(--ink);font-size:24px;line-height:1.55;font-weight:400;text-wrap:balance}
+@media(max-width:760px){.scaling-intro{margin-bottom:0}.scaling-question{margin:26px 0 30px;font-size:21px}}
 
 .rule-preset-description{margin:16px 0 0;font-size:14px;line-height:1.75;color:var(--muted);overflow-wrap:break-word}
 .rule-preset-description strong{font-weight:600;color:var(--ink)}
