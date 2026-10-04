@@ -119,10 +119,10 @@
     s.coords.forEach(c => {
       const v = variables[c.key], choice = r.choices[c.key];
       const factor = choice==='sqrt'?'<msqrt><mi>κ</mi></msqrt>':choice==='linear'?'<mi>κ</mi>':'';
-      const scaled = choice==='retention'?`<msup>${v}<mi>${state.task==='llm'?'ρ':'κ'}</mi></msup>`:factor+v;
+      const scaled = choice==='retention'?`<msup>${v}<mi>κ</mi></msup>`:factor+v;
       node(`rule-formula-${c.key}`).innerHTML = mathMarkup(`<msup>${v}<mo>′</mo></msup><mo>=</mo>${scaled}`);
     });
-    node('rule-recipe').innerHTML = state.task==='llm'&&s.coords.some(c=>r.choices[c.key]==='retention')?mathMarkup('<mi>ρ</mi>'+retentionExponent()):'';
+    node('rule-recipe').innerHTML = state.task==='llm'&&s.coords.some(c=>r.choices[c.key]==='retention')?mathMarkup('<mi>κ</mi>'+retentionExponent()):'';
     document.querySelectorAll('[data-rule-preset]').forEach(button => {const active=button.dataset.rulePreset===state.preset;button.classList.toggle('active',active);button.setAttribute('aria-pressed',active);});
     const description = node('rule-preset-description');
     if (description.dataset.preset !== state.preset) {
