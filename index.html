@@ -43,6 +43,7 @@
 <p class="scaling-question" id="scaling-question">Q1: Can a hyperparameter scaling rule consistently work in different training settings?</p>
 <div class="prose essay-prose">
   <p>We summarize and derive scaling rules for MuonW-AdamW hybrid. We then compare them with a broad grid of candidate rules, combinatorially exhausting possible scaling rules for all hyperparameters, resulting in <strong>216</strong> possible scaling rules. Unfortunately, we found the optimal rule depends on the setting and target batch size. In language modeling, both the SDE invariant rule and convex bound minimization rule both fall behind the trivial baseline of keeping constant learning rate.</p>
+  <p>Concretely, we train and tune a reference model in two settings: language modeling (following modded nanogpt speedrun track 3) at 128K tokens batch size, and CIFAR-5M image classification with ResNet with Group Norm at 256 image batch size. We then increase the batch size and test different ways of adjusting the training settings</p>
 </div>
   <section class="candidate-derivations" aria-labelledby="candidate-derivations-title"><h3 id="candidate-derivations-title">Example Scaling Rule</h3><p>Different assumption yields different scaling rule</p>
  <div class="rule-candidates">
@@ -74,7 +75,6 @@
   <div class="panel-foot"><a href="batch-size/data/scaling-rules.json" download>Download all scaling-rule measurements ↓</a><a href="batch-size/paper.pdf" target="_blank" rel="noopener">Section 3 · Scaling-rule appendix ↗</a></div>
  </div>
 <div class="prose essay-prose after-experiment" id="scaling-reading-guide">
-  <p>Batch size is the amount of data used in each training update. We train and tune a reference model in two settings: language modeling at <strong>128K tokens</strong> per update, and CIFAR image classification at <strong>256 images</strong>. We then increase the batch size and test different ways of adjusting the training settings. Each curve represents one rule: <strong>216 rules</strong> in language modeling and <strong>648 rules</strong> on CIFAR.</p>
   <p>The presets highlight six choices. Here, <span class="pseudo-inline">batch ratio = new batch / reference batch</span>; the three candidates describe Muon’s adjustments.</p>
   <ul class="preset-guide">
    <li><strong>Best common rule:</strong> The smallest average loss gap to the best tested rule at each target batch.</li>
