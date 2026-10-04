@@ -6,7 +6,7 @@
   <meta name="description" content="Turn the batch-size dial. Race optimizers through a noisy landscape. Explore why a tiny set of sharp directions can change the result.">
   <meta name="theme-color" content="#f5f3ec">
   <link rel="icon" href="batch-size/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="batch-size/vendor/katex/katex.min.css?v=d4ab5b8e"><link rel="stylesheet" href="batch-size/fonts.css"><link rel="stylesheet" href="batch-size/style.css"><link rel="stylesheet" href="batch-size/editorial.css?v=85b91fdd"><link rel="stylesheet" href="batch-size/playable.css?v=4f7c47ff"><link rel="stylesheet" href="batch-size/branching.css?v=0134537c">
+  <link rel="stylesheet" href="batch-size/vendor/katex/katex.min.css?v=d4ab5b8e"><link rel="stylesheet" href="batch-size/fonts.css"><link rel="stylesheet" href="batch-size/style.css"><link rel="stylesheet" href="batch-size/editorial.css?v=85b91fdd"><link rel="stylesheet" href="batch-size/playable.css?v=2a76d096"><link rel="stylesheet" href="batch-size/branching.css?v=0134537c">
   <link rel="preload" href="batch-size/fonts/fraunces-essay.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="batch-size/fonts/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="canonical" href="https://dangxingyu.github.io/batch-size-blog/">
@@ -42,8 +42,14 @@
 </div>
 <p class="scaling-question" id="scaling-question">Q1: Can a hyperparameter scaling rule consistently work in different training settings?</p>
 <div class="prose essay-prose">
-  <p>We summarize and derive scaling rules for MuonW-AdamW hybrid. We then compare them with a broad grid of candidate rules, combinatorially exhausting possible scaling rules for all hyperparameters, resulting in <strong>216</strong> possible scaling rules. Unfortunately, we found the optimal rule depends on the setting and target batch size. In language modeling, both the SDE invariant rule and convex bound minimization rule both fall behind the trivial baseline of keeping constant learning rate.</p>
+  <p>We summarize and derive scaling rules for MuonW-AdamW hybrid. We then compare them with a broad grid of candidate rules, combinatorially exhausting possible scaling rules for all hyperparameters, resulting in <strong>216</strong> possible scaling rules.</p>
   <p>Concretely, we train and tune a reference model in two settings: language modeling (following modded nanogpt speedrun track 3) at 128K tokens batch size, and CIFAR-5M image classification with ResNet with Group Norm at 256 image batch size. We then increase the batch size and test different ways of adjusting the training settings. We will denote the new batch / reference batch as batch size ratio <strong>κ</strong>.</p>
+  <p>We found the promise does not hold:</p>
+  <ol class="scaling-findings">
+    <li>The optimal rule depends on the setting and target batch size.</li>
+    <li>In language modeling, both the SDE invariant rule and convex bound minimization rule both fall behind the trivial baseline of keeping constant learning rate. The best performing rule at large batch size is prescribed by the Power Lines</li>
+    <li>On image classification, the bound minimization rule works the best instead.</li>
+  </ol>
 </div>
   <section class="candidate-derivations" aria-labelledby="candidate-derivations-title"><h3 id="candidate-derivations-title">Example Scaling Rule</h3><p>Different assumption yields different scaling rule</p>
  <div class="rule-candidates">

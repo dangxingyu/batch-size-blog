@@ -494,6 +494,7 @@ body{--ui-label-size:15px;--ui-button-size:14px;--ui-detail-size:14px}
 
 /* Lead with the scientific question; keep the experiment guide after the figure. */
 .scaling-intro{margin-bottom:0}
+.scaling-findings{margin:12px 0 0;padding-left:1.5em}.scaling-findings li+li{margin-top:12px}
 .scaling-question{max-width:760px;margin:32px 0 36px;text-align:center;color:var(--ink);font-size:19.2px;line-height:1.55;font-weight:400;text-wrap:balance}
 @media(max-width:760px){.scaling-intro{margin-bottom:0}.scaling-question{margin:26px 0 30px;font-size:16.8px}}
 
