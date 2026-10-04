@@ -124,6 +124,13 @@
     });
     node('rule-recipe').innerHTML = state.task==='llm'&&s.coords.some(c=>r.choices[c.key]==='retention')?mathMarkup('<mi>ρ</mi>'+retentionExponent()):'';
     document.querySelectorAll('[data-rule-preset]').forEach(button => {const active=button.dataset.rulePreset===state.preset;button.classList.toggle('active',active);button.setAttribute('aria-pressed',active);});
+    const description = node('rule-preset-description');
+    if (description.dataset.preset !== state.preset) {
+      const content = node('rule-preset-descriptions').content.querySelector(`[data-preset-description="${state.preset}"]`);
+      description.innerHTML = content ? content.innerHTML : '';
+      description.hidden = !content;
+      description.dataset.preset = state.preset;
+    }
     cursor(indices().indexOf(state.index));
   }
   function choose(id,preset='') { pause();state.selected=id;state.preset=preset;if(state.range==='detail')rebuildPlot();else updateSelection(); }
