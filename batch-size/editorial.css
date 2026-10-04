@@ -52,3 +52,8 @@ body{font-size:17px;-webkit-font-smoothing:antialiased}h1,h2{font-variation-sett
  .component-copy,.simulation-results .component-copy p,.pseudo-equation{font-size:16px}
  .component-intro{margin-bottom:23px}
 }
+
+/* Visible derivations introduce the scaling-rule component. */
+.candidate-derivations{margin:0 0 34px;color:var(--muted);font-size:14px;line-height:1.85}
+.candidate-derivations>h3{color:var(--ink);margin-bottom:16px}
+.candidate-derivations .rule-candidates{margin-bottom:0}

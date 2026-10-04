@@ -10,7 +10,7 @@ must remain explicitly distinguished.
 
 ## Evidence and typography
 
-The opening questions are copied verbatim from the paper’s active introduction. Main prose is written for a general audience around each playable: what the figure shows, how to use its controls, and what the result means. Short verbal formulas explain scaling presets, optimizer updates, loss decomposition, and branch penalties. Formal derivations, experiment settings, and qualifications stay in collapsed details. Five large editorial pitches summarize the results and mechanism; the late-training limitation is ordinary prose. Source
+The opening questions are copied verbatim from the paper’s active introduction. Main prose is written for a general audience around each playable: what the figure shows, how to use its controls, and what the result means. Short verbal formulas explain scaling presets, optimizer updates, loss decomposition, and branch penalties. Formal derivations, experiment settings, and qualifications stay in collapsed details. Candidate derivations appears fully expanded immediately before Scaling-rule search. Five large editorial pitches summarize the results and mechanism; the late-training limitation is ordinary prose. Source
 revision 462dc51 is retained; an Overleaf refresh returned HTTP 503 during this
 edit, so a newer revision could not be confirmed.
 
@@ -73,6 +73,7 @@ protocol, endpoint fields and hashes are included in the downloadable dataset.
   Batch/noise selection and theme changes reuse the current numerical map. A worker
   failure falls back to the same kernel, yielding on the main thread between rows.
   Busy maps show their status and disable stale cells until current results arrive.
+- The geometry experiment and winner map share one bordered component. Shared batch, curvature, noise and starting-point controls sit above the two views; map tiles load the same experiment. Desktop shows paths and map side by side, followed by one shared selected-experiment readout and playback toolbar, with live and expected losses below. Narrow layouts stack the views and keep map scrolling inside its container.
 - Initialization presets share the sandbox's state. Phase-map arrows stay in their
   row/column; Home and End select the row's endpoints. Optional letters make the map
   readable without relying on hue. Expected losses are shown beside the winner.

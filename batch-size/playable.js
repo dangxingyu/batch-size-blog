@@ -251,10 +251,7 @@
     cancelAnimationFrame(phaseFrame);
     phaseFrame = requestAnimationFrame(drawPhaseMap);
   });
-  el('phase-run').addEventListener('click', () => {
-    el('landscape').scrollIntoView({ behavior: reducedMotion.matches ? 'instant' : 'smooth', block: 'center' });
-    if (!sim.playing) el('sim-play').click();
-  });
+
 
   function preservingExponent(cnr, ratio) {
     return ratio===1 ? null : 1-Math.log(NQM.response(cnr,ratio)/NQM.response(cnr,1))/Math.log(ratio);
