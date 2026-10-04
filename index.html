@@ -6,7 +6,7 @@
   <meta name="description" content="Turn the batch-size dial. Race optimizers through a noisy landscape. Explore why a tiny set of sharp directions can change the result.">
   <meta name="theme-color" content="#f5f3ec">
   <link rel="icon" href="batch-size/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="batch-size/vendor/katex/katex.min.css?v=d4ab5b8e"><link rel="stylesheet" href="batch-size/fonts.css"><link rel="stylesheet" href="batch-size/style.css"><link rel="stylesheet" href="batch-size/editorial.css?v=85b91fdd"><link rel="stylesheet" href="batch-size/playable.css?v=d791b148"><link rel="stylesheet" href="batch-size/branching.css?v=0134537c">
+  <link rel="stylesheet" href="batch-size/vendor/katex/katex.min.css?v=d4ab5b8e"><link rel="stylesheet" href="batch-size/fonts.css"><link rel="stylesheet" href="batch-size/style.css"><link rel="stylesheet" href="batch-size/editorial.css?v=85b91fdd"><link rel="stylesheet" href="batch-size/playable.css?v=15452970"><link rel="stylesheet" href="batch-size/branching.css?v=0134537c">
   <link rel="preload" href="batch-size/fonts/fraunces-essay.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="batch-size/fonts/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="canonical" href="https://dangxingyu.github.io/batch-size-blog/">
@@ -38,11 +38,11 @@
  <div class="chapter-head"><div><h2>Deriving and testing scaling rules.</h2></div></div>
  <aside class="research-pitch"><span class="pitch-number" aria-hidden="true">01</span><div><h3>The best scaling rule depends on the training setting.</h3><p>216 rules in language modeling. 648 on CIFAR-5M. The best common prescription differs, and the language-model winner also changes with the target batch.</p></div></aside>
 <div class="prose essay-prose scaling-intro">
-  <p>Larger batches can increase training throughput, but retaining optimization performance is challenging and often requires adjusting hyperparameters. For years, empirical and theoretical research has sought the right batch-size “scaling rule.” Can these prescriptions, or alternatives beyond them, fulfill this promise?</p>
+  <p>Larger batches can increase training throughput, but retaining optimization performance is challenging and often requires adjusting hyperparameters. Throughout the years, multiple empirical and theoretical research programs have repeatedly investigated the correct "scaling rule" with respect to batch size. Can any of these prescriptions, or alternatives beyond them, can fulfill this promise?</p>
 </div>
-<p class="scaling-question" id="scaling-question"><strong>Q1:</strong> Can a hyperparameter scaling rule consistently work in different training settings?</p>
+<p class="scaling-question" id="scaling-question">Q1: Can a hyperparameter scaling rule consistently work in different training settings?</p>
 <div class="prose essay-prose">
-  <p>We summarize and derive scaling rules for the MuonW–AdamW hybrid, then test every combination in a broad grid of candidate prescriptions across its hyperparameters: <strong>216 possible scaling rules in language modeling. The best rule depends on the setting and target batch size. In language modeling, both the SDE-based and bound-minimization rules fall behind the simple baseline of keeping hyperparameters fixed, including the learning rate, at larger target batches.</strong></p>
+  <p>We summarize and derive scaling rules for MuonW-AdamW hybrid. We then compare them with a broad grid of candidate rules, combinatorially exhausting possible scaling rules for all hyperparameters, resulting in <strong>216</strong> possible scaling rules. Unfortunately, we found the optimal rule depends on the setting and target batch size. In language modeling, both the SDE invariant rule and convex bound minimization rule both fall behind the trivial baseline of keeping constant learning rate.</p>
 </div>
   <section class="candidate-derivations" aria-labelledby="candidate-derivations-title"><h3 id="candidate-derivations-title">Candidate derivations</h3><p>These derivations rely on different assumptions; none is an exact invariance guarantee for the optimizer. The SDE and bound calculations give our Muon prescriptions; Power Lines motivates the weight-decay extension.</p>
  <div class="rule-candidates">
