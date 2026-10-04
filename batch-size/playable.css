@@ -500,8 +500,8 @@ body{--ui-label-size:15px;--ui-button-size:14px;--ui-detail-size:14px}
 
 .rule-preset-description{margin:16px 0 0;font-size:14px;line-height:1.75;color:var(--muted);overflow-wrap:break-word}
 .rule-preset-description strong{font-weight:600;color:var(--ink)}
-.rule-preset-description a{text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line)}
-.rule-preset-description a:hover{text-decoration-color:currentColor}
+.rule-preset-description a,.scaling-findings a{text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line)}
+.rule-preset-description a:hover,.scaling-findings a:hover{text-decoration-color:currentColor}
 
 .rule-candidates h3{min-height:0;margin:0 0 10px}
 .rule-candidates h3 a{font:inherit;color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:5px;text-decoration-color:var(--line)}

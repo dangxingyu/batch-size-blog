@@ -6,7 +6,7 @@
   <meta name="description" content="Turn the batch-size dial. Race optimizers through a noisy landscape. Explore why a tiny set of sharp directions can change the result.">
   <meta name="theme-color" content="#f5f3ec">
   <link rel="icon" href="batch-size/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="batch-size/vendor/katex/katex.min.css?v=d4ab5b8e"><link rel="stylesheet" href="batch-size/fonts.css"><link rel="stylesheet" href="batch-size/style.css"><link rel="stylesheet" href="batch-size/editorial.css?v=85b91fdd"><link rel="stylesheet" href="batch-size/playable.css?v=2a76d096"><link rel="stylesheet" href="batch-size/branching.css?v=0134537c">
+  <link rel="stylesheet" href="batch-size/vendor/katex/katex.min.css?v=d4ab5b8e"><link rel="stylesheet" href="batch-size/fonts.css"><link rel="stylesheet" href="batch-size/style.css"><link rel="stylesheet" href="batch-size/editorial.css?v=85b91fdd"><link rel="stylesheet" href="batch-size/playable.css?v=22da80b1"><link rel="stylesheet" href="batch-size/branching.css?v=0134537c">
   <link rel="preload" href="batch-size/fonts/fraunces-essay.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="batch-size/fonts/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="canonical" href="https://dangxingyu.github.io/batch-size-blog/">
@@ -47,7 +47,7 @@
   <p>We found the promise does not hold:</p>
   <ol class="scaling-findings">
     <li>The optimal rule depends on the setting and target batch size.</li>
-    <li>In language modeling, both the SDE invariant rule and convex bound minimization rule both fall behind the trivial baseline of keeping constant learning rate. The best performing rule at large batch size is prescribed by the Power Lines</li>
+    <li>In language modeling, both the SDE invariant rule and convex bound minimization rule both fall behind the trivial baseline of keeping constant learning rate. The best performing rule at large batch size is prescribed by the <a class="rule-source" href="https://arxiv.org/abs/2505.13738" target="_blank" rel="noopener">Power Lines</a></li>
     <li>On image classification, the bound minimization rule works the best instead.</li>
   </ol>
 </div>
