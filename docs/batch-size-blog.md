@@ -210,14 +210,21 @@ Expected-loss bars retain a neutral full-length track and a small origin marker 
   share a fixed range containing all generated losses. On the log axis, zero or
   underflowed losses use the numerical floor 1e-15. A dashed vertical marker
   locates the original 4,096-sample comparison budget.
-- The directional narrative now gives the gradient, SignSGD update, stationary
-  expected sign, movement per sample, and the two asymptotic exponents in visible
-  equations. Beside the local movement chart, two quadratic slices display the
-  same high/low-CNR movement ratios. Each direction is normalized to its own
-  batch-1 movement; a shared adaptive arrow scale keeps both visible. These are
-  frozen-coordinate local increments, not training trajectories or new data.
+- The directional narrative defines CNR and expected movement per sample, with
+  the shared learning-rate rule in a simple pseudo formula. Detailed update and
+  stationary-sign derivations remain in the protocol drawers. Beside the local
+  movement chart, two quadratic slices display the same high/low-CNR ratios.
+  Each direction is normalized to its own batch-1 movement; a shared adaptive
+  arrow scale keeps both visible. These are frozen-coordinate local increments,
+  not training trajectories or new data.
 
 The SignSGD learning-rate panel uses a wide chart with the CNR slider and fitted exponent in a compact sidebar. Its SVG height adapts to its rendered width (190–260px), retaining all independently tuned dots and the same log axes. Narrow layouts stack the chart and settings.
 The local movement panel aligns the quadratic illustration and response chart above one shared controls row. Direction readouts use the same method colors; the exponent rail and compromise action share a compact feedback strip. Both panels preserve the existing definitions and numerical results.
 
 The geometry playground keeps playback actions and progress in a horizontal strip beside the starting-direction presets, directly beneath the batch, curvature, and noise sliders. The toolbar stacks below the presets on narrow screens; the idle action reads “Run.”
+
+## Narrative style
+
+The rewritten scaling-rule chapter is the reference for the rest of the main prose. Its unit is a research section rather than an individual widget: motivation and question, a compact concrete setup, then numbered findings. Use the researchers’ voice, retain the conditions and numbers needed to read the results, and avoid beginner definitions or click-by-click instructions in the surrounding paragraphs. Control labels and preset descriptions carry the interaction guidance.
+
+Rankings, the quadratic mechanism, directional scaling, the intervention, and the conclusion follow this structure. Keep expected loss at the 4,096-sample tuning budget separate from the extended sampled trajectory. The directional calculation freezes the parameter; the intervention affects matrix directions and does not establish CNR as their predictor. The 59.5% maximum refers to all measured checkpoints, while the displayed 5K checkpoint gives 59.3%. Detailed protocols retain their technical granularity.
