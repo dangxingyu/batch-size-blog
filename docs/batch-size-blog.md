@@ -67,7 +67,7 @@ The 3D and 2D landscapes are projections of the same geometry-lab run. The icon 
 
 The SignSGD chart uses κ = B′/B and η(κB)/η(B). Linear and square-root guides use rust and teal; the selected measured curve and fitted exponent share a color blended between them according to the exponent. Only the chosen CNR curve is drawn; this color interpolation never interpolates measurement values. The local movement panel uses one exponent slider with adjacent preset choices. Its batch-1 arrow has a fixed length across all slider settings, and the duplicated exponent rail and compromise button are removed.
 
-The branch curves and vertical endpoint-penalty bars share one comparison layout, with bars to the right on desktop. Selected top-k bars use the same color as their curve. Mobile stacks the views. All endpoint values and missing states retain the original measured data.
+The branch curves and vertical endpoint-penalty bars share one comparison layout, with bars to the right on desktop. Selected top-k bars use the same color as their curve. The legend groups reference/full/random branches in one aligned row and the five top-k choices in a second row. Selection uses a subtle background and border; missing measurements remain disabled and labeled. Mobile stacks the views. All endpoint values and missing states retain the original measured data.
 
 - The leaderboard and pair comparison use reported losses at four measured batches.
   Replicate counts are retained in downloadable data and omitted from the ranking labels and tooltips.
