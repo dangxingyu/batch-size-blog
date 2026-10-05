@@ -89,7 +89,7 @@ const hero={batch:256,sharp:20,noise:8,start:[1,1],paths:{},tuned:{}};
 function configureHero(){
   hero.batch=2**+$('hero-batch').value;
   hero.tuned=tunedMethods(hero);hero.paths={};
-  const steps=NQM.settlingSteps(hero,hero.tuned);
+  const steps=NQM.T/hero.batch;
   ['sgd','newton'].forEach(m=>{hero.paths[m]=NQM.trajectory(hero,m,hero.tuned[m].eta,7,steps);});
   hero.duration=60000;
   $('hero-batch-output').textContent=fmt(hero.batch);

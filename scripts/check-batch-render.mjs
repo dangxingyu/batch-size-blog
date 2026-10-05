@@ -197,9 +197,10 @@ vm.runInContext(`
 for(const exponent of [0,8,12,8,0]){
   nodes['hero-batch'].value=String(exponent);
   vm.runInContext('configureHero()',context);
-  const state=vm.runInContext('({duration:hero.duration,length:heroBackdrop.prepared.count})',context);
-  assert.equal(state.length,vm.runInContext('1+NQM.settlingSteps(hero,hero.tuned)',context),'Changing batch rebuilds the extended projected paths.');
-  assert(state.length>=193,'Large-batch trajectories take enough updates to settle.');
+  const state=vm.runInContext('({duration:hero.duration,length:heroBackdrop.prepared.count,paths:hero.paths})',context);
+  assert.equal(state.length,4096/(2**exponent)+1,'Changing batch rebuilds the projected paths for the same 4K sample budget.');
+  for(const method of ['sgd','newton'])
+    assert.equal(state.paths[method].at(-1).samples,4096,'Both cover paths stop at 4,096 processed samples.');
   for(const progress of [0,.1,.5,.9,1])vm.runInContext(`drawHero(hero.duration*${progress})`,context);
   assert.equal(nodes['hero-canvas'].dataset.progress,'1.000');
   const paths=vm.runInContext('heroBackdrop.history',context);
@@ -209,7 +210,7 @@ for(const exponent of [0,8,12,8,0]){
 vm.runInContext('reducedMotion.matches=true;heroPaused=true;configureHero()',context);
 assert.equal(nodes['hero-canvas'].dataset.progress,'1.000');
 assert.equal(nodes['hero-canvas'].dataset.zoom,'1.000');
-console.log('PASS: hero batch changes invalidate projection caches, extended runs retain all updates, and reduced-motion startup stays static.');
+console.log('PASS: hero batch changes rebuild 4K-sample paths with 60-second playback, full traces, and static reduced-motion startup.');
 
 vm.runInContext('reducedMotion.matches=false;heroPaused=false;heroVisible=true;heroTime=hero.duration-20;lastHero=100;heroLoop(140)',context);
 assert.equal(nodes['hero-canvas'].dataset.animating,'false');

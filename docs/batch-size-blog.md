@@ -84,14 +84,14 @@ protocol, endpoint fields and hashes are included in the downloadable dataset.
 - The hero caches projected trajectories and vector meshes at each drawing scale.
   Playback takes 60 seconds; large batches
   smoothly interpolate between actual optimizer states. This is a visual tween,
-  not an additional optimizer update. Trajectories now continue with the same tuned learning rates beyond the 4,096-sample comparison budget. `settlingSteps` requires at least 192 updates and four comparison budgets, increasing the horizon when needed for initialization bias to fall below 0.5% of stationary variance (or a numerical tolerance in the noiseless case), with a 32,768-update cap. The original budget remains the basis of tuning, winner labels, expected-loss bars and the phase map. Its camera follows the recent paths, keeps
+  not an additional optimizer update. Both optimizer trajectories stop at 4,096 processed samples, matching the tuning budget, winner labels, expected-loss bars, and phase map. Its camera follows the recent paths, keeps
   the full accumulated trace as cached vectors, and
   holds the completed view until explicit Replay.
   Hero and sandbox animation loops stop when
   their view is hidden or the document loses visibility. Manual pause freezes the
   current frame. Reduced-motion startup shows a static completed hero trajectory.
-- The sandbox runs for 60 seconds at the default 1× (30 seconds at 2×, 15 seconds at 4×). Its paths and live loss end at the 4,096-sample tuning budget; the x axis ends at 4K, with no continuation beyond that point. The hero retains its separate extended horizon. The noise button reads “Resample noise.”
-- The live loss figure sits beneath the parameter sliders at the bottom right of the landscape. It always shows the two sampled paths, synchronized with playback, with a fixed logarithmic range containing their extrema. There are no expected-loss curve overlays or visibility toggle. The original 4K tuning budget is marked; expected-loss bars stay in the results row. On narrow screens the controls and live chart stack below the landscape.
+- The sandbox runs for 60 seconds at the default 1× (30 seconds at 2×, 15 seconds at 4×). Its paths and live loss end at the 4,096-sample tuning budget; the x axis ends at 4K, with no continuation beyond that point. The 3D hero uses the same 4K endpoint. The noise button reads “Resample noise.”
+- The live loss figure sits beneath the parameter sliders at the bottom right of the landscape. It always shows the two sampled paths, synchronized with playback, with a fixed logarithmic range containing their extrema. There are no expected-loss curve overlays or visibility toggle. The x axis ends at the 4K tuning budget; expected-loss bars stay in the results row. On narrow screens the controls and live chart stack below the landscape.
 - The sandbox caches its contours and appends every newly revealed trajectory segment
   to offscreen canvases. The loss plot retains its axes and precomputes a bounded
   display curve, with the exact current update as its endpoint. Theme, size, replay,
@@ -211,7 +211,7 @@ Expected-loss bars retain a neutral full-length track and a small origin marker 
   no expected-loss curve overlay. Curves retain their exact current endpoint and
   share a fixed range containing all generated losses. On the log axis, zero or
   underflowed losses use the numerical floor 1e-15. A dashed vertical marker
-  locates the original 4,096-sample comparison budget.
+  ends at the 4,096-sample comparison budget.
 - The directional narrative defines CNR and expected movement per sample, with
   the shared learning-rate rule in a simple pseudo formula. Detailed update and
   stationary-sign derivations remain in the protocol drawers. Beside the local
@@ -233,4 +233,4 @@ The rewritten scaling-rule chapter is the reference for the rest of the main pro
 
 The curvature-and-noise chapter explicitly introduces the noisy quadratic model (NQM): a quadratic loss paired with noisy gradient estimates. Its two-dimensional SGD/Newton example is distinguished from the language-model experiments.
 
-Rankings, the quadratic mechanism, directional scaling, the intervention, and the conclusion follow this structure. Keep expected loss at the 4,096-sample tuning budget separate from the extended sampled trajectory. The directional calculation freezes the parameter; the intervention affects matrix directions and does not establish CNR as their predictor. The 59.5% maximum refers to all measured checkpoints, while the displayed 5K checkpoint gives 59.3%. Detailed protocols retain their technical granularity.
+Rankings, the quadratic mechanism, directional scaling, the intervention, and the conclusion follow this structure. Keep expected loss at the 4,096-sample budget distinct from the single sampled trajectory at that same budget. The directional calculation freezes the parameter; the intervention affects matrix directions and does not establish CNR as their predictor. The 59.5% maximum refers to all measured checkpoints, while the displayed 5K checkpoint gives 59.3%. Detailed protocols retain their technical granularity.
