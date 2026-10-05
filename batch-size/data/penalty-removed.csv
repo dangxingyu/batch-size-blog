@@ -1,70 +1,70 @@
-anchor,arm,percent,approximate,source,sourceRevision,fullyScaledPenalty,heldPenalty,penaltyPrecision,branchBaseSteps
-1000,top-16 held,14.3,,,,,,,
-1000,top-64 held,18.7,,,,,,,
-1000,top-128 held,21.9,,,,,,,
-1000,top-256 held,38.6,,,,,,,
-1000,top-768 held,39.5,,,,,,,
-1000,random-768 held,-2.4,,,,,,,
-2000,top-16 held,-2.3575638506876384,True,paper table,467c973,50.9,52.1,1,1024
-2000,top-64 held,10.019646365422396,True,paper table,467c973,50.9,45.8,1,1024
-2000,top-128 held,22.593320235756387,True,paper table,467c973,50.9,39.4,1,1024
-2000,top-256 held,24.165029469548127,True,paper table,467c973,50.9,38.6,1,1024
-2000,top-768 held,40.1,,,,,,,
-2000,random-768 held,0.2,,,,,,,
-3000,top-16 held,5.1,,,,,,,
-3000,top-64 held,23.6,,,,,,,
-3000,top-128 held,20.9,,,,,,,
-3000,top-256 held,39.4,,,,,,,
-3000,top-768 held,49.4,,,,,,,
-3000,random-768 held,0.3,,,,,,,
-4000,top-16 held,27.29528535980148,True,paper table,467c973,40.3,29.3,1,1024
-4000,top-64 held,32.258064516129025,True,paper table,467c973,40.3,27.3,1,1024
-4000,top-128 held,36.724565756823814,True,paper table,467c973,40.3,25.5,1,1024
-4000,top-256 held,42.4317617866005,True,paper table,467c973,40.3,23.2,1,1024
-4000,top-768 held,52.8,,,,,,,
-4000,random-768 held,1.5,,,,,,,
-5000,top-16 held,26.4,,,,,,,
-5000,top-64 held,35.9,,,,,,,
-5000,top-128 held,40.8,,,,,,,
-5000,top-256 held,48.5,,,,,,,
-5000,top-768 held,59.3,,,,,,,
-5000,random-768 held,0.5,,,,,,,
-6000,top-16 held,12.749003984063755,True,paper table,467c973,25.1,21.9,1,1024
-6000,top-64 held,33.46613545816734,True,paper table,467c973,25.1,16.7,1,1024
-6000,top-128 held,43.82470119521913,True,paper table,467c973,25.1,14.1,1,1024
-6000,top-256 held,50.199203187250994,True,paper table,467c973,25.1,12.5,1,1024
-6000,top-768 held,59.5,,,,,,,
-6000,random-768 held,1.8,,,,,,,
-7000,top-16 held,18.2,,,,,,,
-7000,top-64 held,34.2,,,,,,,
-7000,top-256 held,44.9,,,,,,,
-7000,top-768 held,50.6,,,,,,,
-7000,random-768 held,-0.4,,,,,,,
-8000,top-16 held,12.135922330097081,True,paper table,467c973,20.6,18.1,1,1024
-8000,top-64 held,24.271844660194187,True,paper table,467c973,20.6,15.6,1,1024
-8000,top-128 held,31.06796116504855,True,paper table,467c973,20.6,14.2,1,1024
-8000,top-256 held,36.893203883495154,True,paper table,467c973,20.6,13.0,1,1024
-8000,top-768 held,43.0,,,,,,,
-8000,random-768 held,0.1,,,,,,,
-9000,top-16 held,19.0,,,,,,,
-9000,top-64 held,24.5,,,,,,,
-9000,top-256 held,34.5,,,,,,,
-9000,top-768 held,35.0,,,,,,,
-9000,random-768 held,0.1,,,,,,,
-10000,top-16 held,8.730158730158733,True,paper table,467c973,12.6,11.5,1,1024
-10000,top-64 held,10.317460317460315,True,paper table,467c973,12.6,11.3,1,1024
-10000,top-128 held,10.317460317460315,True,paper table,467c973,12.6,11.3,1,1024
-10000,top-256 held,11.111111111111116,True,paper table,467c973,12.6,11.2,1,1024
-10000,top-768 held,11.4,,,,,,,
-10000,random-768 held,0.0,,,,,,,
-11000,top-16 held,-0.3,,,,,,,
-11000,top-64 held,1.0,,,,,,,
-11000,top-256 held,1.0,,,,,,,
-11000,top-768 held,1.3,,,,,,,
-11000,random-768 held,-0.4,,,,,,,
-12000,top-16 held,0.0,True,paper table,467c973,12.9,12.9,1,992
-12000,top-64 held,0.0,True,paper table,467c973,12.9,12.9,1,992
-12000,top-128 held,0.0,True,paper table,467c973,12.9,12.9,1,992
-12000,top-256 held,-0.7751937984496138,True,paper table,467c973,12.9,13.0,1,992
-12000,top-768 held,-0.0,,,,,,,
-12000,random-768 held,-0.0,,,,,,,
+anchor,arm,percent
+1000,top-16 held,14.3
+1000,top-64 held,18.7
+1000,top-128 held,21.9
+1000,top-256 held,38.6
+1000,top-768 held,39.5
+1000,random-768 held,-2.4
+2000,top-16 held,-2.4
+2000,top-64 held,10.0
+2000,top-128 held,22.7
+2000,top-256 held,24.1
+2000,top-768 held,40.1
+2000,random-768 held,0.2
+3000,top-16 held,5.1
+3000,top-64 held,23.6
+3000,top-128 held,20.9
+3000,top-256 held,39.4
+3000,top-768 held,49.4
+3000,random-768 held,0.3
+4000,top-16 held,27.2
+4000,top-64 held,32.2
+4000,top-128 held,36.6
+4000,top-256 held,42.4
+4000,top-768 held,52.8
+4000,random-768 held,1.5
+5000,top-16 held,26.4
+5000,top-64 held,35.9
+5000,top-128 held,40.8
+5000,top-256 held,48.5
+5000,top-768 held,59.3
+5000,random-768 held,0.5
+6000,top-16 held,12.7
+6000,top-64 held,33.2
+6000,top-128 held,43.7
+6000,top-256 held,50.1
+6000,top-768 held,59.5
+6000,random-768 held,1.8
+7000,top-16 held,18.2
+7000,top-64 held,34.2
+7000,top-256 held,44.9
+7000,top-768 held,50.6
+7000,random-768 held,-0.4
+8000,top-16 held,12.4
+8000,top-64 held,24.3
+8000,top-128 held,31.0
+8000,top-256 held,36.9
+8000,top-768 held,43.0
+8000,random-768 held,0.1
+9000,top-16 held,19.0
+9000,top-64 held,24.5
+9000,top-256 held,34.5
+9000,top-768 held,35.0
+9000,random-768 held,0.1
+10000,top-16 held,8.6
+10000,top-64 held,9.9
+10000,top-128 held,10.3
+10000,top-256 held,10.8
+10000,top-768 held,11.4
+10000,random-768 held,0.0
+11000,top-16 held,-0.3
+11000,top-64 held,1.0
+11000,top-256 held,1.0
+11000,top-768 held,1.3
+11000,random-768 held,-0.4
+12000,top-16 held,-0.0
+12000,top-64 held,0.0
+12000,top-128 held,-0.0
+12000,top-256 held,-0.1
+12000,top-768 held,-0.0
+12000,random-768 held,-0.0

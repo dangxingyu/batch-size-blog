@@ -128,13 +128,19 @@ def main():
     curves = json.loads((args.data_dir / 'branch-curves.json').read_text())
     curves['metadata'].update(source='paper figure6_data',
                               sourceRevision=args.source_revision,
-                              sha256={name: hashes[name] for name in FILES[:2]})
+                              sha256={name: hashes[name] for name in FILES[:2]},
+                              branchBaseStepsByAnchor={a: max(p[0] for points in arms.values() for p in points)-int(a)
+                                                       for a, arms in anchors.items()})
     curves.update(base=base, anchors=anchors)
     paper = json.loads((args.data_dir / 'paper-data.json').read_text())
     paper.update(endpoints=endpoints, recovery=recovery)
+    paper.pop('branchEndpointSupplement', None)
     paper['branchSource'] = dict(sourceRevision=args.source_revision,
                                sha256={name: hashes[name] for name in FILES[2:]})
     provenance = json.loads((args.data_dir / 'provenance.json').read_text())
+    provenance.pop('directional_endpoint_supplement', None)
+    provenance['files'] = [record for record in provenance['files']
+                           if record['path'] != 'src/appendices/lm_directional_protocol.tex']
     for name in FILES:
         path = f'figure6_data/{name}'
         record = next((f for f in provenance['files'] if f['path'] == path), None)

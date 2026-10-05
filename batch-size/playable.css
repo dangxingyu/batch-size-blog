@@ -310,8 +310,8 @@ body{--ui-label-size:15px;--ui-button-size:14px;--ui-detail-size:14px}
 .leaderboard .pair-note{border:0;padding:0;margin:0;font-size:11px}.leaderboard .pair-note summary{font-size:11px}.leaderboard .pair-note p{font-size:12px;line-height:1.7;margin-top:10px}
 @media(max-width:760px){.leaderboard .pair-lab{margin-top:17px;padding-top:17px}.leaderboard .pair-controls{max-width:380px}.leaderboard .pair-controls select{min-height:44px}.leaderboard .pair-lab h4{font-size:16px}}
 
-/* Visible NQM definitions and exact constant-step loss decomposition. */
-.mechanism-exposition{max-width:850px}.mechanism-equation{overflow-x:auto;max-width:100%;padding:18px 2px;margin:10px 0 22px;font-size:20px;line-height:1.6}.mechanism-equation .math-block{white-space:nowrap;text-align:left}.mechanism-equations{display:grid;grid-template-columns:1fr 1.2fr;gap:28px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:24px 0}.mechanism-equations .mechanism-equation{margin:0;padding-top:23px;padding-bottom:23px}.mechanism-loss{padding-top:22px;padding-bottom:22px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+/* The NQM introduction shares the figures' content width. */
+.mechanism-exposition{max-width:none}.mechanism-equation{overflow-x:auto;max-width:100%;padding:18px 2px;margin:10px 0 22px;font-size:20px;line-height:1.6}.mechanism-equation .math-block{white-space:nowrap;text-align:left}.mechanism-equations{display:grid;grid-template-columns:1fr 1.2fr;gap:28px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:24px 0}.mechanism-equations .mechanism-equation{margin:0;padding-top:23px;padding-bottom:23px}.mechanism-loss{padding-top:22px;padding-bottom:22px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 @media(max-width:760px){.mechanism-equations{grid-template-columns:1fr;gap:0}.mechanism-equations .mechanism-equation{padding-top:15px;padding-bottom:15px}.mechanism-equation{font-size:17px;padding:15px 1px;margin-bottom:18px}.mechanism-loss{font-size:16px}}
 
 /* Remove forced header gaps; the displacement graph uses data-driven headroom. */

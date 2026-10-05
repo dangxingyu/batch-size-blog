@@ -487,49 +487,33 @@
       "anchor": 2000,
       "arm": "top-16 held",
       "rank": 16,
-      "loss": null,
-      "control": null,
-      "penalty": 52.1,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.741446,
+      "control": 3.689329,
+      "penalty": 52.12
     },
     {
       "anchor": 2000,
       "arm": "top-64 held",
       "rank": 64,
-      "loss": null,
-      "control": null,
-      "penalty": 45.8,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.735111,
+      "control": 3.689329,
+      "penalty": 45.78
     },
     {
       "anchor": 2000,
       "arm": "top-128 held",
       "rank": 128,
-      "loss": null,
-      "control": null,
-      "penalty": 39.4,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.728681,
+      "control": 3.689329,
+      "penalty": 39.35
     },
     {
       "anchor": 2000,
       "arm": "top-256 held",
       "rank": 256,
-      "loss": null,
-      "control": null,
-      "penalty": 38.6,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.72795,
+      "control": 3.689329,
+      "penalty": 38.62
     },
     {
       "anchor": 2000,
@@ -631,49 +615,33 @@
       "anchor": 4000,
       "arm": "top-16 held",
       "rank": 16,
-      "loss": null,
-      "control": null,
-      "penalty": 29.3,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.604685,
+      "control": 3.575381,
+      "penalty": 29.3
     },
     {
       "anchor": 4000,
       "arm": "top-64 held",
       "rank": 64,
-      "loss": null,
-      "control": null,
-      "penalty": 27.3,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.602708,
+      "control": 3.575381,
+      "penalty": 27.33
     },
     {
       "anchor": 4000,
       "arm": "top-128 held",
       "rank": 128,
-      "loss": null,
-      "control": null,
-      "penalty": 25.5,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.600901,
+      "control": 3.575381,
+      "penalty": 25.52
     },
     {
       "anchor": 4000,
       "arm": "top-256 held",
       "rank": 256,
-      "loss": null,
-      "control": null,
-      "penalty": 23.2,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.598575,
+      "control": 3.575381,
+      "penalty": 23.19
     },
     {
       "anchor": 4000,
@@ -775,49 +743,33 @@
       "anchor": 6000,
       "arm": "top-16 held",
       "rank": 16,
-      "loss": null,
-      "control": null,
-      "penalty": 21.9,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.513867,
+      "control": 3.491998,
+      "penalty": 21.87
     },
     {
       "anchor": 6000,
       "arm": "top-64 held",
       "rank": 64,
-      "loss": null,
-      "control": null,
-      "penalty": 16.7,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.508727,
+      "control": 3.491998,
+      "penalty": 16.73
     },
     {
       "anchor": 6000,
       "arm": "top-128 held",
       "rank": 128,
-      "loss": null,
-      "control": null,
-      "penalty": 14.1,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.506097,
+      "control": 3.491998,
+      "penalty": 14.1
     },
     {
       "anchor": 6000,
       "arm": "top-256 held",
       "rank": 256,
-      "loss": null,
-      "control": null,
-      "penalty": 12.5,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.504508,
+      "control": 3.491998,
+      "penalty": 12.51
     },
     {
       "anchor": 6000,
@@ -911,49 +863,33 @@
       "anchor": 8000,
       "arm": "top-16 held",
       "rank": 16,
-      "loss": null,
-      "control": null,
-      "penalty": 18.1,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.432754,
+      "control": 3.41469,
+      "penalty": 18.06
     },
     {
       "anchor": 8000,
       "arm": "top-64 held",
       "rank": 64,
-      "loss": null,
-      "control": null,
-      "penalty": 15.6,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.4303,
+      "control": 3.41469,
+      "penalty": 15.61
     },
     {
       "anchor": 8000,
       "arm": "top-128 held",
       "rank": 128,
-      "loss": null,
-      "control": null,
-      "penalty": 14.2,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.428916,
+      "control": 3.41469,
+      "penalty": 14.23
     },
     {
       "anchor": 8000,
       "arm": "top-256 held",
       "rank": 256,
-      "loss": null,
-      "control": null,
-      "penalty": 13.0,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.427691,
+      "control": 3.41469,
+      "penalty": 13.0
     },
     {
       "anchor": 8000,
@@ -1047,49 +983,33 @@
       "anchor": 10000,
       "arm": "top-16 held",
       "rank": 16,
-      "loss": null,
-      "control": null,
-      "penalty": 11.5,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.348595,
+      "control": 3.337106,
+      "penalty": 11.49
     },
     {
       "anchor": 10000,
       "arm": "top-64 held",
       "rank": 64,
-      "loss": null,
-      "control": null,
-      "penalty": 11.3,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.348423,
+      "control": 3.337106,
+      "penalty": 11.32
     },
     {
       "anchor": 10000,
       "arm": "top-128 held",
       "rank": 128,
-      "loss": null,
-      "control": null,
-      "penalty": 11.3,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.34838,
+      "control": 3.337106,
+      "penalty": 11.27
     },
     {
       "anchor": 10000,
       "arm": "top-256 held",
       "rank": 256,
-      "loss": null,
-      "control": null,
-      "penalty": 11.2,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "loss": 3.34831,
+      "control": 3.337106,
+      "penalty": 11.2
     },
     {
       "anchor": 10000,
@@ -1183,49 +1103,33 @@
       "anchor": 12000,
       "arm": "top-16 held",
       "rank": 16,
-      "loss": null,
-      "control": null,
-      "penalty": 12.9,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 992
+      "loss": 3.278243,
+      "control": 3.265295,
+      "penalty": 12.95
     },
     {
       "anchor": 12000,
       "arm": "top-64 held",
       "rank": 64,
-      "loss": null,
-      "control": null,
-      "penalty": 12.9,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 992
+      "loss": 3.278235,
+      "control": 3.265295,
+      "penalty": 12.94
     },
     {
       "anchor": 12000,
       "arm": "top-128 held",
       "rank": 128,
-      "loss": null,
-      "control": null,
-      "penalty": 12.9,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 992
+      "loss": 3.278245,
+      "control": 3.265295,
+      "penalty": 12.95
     },
     {
       "anchor": 12000,
       "arm": "top-256 held",
       "rank": 256,
-      "loss": null,
-      "control": null,
-      "penalty": 13.0,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 992
+      "loss": 3.278249,
+      "control": 3.265295,
+      "penalty": 12.95
     },
     {
       "anchor": 12000,
@@ -1278,50 +1182,22 @@
     {
       "anchor": 2000,
       "arm": "top-16 held",
-      "percent": -2.3575638506876384,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 50.9,
-      "heldPenalty": 52.1,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": -2.4
     },
     {
       "anchor": 2000,
       "arm": "top-64 held",
-      "percent": 10.019646365422396,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 50.9,
-      "heldPenalty": 45.8,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": 10.0
     },
     {
       "anchor": 2000,
       "arm": "top-128 held",
-      "percent": 22.593320235756387,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 50.9,
-      "heldPenalty": 39.4,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": 22.7
     },
     {
       "anchor": 2000,
       "arm": "top-256 held",
-      "percent": 24.165029469548127,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 50.9,
-      "heldPenalty": 38.6,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": 24.1
     },
     {
       "anchor": 2000,
@@ -1366,50 +1242,22 @@
     {
       "anchor": 4000,
       "arm": "top-16 held",
-      "percent": 27.29528535980148,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 40.3,
-      "heldPenalty": 29.3,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": 27.2
     },
     {
       "anchor": 4000,
       "arm": "top-64 held",
-      "percent": 32.258064516129025,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 40.3,
-      "heldPenalty": 27.3,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": 32.2
     },
     {
       "anchor": 4000,
       "arm": "top-128 held",
-      "percent": 36.724565756823814,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 40.3,
-      "heldPenalty": 25.5,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": 36.6
     },
     {
       "anchor": 4000,
       "arm": "top-256 held",
-      "percent": 42.4317617866005,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 40.3,
-      "heldPenalty": 23.2,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": 42.4
     },
     {
       "anchor": 4000,
@@ -1454,50 +1302,22 @@
     {
       "anchor": 6000,
       "arm": "top-16 held",
-      "percent": 12.749003984063755,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 25.1,
-      "heldPenalty": 21.9,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": 12.7
     },
     {
       "anchor": 6000,
       "arm": "top-64 held",
-      "percent": 33.46613545816734,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 25.1,
-      "heldPenalty": 16.7,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": 33.2
     },
     {
       "anchor": 6000,
       "arm": "top-128 held",
-      "percent": 43.82470119521913,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 25.1,
-      "heldPenalty": 14.1,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": 43.7
     },
     {
       "anchor": 6000,
       "arm": "top-256 held",
-      "percent": 50.199203187250994,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 25.1,
-      "heldPenalty": 12.5,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": 50.1
     },
     {
       "anchor": 6000,
@@ -1537,50 +1357,22 @@
     {
       "anchor": 8000,
       "arm": "top-16 held",
-      "percent": 12.135922330097081,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 20.6,
-      "heldPenalty": 18.1,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": 12.4
     },
     {
       "anchor": 8000,
       "arm": "top-64 held",
-      "percent": 24.271844660194187,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 20.6,
-      "heldPenalty": 15.6,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": 24.3
     },
     {
       "anchor": 8000,
       "arm": "top-128 held",
-      "percent": 31.06796116504855,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 20.6,
-      "heldPenalty": 14.2,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": 31.0
     },
     {
       "anchor": 8000,
       "arm": "top-256 held",
-      "percent": 36.893203883495154,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 20.6,
-      "heldPenalty": 13.0,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": 36.9
     },
     {
       "anchor": 8000,
@@ -1620,50 +1412,22 @@
     {
       "anchor": 10000,
       "arm": "top-16 held",
-      "percent": 8.730158730158733,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 12.6,
-      "heldPenalty": 11.5,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": 8.6
     },
     {
       "anchor": 10000,
       "arm": "top-64 held",
-      "percent": 10.317460317460315,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 12.6,
-      "heldPenalty": 11.3,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": 9.9
     },
     {
       "anchor": 10000,
       "arm": "top-128 held",
-      "percent": 10.317460317460315,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 12.6,
-      "heldPenalty": 11.3,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": 10.3
     },
     {
       "anchor": 10000,
       "arm": "top-256 held",
-      "percent": 11.111111111111116,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 12.6,
-      "heldPenalty": 11.2,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 1024
+      "percent": 10.8
     },
     {
       "anchor": 10000,
@@ -1703,50 +1467,22 @@
     {
       "anchor": 12000,
       "arm": "top-16 held",
-      "percent": 0.0,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 12.9,
-      "heldPenalty": 12.9,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 992
+      "percent": -0.0
     },
     {
       "anchor": 12000,
       "arm": "top-64 held",
-      "percent": 0.0,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 12.9,
-      "heldPenalty": 12.9,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 992
+      "percent": 0.0
     },
     {
       "anchor": 12000,
       "arm": "top-128 held",
-      "percent": 0.0,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 12.9,
-      "heldPenalty": 12.9,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 992
+      "percent": -0.0
     },
     {
       "anchor": 12000,
       "arm": "top-256 held",
-      "percent": -0.7751937984496138,
-      "approximate": true,
-      "source": "paper table",
-      "sourceRevision": "467c973",
-      "fullyScaledPenalty": 12.9,
-      "heldPenalty": 13.0,
-      "penaltyPrecision": 1,
-      "branchBaseSteps": 992
+      "percent": -0.1
     },
     {
       "anchor": 12000,
@@ -1759,17 +1495,11 @@
       "percent": -0.0
     }
   ],
-  "branchEndpointSupplement": {
-    "source": "paper table",
-    "sourceRevision": "467c973",
-    "path": "src/appendices/lm_directional_protocol.tex",
-    "sha256": "793e24a479713153c2f66c5e3b9f6e4d31c86c98d8409a87dbc1fc1318aa39cd",
-    "penaltyPrecision": 1,
-    "branchBaseSteps": {
-      "12000": 992,
-      "other_checkpoints": 1024
-    },
-    "scope": "Even-checkpoint top-16/64/128/256 penalties. Absolute losses and raw curves are unavailable in this table.",
-    "recovery": "Approximate recovery computed from the published one-decimal held and fully-scaled penalties."
+  "branchSource": {
+    "sourceRevision": "83b7052",
+    "sha256": {
+      "branch_endpoints.csv": "3524261d93ffc07d69dacf52defeebfd60781d62969684ef30728864d4b2529e",
+      "penalty_removed.csv": "8c7dbd3b37c99074da0647d1f449c242585468c774ff9c3684facc72dd6633ea"
+    }
   }
 }

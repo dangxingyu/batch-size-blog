@@ -7,11 +7,13 @@
     },
     {
       "path": "figure6_data/branch_endpoints.csv",
-      "sha256": "214808766c7fcc5c543be1f1244c2c542c70caf45ce2bff853c7988580f8e74a"
+      "sha256": "3524261d93ffc07d69dacf52defeebfd60781d62969684ef30728864d4b2529e",
+      "source_revision": "83b7052"
     },
     {
       "path": "figure6_data/penalty_removed.csv",
-      "sha256": "51f9f94645f7500043640e49df55471105fc01b6f6d1cbf92a83bfaff31c84cd"
+      "sha256": "8c7dbd3b37c99074da0647d1f449c242585468c774ff9c3684facc72dd6633ea",
+      "source_revision": "83b7052"
     },
     {
       "path": "data/muonw_batch_transfer_raw_results.csv",
@@ -38,9 +40,14 @@
       "sha256": "c4ffc3d783a2ae49b08e6a9fe97f1e0a57b8f252ae8349185589d66f50ab1535"
     },
     {
-      "path": "src/appendices/lm_directional_protocol.tex",
-      "sha256": "793e24a479713153c2f66c5e3b9f6e4d31c86c98d8409a87dbc1fc1318aa39cd",
-      "source_revision": "467c973"
+      "path": "figure6_data/base_run_curve.csv",
+      "sha256": "8ace2269f855d5fb9715ae083be7d169f3c74c99ff29f22d4b8810bc74989457",
+      "source_revision": "83b7052"
+    },
+    {
+      "path": "figure6_data/branch_curves.csv",
+      "sha256": "32bd55ebf8d443a08a48c1bf16fddf6201a7b98535aa38bab876e2ac47fed70f",
+      "source_revision": "83b7052"
     }
   ],
   "notes": [
@@ -80,18 +87,26 @@
     "metric": "Monte Carlo expected terminal loss; independently tuned learning rate per batch",
     "source": "figures/signsgd_cnr_scaling_b09/training.csv"
   },
-  "directional_endpoint_supplement": {
-    "source": "paper table",
-    "sourceRevision": "467c973",
-    "path": "src/appendices/lm_directional_protocol.tex",
-    "sha256": "793e24a479713153c2f66c5e3b9f6e4d31c86c98d8409a87dbc1fc1318aa39cd",
-    "penaltyPrecision": 1,
-    "branchBaseSteps": {
-      "12000": 992,
-      "other_checkpoints": 1024
-    },
-    "scope": "Even-checkpoint top-16/64/128/256 penalties. Absolute losses and raw curves are unavailable in this table.",
-    "recovery": "Approximate recovery computed from the published one-decimal held and fully-scaled penalties.",
-    "endpoints": 24
+  "directional_branching": {
+    "source_revision": "83b7052",
+    "checkpoints": [
+      1000,
+      2000,
+      3000,
+      4000,
+      5000,
+      6000,
+      7000,
+      8000,
+      9000,
+      10000,
+      11000,
+      12000
+    ],
+    "branch_curves": 93,
+    "curve_points": 3061,
+    "endpoints": 93,
+    "recovery_measurements": 69,
+    "display": "Every available measured checkpoint and top-k branch. Missing runs remain absent."
   }
 }
