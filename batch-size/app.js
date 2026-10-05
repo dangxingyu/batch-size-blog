@@ -8,7 +8,7 @@ const fmt = n => n.toLocaleString('en-US');
 const batchName = b => ({131072:'128K',524288:'512K',1048576:'1M',2097152:'2M'})[b] || fmt(b);
 const line = (points, x, y) => points.map((p,i) => `${i?'L':'M'}${x(p).toFixed(2)},${y(p).toFixed(2)}`).join(' ');
 const svgText = (x,y,text,extra='') => `<text x="${x}" y="${y}" ${extra}>${text}</text>`;
-const tickStyle = 'font-size="12"';
+const tickStyle = 'font-size="17"';
 const scientificSVG = (value, digits=0) => { const [coefficient,exponent]=value.toExponential(digits).split('e');return `${Number(coefficient)===1?'':Number(coefficient)+' × '}10<tspan baseline-shift="super" font-size="9">${Number(exponent).toString().replace('-', '−')}</tspan>`; };
 const scientificHTML = (value,digits=1) => {const [coefficient,exponent]=value.toExponential(digits).split('e');return `${Number(coefficient)===1?'':Number(coefficient)+' × '}10<sup>${Number(exponent).toString().replace('-', '−')}</sup>`;};
 const token = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -59,7 +59,7 @@ function drawRankings(){
   $('rank-list').innerHTML=sorted.map((r,i)=>`<div data-optimizer="${r.optimizer}" class="rank-row ${i===0?'first':''}"><span class="rank-name"><span class="rank-number">${i+1}</span><i class="dot" style="background:${colors[r.optimizer]}"></i>${r.optimizer}</span><span class="rank-value">${r.loss.toFixed(4)}</span></div>`).join('');
   if(!reducedMotion.matches)document.querySelectorAll('.rank-row').forEach(row=>{const previous=oldRanks.get(row.dataset.optimizer);if(previous!==undefined){const dy=previous-row.getBoundingClientRect().top;if(dy)row.animate([{transform:`translateY(${dy}px)`},{transform:'translateY(0)'}],{duration:350,easing:'cubic-bezier(.22,1,.36,1)'});}});
   const gap=sorted[1].loss-sorted[0].loss;
-  $('ranking-insight').innerHTML=`<strong>${sorted[0].optimizer} leads by ${gap.toFixed(4)} nats</strong> over ${sorted[1].optimizer}.${gap<.002?' This is a close comparison, below the 0.002-nat tuning acceptance threshold.':''} ${fmt(sorted[0].steps)} updates at this batch size.`;
+  $('ranking-insight').innerHTML=`<strong>${sorted[0].optimizer} leads by ${gap.toFixed(4)} nats</strong> over ${sorted[1].optimizer}.${gap<.002?' This is a close comparison, below the 0.002-nat tuning acceptance threshold.':''}`;
   dispatchEvent(new Event('batchsize:rankings'));
   $('board-batch').textContent=batchName(selected);$('rank-batch-output').textContent=batchName(selected)+' tokens';
   document.querySelectorAll('#rank-ticks button').forEach(b=>{b.classList.toggle('active',+b.dataset.index===index);b.setAttribute('aria-pressed',String(+b.dataset.index===index));});
@@ -185,7 +185,7 @@ function drawHero(time){
     ctx.strokeStyle=palette.surface;ctx.lineWidth=1.2;ctx.stroke();
     ctx.beginPath();ctx.arc(...tip,8,0,Math.PI*2);ctx.strokeStyle=colors[method];ctx.globalAlpha=.3;ctx.lineWidth=1;ctx.stroke();ctx.globalAlpha=1;
   });
-  ctx.font='12px "Essay Sans",sans-serif';ctx.fillStyle=palette.muted;
+  ctx.font='17px "Essay Sans",sans-serif';ctx.fillStyle=palette.muted;
   ctx.beginPath();ctx.arc(ox,oy,2.5,0,Math.PI*2);ctx.fill();ctx.textAlign='left';
   if(camera.from===0){const start=view(project(...hero.start));ctx.beginPath();ctx.arc(...start,4,0,Math.PI*2);ctx.strokeStyle=palette.ink;ctx.lineWidth=1;ctx.stroke();ctx.fillText('same start',start[0]+10,start[1]-10);}
   canvas.dataset.zoom=camera.zoom.toFixed(3);canvas.dataset.duration=hero.duration.toFixed(0);canvas.dataset.progress=progress.toFixed(3);
@@ -227,7 +227,7 @@ function configureSimulation(){
   cancelAnimationFrame(simConfigRAF);simConfigRAF=0;
   sim.batch=2**+$('sim-batch').value;sim.sharp=+$('sim-sharp').value;sim.noise=+$('sim-noise').value;sim.progress=0;sim.playing=false;sim.last=0;cancelAnimationFrame(simRAF);
   sim.tuned=tunedMethods(sim);sim.paths={};
-  const steps=NQM.settlingSteps(sim,sim.tuned);
+  const steps=NQM.T/sim.batch;
   ['sgd','newton'].forEach(m=>{sim.paths[m]=NQM.trajectory(sim,m,sim.tuned[m].eta,sim.seed,steps);});
   const maxLoss=Math.max(.5*(sim.start[0]**2+sim.sharp*sim.start[1]**2),...Object.values(sim.paths).map(ps=>Math.max(...ps.map(p=>p.loss))),1e-2);
   const minLoss=Math.min(...Object.values(sim.paths).map(ps=>Math.min(...ps.map(p=>Math.max(p.loss,1e-15)))));
@@ -315,7 +315,7 @@ function renderLandscape(){
     const p=current.map((v,i)=>v+(next[i]-v)*(position-end));
     ctx.beginPath();ctx.arc(detailX(p[0]),detailY(p[1]),5,0,2*Math.PI);ctx.fillStyle=colors[m];ctx.fill();ctx.strokeStyle=simLayer.palette.surface;ctx.lineWidth=1.5;ctx.stroke();
   });
-  if(camera.from===0){ctx.beginPath();ctx.arc(detailX(sim.start[0]),detailY(sim.start[1]),5.5,0,2*Math.PI);ctx.strokeStyle=simLayer.palette.ink;ctx.lineWidth=1;ctx.stroke();ctx.font='11px "Essay Sans",sans-serif';ctx.fillStyle=simLayer.palette.muted;ctx.fillText('start',detailX(sim.start[0])+9,detailY(sim.start[1])-9);}
+  if(camera.from===0){ctx.beginPath();ctx.arc(detailX(sim.start[0]),detailY(sim.start[1]),5.5,0,2*Math.PI);ctx.strokeStyle=simLayer.palette.ink;ctx.lineWidth=1;ctx.stroke();ctx.font='17px "Essay Sans",sans-serif';ctx.fillStyle=simLayer.palette.muted;ctx.fillText('start',detailX(sim.start[0])+9,detailY(sim.start[1])-9);}
   ctx.beginPath();ctx.arc(cx,cy,2.5,0,2*Math.PI);ctx.fillStyle=simLayer.palette.ink;ctx.fill();ctx.restore();
   if(simCamera.mode==='auto')renderOverview(camera,w,h);
   return {scale:camera.scale,cx,cy};
@@ -332,7 +332,7 @@ function drawFocusedBackdrop(ctx,w,h,camera){
   }
   ctx.globalAlpha=1;
   ctx.strokeStyle=palette.muted;ctx.globalAlpha=.55;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(20,cy);ctx.lineTo(w-20,cy);ctx.moveTo(cx,22);ctx.lineTo(cx,h-22);ctx.stroke();ctx.globalAlpha=1;
-  ctx.font='12px "Essay Sans",sans-serif';ctx.fillStyle=palette.muted;
+  ctx.font='17px "Essay Sans",sans-serif';ctx.fillStyle=palette.muted;
   const tickX=SimulationCamera.niceStep((w-64)/scale),tickY=SimulationCamera.niceStep((h-50)/scale);
   for(let i=Math.ceil((24-cx)/scale/tickX);i<=Math.floor((w-32-cx)/scale/tickX);i++){
     const x=cx+i*tickX*scale;ctx.beginPath();ctx.moveTo(x,cy-3);ctx.lineTo(x,cy+3);ctx.stroke();
@@ -373,10 +373,10 @@ function renderLoss(){
     simLoss.key=key;simLoss.paths=sim.paths;simLoss.end=-1;
     chart.setAttribute('viewBox',`0 0 ${width} 240`);
     const samples=sim.paths.sgd.at(-1).samples;
-    const f=frame(width,240,{l:58,r:22,t:20,b:38}),x=s=>f.l+s/samples*f.iw;
-    const xticks=width<340?[[0,'0'],[samples,fmt(samples)+' samples']]:[[0,'0'],[samples/2,fmt(samples/2)],[samples,fmt(samples)+' samples']];
+    const f=frame(width,240,{l:86,r:22,t:20,b:38}),x=s=>f.l+s/samples*f.iw;
+    const xticks=width<340?[[0,'0'],[samples,'4K samples']]:[[0,'0'],[samples/2,'2K'],[samples,'4K samples']];
     const a=axes(f,ymin,ymax,xticks,x,{dark:true,format:v=>scientificSVG(10**v)});
-    chart.innerHTML=a.svg+`<line class="comparison-budget" x1="${x(NQM.T)}" x2="${x(NQM.T)}" y1="${f.t}" y2="${f.h-f.b}" stroke="${token('--muted')}" stroke-dasharray="3 4" opacity=".7"/>`+svgText(x(NQM.T)+5,f.t+11,'4K','font-size="14"')+['sgd','newton'].map(m=>`<path id="sim-loss-${m}" fill="none" stroke="${colors[m]}" stroke-width="1.8"/>`).join('');
+    chart.innerHTML=a.svg+['sgd','newton'].map(m=>`<path id="sim-loss-${m}" fill="none" stroke="${colors[m]}" stroke-width="1.8"/>`).join('');
     ['sgd','newton'].forEach(m=>{
       const pts=sim.paths[m],stride=Math.max(1,Math.ceil((pts.length-1)/350));
       const coordinates=pts.map(p=>`${x(p.samples).toFixed(2)},${a.y(Math.max(ymin,Math.log10(Math.max(p.loss,1e-15)))).toFixed(2)}`);
@@ -447,22 +447,22 @@ function drawScaling(){
   document.querySelectorAll('#scale-presets button').forEach(b=>{b.classList.toggle('active',+b.dataset.alpha===alpha);b.setAttribute('aria-pressed',String(+b.dataset.alpha===alpha));});
 }
 function drawMovementQuadratic(alpha,ratio){
-  const svg=$('movement-quadratic'),w=Math.max(240,Math.min(440,svg.clientWidth)),h=300;
+  const svg=$('movement-quadratic'),w=Math.max(240,Math.min(440,svg.clientWidth)),h=350;
   svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
   const x=v=>24+(v+1.2)/2.8*(w-48);
   const arrowUnit=.7/Math.max(1,...[1,.001].map(c=>NQM.displacement(c,ratio,alpha)));
   let markup=`<title>Local movement at batch ratio ${ratio}, exponent ${alpha.toFixed(2)}. Arrows are normalized to each direction's batch-1 movement.</title>`;
   [1,.001].forEach((cnr,i)=>{
-    const top=i*150,color=i?colors.newton:colors.sgd,movement=NQM.displacement(cnr,ratio,alpha),end=1-arrowUnit*movement;
+    const top=i*190,color=i?colors.newton:colors.sgd,movement=NQM.displacement(cnr,ratio,alpha),end=1-arrowUnit*movement;
     const y=v=>top+91-38*v*v,points=Array.from({length:81},(_,k)=>-1.2+2.6*k/80);
     markup+=svgText(16,top+18,`${i?'Low':'High'} CNR · ${cnr}`,`font-size="16" fill="${color}" font-weight="600"`);
     markup+=`<path d="${line(points,v=>x(v),y)}" fill="none" stroke="${token('--grid-strong')}" stroke-width="1.5"/><line x1="24" x2="${w-24}" y1="${top+91}" y2="${top+91}" stroke="${token('--line')}"/><circle cx="${x(1)}" cy="${y(1)}" r="4" fill="${token('--ink')}"/>`;
-    markup+=svgText(x(1)+7,y(1)-10,'w = 1','font-size="13"')+svgText(x(0),top+105,'0','font-size="13" text-anchor="middle"');
+    markup+=svgText(x(1)+7,y(1)-10,'w = 1','font-size="17"')+svgText(x(0),top+105,'0','font-size="17" text-anchor="middle"');
     const arrow=(end,cy,stroke,dashed)=>`<path d="M${x(1)} ${cy}H${x(end)}" fill="none" stroke="${stroke}" stroke-width="${dashed?1.5:3}" ${dashed?'stroke-dasharray="4 3"':''}/><path d="M${x(end)+5} ${cy-4}L${x(end)} ${cy}L${x(end)+5} ${cy+4}" fill="none" stroke="${stroke}" stroke-width="1.5"/>`;
     const local=Array.from({length:21},(_,k)=>end+(1-end)*k/20);
     markup+=`<path d="${line(local,v=>x(v),y)}" fill="none" stroke="${color}" stroke-width="3"/><circle cx="${x(end)}" cy="${y(end)}" r="4" fill="${color}"/>`;
     markup+=arrow(1-arrowUnit,top+118,token('--muted'),true)+arrow(end,top+140,color,false);
-    markup+=svgText(16,top+121,'Batch 1','font-size="12"')+svgText(16,top+143,`${ratio}× batch · ${movement.toFixed(2)}×`,`font-size="12" fill="${color}"`);
+    markup+=svgText(16,top+121,'Batch 1','font-size="17"')+svgText(16,top+143,`${ratio}× batch · ${movement.toFixed(2)}×`,`font-size="17" fill="${color}"`);
   });
   svg.dataset.alpha=alpha;svg.dataset.ratio=ratio;svg.innerHTML=markup;
 }
@@ -483,7 +483,7 @@ function drawIntervention(){
   const approximate=DATA.recovery.find(r=>r.anchor===anchor&&r.arm===arm)?.approximate;
   $('recovery-number').innerHTML=selected&&recovery!==undefined?`${approximate?'≈ ':''}${recovery.toFixed(1)}<span>%</span>`:'Not run';
   $('recovery-number').classList.toggle('missing',!selected);
-  $('recovery-text').textContent=!selected?'This branch was not run at this anchor. Choose another subspace or training step; no result is inferred.':arm==='fully scaled'?'All matrix directions use large-batch updates. This is the baseline penalty.':anchor>=11000?'Near the end of training, preserving these directions changes little. The early-training recovery does not persist throughout training.':arm==='random-768 held'?'A random subspace barely changes the penalty. Negative recovery means the measured loss gap got slightly larger.':`At step ${fmt(anchor)}, keeping ${fmt(selected.rank)} sharp directions on small-batch updates ${recovery>=0?'reduces':'increases'} the local penalty. This is a measured endpoint, not a projected final-training gain.`;
+  $('recovery-text').textContent=!selected?'This branch was not run at this anchor. Choose another subspace or training step; no result is inferred.':arm==='fully scaled'?'All matrix directions use large-batch updates. This is the baseline penalty.':anchor>=11000?'Near the end of training, preserving these directions changes little. The early-training recovery does not persist throughout training.':arm==='random-768 held'?'A random subspace barely changes the penalty. Negative recovery means the measured loss gap got slightly larger.':`At step ${fmt(anchor)}, keeping ${fmt(selected.rank)} sharp directions on small-batch updates ${recovery>=0?'reduces':'increases'} the local penalty.`;
   $('anchor-strip').innerHTML=interventionAnchors.map(a=>{const checkpoint=a/1000,r=DATA.recovery.find(r=>r.anchor===a&&r.arm==='top-768 held');return `<button class="anchor-cell ${a===anchor?'active':''}" data-anchor="${checkpoint}" aria-pressed="${a===anchor}" aria-label="Step ${a}, top 768 recovery ${r?r.percent+'%':'not run'}"><span>${checkpoint}K</span><i><span style="height:${r?Math.max(1,r.percent/65*100):0}%"></span></i><strong>${r?r.percent.toFixed(1)+'%':'Not run'}</strong></button>`;}).join('');
   document.querySelectorAll('.anchor-cell').forEach(b=>b.addEventListener('click',()=>{$('anchor').value=b.dataset.anchor;drawIntervention();}));
   dispatchEvent(new Event('batchsize:intervention'));

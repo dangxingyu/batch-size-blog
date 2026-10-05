@@ -19,6 +19,8 @@ function canvas(){
 const nodes={landscape:canvas(),'landscape-overview':canvas(),'sim-overview':{},'sim-window':{},'sim-zoom':{},'sim-auto-view':{setAttribute(){}},'sim-full-view':{setAttribute(){}},'sim-loss':{clientWidth:480,setAttribute(){},
   set innerHTML(value){this.markup=value;for(const method of ['sgd','newton'])nodes['sim-loss-'+method]={setAttribute(name,value){this[name]=value;}};},
   get innerHTML(){return this.markup;}},'sim-progress':{},'sim-progress-bar':{style:{}},'sim-play-label':{},'sim-play-icon':{}};
+for(const id of ['sim-batch','sim-sharp','sim-noise','sim-batch-output','sim-sharp-output','sim-noise-output','sim-updates','sim-seed','preset-small','preset-large'])
+  nodes[id]={value:'',classList:{toggle(){}},setAttribute(){}};
 const compassNodes=Object.fromEntries(['flat','sharp','origin'].map(name=>[name,{attributes:{},setAttribute(key,value){this.attributes[key]=String(value);}}]));
 const compass={querySelector(selector){
   if(selector==='circle')return compassNodes.origin;
@@ -30,29 +32,34 @@ const document={documentElement:{dataset:{theme:'light'}},hidden:false,createEle
   querySelector(selector){assert.equal(selector,'.coordinate-compass svg');return compass;}};
 const context=vm.createContext({document,Path2D:VectorPath,window:{devicePixelRatio:2},
   getComputedStyle:()=>({getPropertyValue:name=>name}),requestAnimationFrame:()=>1,cancelAnimationFrame(){},
+  Event:class Event{constructor(type){this.type=type;}},dispatchEvent(){},
   $:id=>nodes[id],token:name=>name,svgText:(x,y,text)=>`<text>${text}</text>`,colors:{sgd:'#a44530',newton:'#176d63'},fmt:n=>n.toLocaleString('en-US')});
 vm.runInContext(physics,context);
 vm.runInContext(cameraSource,context);
 const size=source.slice(source.indexOf('function canvasSize('),source.indexOf('const reducedMotion='));
 const renderer=source.slice(source.indexOf('function renderLandscape()'),source.indexOf("$('sim-play').addEventListener"));
 const tuning=source.slice(source.indexOf('const tuningCache='),source.indexOf('const hero='));
+const simulationState=source.slice(source.indexOf('const sim='),source.indexOf('let simRAF='));
+const configure=source.slice(source.indexOf('function configureSimulation()'),source.indexOf('function renderRisk()'));
 vm.runInContext(`
   const NQM=window.NQM,SimulationCamera=window.SimulationCamera;
   ${size}
   function frame(w,h,m){return {w,h,...m,iw:w-m.l-m.r,ih:h-m.t-m.b};}
-  function axes(f,min,max){return {svg:'<line/>',y:v=>f.t+f.ih*(1-(v-min)/(max-min))};}
-  const sim={batch:1,sharp:20,noise:8,start:[1,1],seed:7,speed:1,duration:60000,progress:0,playing:false,last:0};
+  function axes(f,min,max,xticks,x){globalThis.lossAxes={f,xticks,x};return {svg:'<line/>',y:v=>f.t+f.ih*(1-(v-min)/(max-min))};}
+  ${simulationState}
   const simLayer={canvas:document.createElement('canvas'),key:'',paths:null,end:-1,painted:-1,
     trails:{sgd:document.createElement('canvas'),newton:document.createElement('canvas')}};
   const simLoss={key:'',paths:null,end:-1,curves:{}};
   const simCamera={mode:'overview',paths:null,prepared:null,view:null,size:''};
   const simDetail={canvas:document.createElement('canvas'),key:'',painted:''};
-  let simRAF=0,simVisible=true;
+  let simRAF=0,simConfigRAF=0,simVisible=true;
+  function renderRisk() {}
+  ${configure}
   function setup(){
-    sim.tuned={sgd:NQM.tune(sim,'sgd'),newton:NQM.tune(sim,'newton')};
-    const steps=NQM.settlingSteps(sim,sim.tuned);
-    sim.paths=Object.fromEntries(['sgd','newton'].map(m=>[m,NQM.trajectory(sim,m,sim.tuned[m].eta,sim.seed,steps)]));
+    $('sim-batch').value=Math.log2(sim.batch);$('sim-sharp').value=sim.sharp;$('sim-noise').value=sim.noise;
+    configureSimulation();
     sim.runLossBounds={ymin:-5,ymax:2};
+    simLoss.key='';
   }
   ${renderer}
   ${tuning}
@@ -60,7 +67,7 @@ vm.runInContext(`
 `,context);
 function checkEnd(progress){
   vm.runInContext(`sim.progress=${progress};renderSim();`,context);
-  const state=vm.runInContext('({sim,simLayer,simLoss})',context),end=Math.floor(progress*(state.sim.paths.sgd.length-1));
+  const state=vm.runInContext('({sim,simLayer,simLoss,lossAxes})',context),end=Math.floor(progress*(state.sim.paths.sgd.length-1));
   const scale=Math.min(720/4.5,320/3.35);
   for(const method of ['sgd','newton']){
     const expected=state.sim.paths[method].slice(1,end+1).map(p=>[360+p.w[0]*scale,169.6-p.w[1]*scale]);
@@ -74,7 +81,7 @@ function checkEnd(progress){
     const path=nodes['sim-loss-'+method].d;
     assert.ok(path.split(/[ML]/).length<=353,'Loss-chart display work stays bounded.');
     const p=state.sim.paths[method][end];
-    const x=(58+p.samples/state.sim.paths.sgd.at(-1).samples*400).toFixed(2);
+    const x=(state.lossAxes.f.l+p.samples/state.sim.paths.sgd.at(-1).samples*state.lossAxes.f.iw).toFixed(2);
     const logLoss=Math.max(-5,Math.log10(Math.max(p.loss,1e-15)));
     const y=(20+182*(1-(logLoss+5)/7)).toFixed(2);
     assert.ok(path.endsWith(`${x},${y}`),'The displayed loss path ends at the actual current update.');
@@ -91,11 +98,25 @@ vm.runInContext('renderSim()',context);
 assert.equal(ellipses,51,'Resizing invalidates the backdrop.');
 nodes.landscape.getBoundingClientRect=()=>({width:720,height:320});
 vm.runInContext('sim.seed=8;setup()',context);checkEnd(.3); // Reseeding invalidates trajectories.
-assert.equal(vm.runInContext('sim.paths.sgd.length',context),16385);
-assert(nodes['sim-loss'].markup.includes('comparison-budget'),'The loss chart marks the original comparison budget.');
+assert.equal(vm.runInContext('sim.paths.sgd.length',context),4097);
+assert(!nodes['sim-loss'].markup.includes('comparison-budget'),'The 4K endpoint needs no interior budget marker.');
 assert(!nodes['sim-loss'].markup.includes('sim-expectation'),'The live loss chart must not include expected-loss curves.');
 assert(!nodes['sim-loss'].markup.includes('visibility="hidden"'),'Live loss paths are always visible.');
-console.log('PASS: live loss paths follow playback and retain the 4K comparison marker without expected curves.');
+for(const batch of [1,256,4096]){
+  vm.runInContext(`sim.batch=${batch};setup();sim.progress=1;renderSim();`,context);
+  const state=vm.runInContext('({sim,lossAxes})',context);
+  assert.equal(state.sim.duration,60000,'The adjustable simulation retains its 60-second playback.');
+  for(const method of ['sgd','newton']){
+    assert.equal(state.sim.paths[method].length,4096/batch+1);
+    assert.equal(state.sim.paths[method].at(-1).samples,4096,'Both optimizer paths stop at 4,096 processed samples.');
+    assert.equal(state.lossAxes.x(state.sim.paths[method].at(-1).samples),state.lossAxes.f.w-state.lossAxes.f.r,'The live-loss domain ends with the physical paths.');
+  }
+  assert.equal(state.lossAxes.xticks.at(-1)[0],4096);
+  assert.equal(state.lossAxes.xticks.at(-1)[1],'4K samples');
+  assert.equal(nodes.landscape.dataset.samples,'4096');
+  assert.equal(nodes['sim-progress'].textContent,'4,096 / 4,096 samples');
+}
+console.log('PASS: adjustable paths and live loss stop at 4K samples with 60-second playback and no extended tail.');
 for(const speed of [1,2,4]){
   const progress=vm.runInContext(`sim.speed=${speed};sim.progress=0;sim.playing=true;sim.last=100;tickSim(140);sim.progress`,context);
   assert.ok(Math.abs(progress-40*speed/60000)<1e-12);

@@ -84,7 +84,7 @@
     g.overview={f,x:g.x,y,points:s.rules.map(r=>g.shown.map(i=>[g.x(batchAt(i)),y(plotValue(r,i))]))};
     svg.setAttribute('viewBox',`0 0 ${f.w} ${h}`);
     let markup=`<title>Full linear range of all ${s.measurementCount} measured runs. The shaded band is the main plot's vertical range. Click a curve to inspect its rule.</title><defs><clipPath id="rule-overview-clip"><rect x="${f.l-4}" y="${f.t}" width="${f.iw+8}" height="${f.ih+3}"/></clipPath></defs>`;
-    [bottom,top].forEach(v=>{markup+=svgText(f.l-12,y(v)+5,v.toFixed(precision),'font-size="14" text-anchor="end"');});
+    [bottom,top].forEach(v=>{markup+=svgText(f.l-12,y(v)+5,v.toFixed(precision),'font-size="17" text-anchor="end"');});
     const clamp=value=>Math.max(bottom,Math.min(top,value));
     const bandTop=y(clamp(g.domain.top)),bandBottom=y(clamp(g.domain.bottom));
     markup+=`<rect x="${f.l}" y="${bandTop}" width="${f.iw}" height="${bandBottom-bandTop}" fill="${token('--orange')}" fill-opacity=".08" stroke="${token('--orange')}" stroke-opacity=".35" stroke-width="1"/><g clip-path="url(#rule-overview-clip)"><g class="rule-overview-cloud">`;

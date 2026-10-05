@@ -11,7 +11,7 @@
       case 'mi': return text === 'erf' ? '\\operatorname{erf}' : element.getAttribute('mathvariant') === 'bold' ? `\\mathbf{${escapeText(text)}}` : element.getAttribute('mathvariant') === 'normal' ? `\\mathrm{${escapeText(text)}}` : symbols[text] || text;
       case 'mn': return text.replaceAll(',', '{,}');
       case 'mo': return symbols[text] || text;
-      case 'mtext': return `\\mathrm{${escapeText(text)}}`;
+      case 'mtext': return `\\text{${escapeText(text)}}`;
       case 'msub': return `{${children[0]}}_{${children[1]}}`;
       case 'msup': return `{${children[0]}}^{${children[1]}}`;
       case 'mfrac': return `\\frac{${children[0]}}{${children[1]}}`;

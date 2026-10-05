@@ -3,7 +3,7 @@
 (function () {
   const el = id => document.getElementById(id);
   const gridStroke = () => token('--line');
-  const text = (x, y, label, extra = '') => svgText(x, y, label, `font-size="12" ${extra}`);
+  const text = (x, y, label, extra = '') => svgText(x, y, label, `font-size="17" ${extra}`);
 
   function closeChapters(restoreFocus = false) {
     el('mobile-chapters').hidden = true;
@@ -45,21 +45,21 @@
         - measurements.find(r => r.batch === batch && r.optimizer === first).loss }));
     const width = Math.max(240, el('pair-chart').clientWidth || 320);
     el('pair-chart').setAttribute('viewBox', `0 0 ${width} 210`);
-    const f = frame(width, 210, { l: 60, r: 18, t: 16, b: 35 });
+    const f = frame(width, 210, { l: 76, r: 18, t: 16, b: 35 });
     const limit = Math.ceil(Math.max(.004, ...points.map(p => Math.abs(p.value))) * 1.15 / .005) * .005;
     const x = b => f.l + Math.log2(b / rankBatches[0]) / 4 * f.iw;
     const y = v => f.t + f.ih * (.5 - v / (2 * limit));
     let markup = `<rect x="${f.l}" y="${y(.002)}" width="${f.iw}" height="${y(-.002)-y(.002)}" fill="${token('--sunken')}"/>`;
     [-limit, 0, limit].forEach(v => {
       markup += `<line x1="${f.l}" x2="${f.w-f.r}" y1="${y(v)}" y2="${y(v)}" stroke="${gridStroke()}" ${v===0?'stroke-width="1.5"':'stroke-dasharray="2 5"'}/>`;
-      markup += svgText(f.l-12, y(v)+5, v.toFixed(3), 'font-size="13" text-anchor="end"');
+      markup += svgText(f.l-12, y(v)+5, v.toFixed(3), 'font-size="17" text-anchor="end"');
     });
     el('pair-axis-quantity').innerHTML=mathMarkup(`<msub><mi>L</mi><mtext>${second}</mtext></msub><mo>−</mo><msub><mi>L</mi><mtext>${first}</mtext></msub>`);
     markup += `<path d="${line(points, p=>x(p.batch), p=>y(p.value))}" fill="none" stroke="${token('--ink')}" stroke-width="2.3" stroke-linejoin="round"/>`;
     points.forEach(p => {
       const sign = p.value > 0 ? first : p.value < 0 ? second : 'Tie';
       markup += `<circle cx="${x(p.batch)}" cy="${y(p.value)}" r="${p.batch===rankBatches[rankState.index]?5.5:3.5}" fill="${sign==='Tie'?token('--muted'):colors[sign]}" stroke="${token('--surface')}" stroke-width="2"><title>${batchName(p.batch)}: ${sign}${sign==='Tie'?'':` leads by ${Math.abs(p.value).toFixed(4)} nats`}</title></circle>`;
-      markup += svgText(x(p.batch), f.h-13, batchName(p.batch), `font-size="13" text-anchor="${p.batch===rankBatches.at(-1)?'end':'middle'}"`);
+      markup += svgText(x(p.batch), f.h-13, batchName(p.batch), `font-size="17" text-anchor="${p.batch===rankBatches.at(-1)?'end':'middle'}"`);
     });
     el('pair-chart').innerHTML = `<title>${first} versus ${second}: positive values favor ${first}, negative values favor ${second}</title>${markup}${researchAxes(f)}`;
     const start = points[0].value, end = points[3].value;
@@ -203,14 +203,14 @@
     const result = winnerResult(sim.tuned.sgd.total, sim.tuned.newton.total);
     el('phase-winner').textContent = result.winner;
     el('phase-winner').style.color = result.tied ? token('--ink') : colors[result.winner === 'SGD' ? 'sgd' : 'newton'];
-    el('phase-detail').innerHTML = `Batch ${fmt(sim.batch)}, noise variance ${sim.noise}. ${fmt(NQM.T / sim.batch)} updates. ${result.tied ? 'Expected losses are within 2% or both below 10<sup>−14</sup>.' : `The other method’s expected loss is ${result.factor >= 1000 ? scientificHTML(result.factor) : result.factor.toFixed(2)}× larger.`}`;
+    el('phase-detail').innerHTML = `${result.tied ? 'Expected losses are similar.' : `The other method’s expected loss is ${result.factor >= 1000 ? scientificHTML(result.factor) : result.factor.toFixed(2)}× larger.`}`;
     ['sgd', 'newton'].forEach(method => { el(`phase-${method}-loss`).textContent = sim.tuned[method].total.toPrecision(3); });
     const starts = { both: [1, 1], flat: [1, 0], sharp: [0, 1] };
     document.querySelectorAll('.phase-starts button').forEach(button => {
       const selected = starts[button.dataset.start].every((v, i) => Math.abs(sim.start[i] - v) < 1e-10);
       button.setAttribute('aria-pressed', String(selected));
     });
-    el('phase-context').innerHTML = `${mathMarkup(mathVariable('h',2)+`<mo>=</mo><mn>${sim.sharp}</mn>`)} · start ${mathMarkup('<mo>(</mo>'+mathVariable('w',1)+'<mo>,</mo>'+mathVariable('w',2)+'<mo>)</mo><mo>=</mo><mo>(</mo>'+sim.start.map(v=>`<mn>${Number(v.toFixed(2))}</mn>`).join('<mo>,</mo>')+'<mo>)</mo>')}. Noise acts in the flat direction.`;
+    el('phase-context').innerHTML = `Starting point: ${mathMarkup('<mo>(</mo>'+mathVariable('w',1)+'<mo>,</mo>'+mathVariable('w',2)+'<mo>)</mo><mo>=</mo><mo>(</mo>'+sim.start.map(v=>`<mn>${Number(v.toFixed(2))}</mn>`).join('<mo>,</mo>')+'<mo>)</mo>')}.`;
   }
   function drawPhaseMap() { updatePhaseSelection(); requestPhaseMap(); }
   function selectPhase(cell) {
@@ -285,7 +285,7 @@
     const random=DATA.recovery.find(r=>r.anchor===anchor && r.arm==='random-768 held');
     const width=Math.max(360,Math.min(640,el('rank-recovery-chart').clientWidth));
     el('rank-recovery-chart').setAttribute('viewBox',`0 0 ${width} 250`);
-    const f=frame(width,250,{l:46,r:26,t:34,b:34}),x=rank=>f.l+Math.log2(rank)/Math.log2(768)*f.iw;
+    const f=frame(width,250,{l:58,r:26,t:34,b:34}),x=rank=>f.l+Math.log2(rank)/Math.log2(768)*f.iw;
     const floor=Math.min(-5, ...rows.map(r=>r.percent),random?.percent??0);
     const y=value=>f.t+f.ih*(1-(value-floor)/(65-floor));
     let s='';
@@ -301,7 +301,7 @@
     if(random) s+=`<path d="M${x(768)-5},${y(random.percent)-5}l10,10m-10,0l10,-10" stroke="${token('--orange')}" stroke-width="2"/><title>Random 768: ${random.percent.toFixed(1)}% recovery</title>`;
     el('rank-recovery-chart').innerHTML=`<title>Measured recovery at training step ${fmt(anchor)}; green circles are sharp directions, rust cross is random 768</title>${s}`;
     if(focused)el('rank-recovery-chart').querySelector(`[data-arm="${focused}"]`)?.focus({preventScroll:true});
-    el('rank-lens-note').textContent='Green circles: sharp; rust cross: random 768. Log rank axis; measured points only.';
+    el('rank-lens-note').textContent='';
   }
   el('rank-recovery-chart').addEventListener('click', event=>{
     const point=event.target.closest('[data-arm]');

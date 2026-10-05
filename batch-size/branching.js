@@ -36,7 +36,7 @@
     const y=l=>box.bottom-(l-axis.min)/(axis.max-axis.min)*(box.bottom-box.top);
     const precision=Math.max(2,(String(axis.step).split('.')[1]||'').length);
     const xticks=closeView?[anchor,anchor+256,anchor+512,anchor+768,anchor+1024]:width<600?[1000,5000,9000,13000]:[1000,3000,5000,7000,9000,11000,13000];
-    const label=(px,py,txt,extra='')=>`<text x="${px}" y="${py}" font-size="${width<500?14:16}" ${extra}>${txt}</text>`;
+    const label=(px,py,txt,extra='')=>`<text x="${px}" y="${py}" font-size="17" ${extra}>${txt}</text>`;
     let svg=`<title>${closeView?'Continuations from':'Branches along the 128K base run; selected checkpoint'} ${fmt(anchor)}. Same start state and data stream.</title><defs><clipPath id="branch-plot-clip"><rect x="${box.left-2}" y="${box.top-3}" width="${box.right-box.left+4}" height="${box.bottom-box.top+6}"/></clipPath></defs>`;
     axis.ticks.forEach(t=>{svg+=`<line x1="${box.left}" x2="${box.right}" y1="${y(t)}" y2="${y(t)}" stroke="${colors.grid}" stroke-dasharray="2 5"/>${label(box.left-10,y(t)+5,t.toFixed(precision),'text-anchor="end"')}`;});
     xticks.forEach((t,i)=>{const offset=!closeView?`${t/1000}K`:width<500?(i===0?'0':`+${t-anchor}`):fmt(t);svg+=label(x(t),box.bottom+27,offset,`text-anchor="${i===0?'start':i===xticks.length-1?'end':'middle'}"`);});
@@ -78,12 +78,14 @@
     el('branch-curve-legend').innerHTML=`<span><i class="branch-line" style="color:${colors.control}" aria-hidden="true"></i>${closeView?'128K control':'128K base / control'}</span>`+entry('Fully scaled to 2M',colors.full,'fully scaled')+ranks.map((k,i)=>entry(`Top-${k}`,rankColors[i],`top-${k} held`)).join('')+entry('Random 768',colors.random,'random-768 held',true);
     el('branch-curve-legend').querySelectorAll('[data-branch-arm]').forEach(button=>button.addEventListener('click',()=>{el('held').value=button.dataset.branchArm;el('held').dispatchEvent(new Event('change'));}));
     el('branch-curve-state').textContent=`Checkpoint ${fmt(anchor)}`;
-    el('branch-curve-caption').textContent=!selected[arm]?endpointExists(arm)?`${armLabel}: the endpoint penalty is available below; its raw loss curve has not been imported.`:`${armLabel} was not run at this checkpoint; no curve is inferred.`:closeView?'All measured ranks from this checkpoint. Select a legend entry to highlight it.':'Branches at every checkpoint from 1K to 12K. Click a checkpoint to compare its measured continuations.';
+    el('branch-curve-caption').textContent=!selected[arm]?endpointExists(arm)?`${armLabel}: the endpoint penalty is available below; its raw loss curve has not been imported.`:`${armLabel} was not run at this checkpoint; no curve is inferred.`:'';
+    el('branch-back').hidden=!closeView;
     el('branch-close').setAttribute('aria-pressed',String(closeView));el('branch-all').setAttribute('aria-pressed',String(!closeView));
     chart.setAttribute('aria-label',`${closeView?'All measured branch loss curves from':'Base run and all measured ranks at every checkpoint; selected checkpoint'} ${fmt(anchor)}. ${selected[arm]?armLabel+' highlighted.':armLabel+(endpointExists(arm)?' curve unavailable; endpoint penalty available.':' was not run.')}`);
   }
   function schedule(){if(!frame)frame=requestAnimationFrame(render);}
   el('branch-all').addEventListener('click',()=>{closeView=false;render();});
+  el('branch-back').addEventListener('click',()=>{closeView=false;render();});
   el('branch-close').addEventListener('click',()=>{closeView=true;render();});
   addEventListener('batchsize:intervention',render);
   addEventListener('resize',schedule);

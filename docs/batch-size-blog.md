@@ -10,6 +10,10 @@ must remain explicitly distinguished.
 
 ## Evidence and typography
 
+Retained figure explanations, controls, legends, metric labels, and protocol text use 17px on desktop and 16px on phones. Repeated summaries and bookkeeping labels are omitted. Substantive mechanism takeaways remain below their titles at the same reading size. The local High/Low CNR quadratic panels have a wider vertical separation, and the checkpoint close-up includes a Go back button that restores the across-training view.
+
+The opening includes five linked TL;DR results directly below Two questions. Each is one sentence linking to its corresponding experiment, without an additional small summary. The SignSGD and SGD/Newton entries identify their toy setting; the intervention entry identifies language-model pretraining and the local penalty. In the optimizer setup, emphasis marks independent retuning at every batch rather than the batch-size range.
+
 The opening questions are copied verbatim from the paper’s active introduction. Main prose is written for a general audience around each playable: what the figure shows, how to use its controls, and what the result means. Short verbal formulas explain scaling presets, optimizer updates, loss decomposition, and branch penalties. Formal derivations, experiment settings, and qualifications stay in collapsed details. Candidate derivations appears fully expanded immediately before Scaling-rule search. Five large editorial pitches summarize the results and mechanism; the late-training limitation is ordinary prose. The original measurements retain source revision 462dc51. Directional curves and endpoints use the complete latest Overleaf CSV export at revision 83b7052, including the rerun smaller top-k branches at even checkpoints.
 
 An underlined **Paper** link sits directly below the article title and points to
@@ -86,7 +90,7 @@ protocol, endpoint fields and hashes are included in the downloadable dataset.
   Hero and sandbox animation loops stop when
   their view is hidden or the document loses visibility. Manual pause freezes the
   current frame. Reduced-motion startup shows a static completed hero trajectory.
-- The sandbox runs for 60 seconds at the default 1× (30 seconds at 2×, 15 seconds at 4×) and uses the same extended horizon as the hero. Its loss curve marks the original 4K comparison point and reports actual processed samples. The noise button reads “Resample noise.”
+- The sandbox runs for 60 seconds at the default 1× (30 seconds at 2×, 15 seconds at 4×). Its paths and live loss end at the 4,096-sample tuning budget; the x axis ends at 4K, with no continuation beyond that point. The hero retains its separate extended horizon. The noise button reads “Resample noise.”
 - The live loss figure sits beneath the parameter sliders at the bottom right of the landscape. It always shows the two sampled paths, synchronized with playback, with a fixed logarithmic range containing their extrema. There are no expected-loss curve overlays or visibility toggle. The original 4K tuning budget is marked; expected-loss bars stay in the results row. On narrow screens the controls and live chart stack below the landscape.
 - The sandbox caches its contours and appends every newly revealed trajectory segment
   to offscreen canvases. The loss plot retains its axes and precomputes a bounded
