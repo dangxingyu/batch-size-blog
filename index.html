@@ -82,19 +82,14 @@
 </section>
 
 <section id="rankings" class="chapter wrap">
-  <div class="chapter-head"><div><h2>Optimizer rankings across batch sizes.</h2></div></div><aside class="research-pitch"><span class="pitch-number" aria-hidden="true">02</span><div><h3>Mediating the Muon and Shampoo debate.</h3><p>Muon leads Shampoo at 128K under HyperBall; Shampoo wins at 2M under both norm controls. SOAP has the lowest loss at 128K.</p></div></aside>
+  <div class="chapter-head"><div><h2>Optimizer rankings across batch sizes.</h2></div></div><aside class="research-pitch"><span class="pitch-number" aria-hidden="true">02</span><div><h3>Mediating the Muon and Shampoo debate.</h3></div></aside>
 <div class="prose essay-prose">
   <p>Optimizer comparisons often use a single batch size. Yet changing the batch alters both gradient noise and the number of updates available within a fixed training budget. A poor scaling rule can also make an optimizer appear worse than it is. This raises our second question:</p>
 </div>
 <p class="scaling-question">Q2: Do optimizer rankings persist across batch sizes after extensive retuning?</p>
 <div class="prose essay-prose">
   <p>We compare Adam, Lion, Muon, SOAP, and Shampoo in the Modded-NanoGPT pretraining setting, <strong>from 128K to 2M tokens</strong> per update. Each run uses approximately 1.7 billion training tokens. We independently retune every optimizer at each batch size, so the comparison does not depend on a particular transfer rule. We test two ways of controlling weight norms. Decoupled weight decay shrinks weights at each update, while HyperBall keeps each hidden matrix’s Frobenius norm fixed.</p>
-  <p>The rankings change after retuning:</p>
-  <ol class="scaling-findings">
-    <li>With weight decay, SOAP has the lowest loss from 128K to 1M, but falls to third at 2M.</li>
-    <li>Shampoo has the lowest loss at 2M under both weight decay and HyperBall.</li>
-    <li>Under HyperBall, Muon outperforms Shampoo at 128K, while Shampoo outperforms Muon at 2M.</li>
-  </ol>
+  <p><strong>Under HyperBall, Muon outperforms Shampoo at 128K, while Shampoo outperforms Muon at 2M.</strong></p>
 </div>
   <div class="experiment light-panel">
     <div class="panel-top"><div><h3>Optimizer rankings.</h3></div><div class="segmented" id="family-tabs" aria-label="Weight norm control"><button class="active" data-family="standard_wd" aria-pressed="true">Weight decay</button><button data-family="hyperball" aria-pressed="false">HyperBall</button></div></div>
