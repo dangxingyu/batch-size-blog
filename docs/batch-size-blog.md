@@ -61,6 +61,8 @@ protocol, endpoint fields and hashes are included in the downloadable dataset.
 
 ## Interactions and computation
 
+The additional recovery-versus-rank plot and checkpoint recovery-card grid are removed. Checkpoint and subspace selection remain in the main curve/penalty comparison; all measurements and downloads are preserved.
+
 The 3D and 2D landscapes are projections of the same geometry-lab run. The icon view toggle preserves the current paths, seed, batch, curvature, starting point, playback progress, and live loss. Shared Run/Reset/Resample/Speed and camera controls apply to both views, and the 3D surface rebuilds when curvature changes. Both views end at 4K processed samples. Tabler cube/square icons are vendored with their MIT license.
 
 The SignSGD chart uses κ = B′/B and η(κB)/η(B). Linear and square-root guides use rust and teal; the selected measured curve and fitted exponent share a color blended between them according to the exponent. Only the chosen CNR curve is drawn; this color interpolation never interpolates measurement values. The local movement panel uses one exponent slider with adjacent preset choices. Its batch-1 arrow has a fixed length across all slider settings, and the duplicated exponent rail and compromise button are removed.
@@ -85,8 +87,7 @@ The branch curves and vertical endpoint-penalty bars share one comparison layout
 - Initialization presets share the sandbox's state. Phase-map arrows stay in their
   row/column; Home and End select the row's endpoints. Optional letters make the map
   readable without relying on hue. Expected losses are shown beside the winner.
-- The held-rank lens uses measured ranks only. Arrow keys move between available
-  ranks and focus survives a chart redraw. Missing branches remain “Not run.”
+- The direction selector and checkpoint slider control the branch comparison. Missing branches remain “Not run.”
 - The 3D projection caches trajectories and vector meshes at each drawing scale.
   Playback takes 60 seconds; large batches
   smoothly interpolate between actual optimizer states. This is a visual tween,

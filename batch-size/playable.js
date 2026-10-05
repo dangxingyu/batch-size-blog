@@ -253,51 +253,8 @@
   });
 
 
-  function drawRankLens() {
-    const focused = document.activeElement.closest('#rank-recovery-chart [data-arm]')?.dataset.arm;
-    const anchor=Number(el('anchor').value)*1000;
-    const rows=DATA.recovery.filter(r=>r.anchor===anchor && r.arm.startsWith('top-')).map(r=>({...r, rank:Number(r.arm.match(/top-(\d+)/)[1])})).sort((a,b)=>a.rank-b.rank);
-    const random=DATA.recovery.find(r=>r.anchor===anchor && r.arm==='random-768 held');
-    const width=Math.max(360,Math.min(640,el('rank-recovery-chart').clientWidth));
-    el('rank-recovery-chart').setAttribute('viewBox',`0 0 ${width} 250`);
-    const f=frame(width,250,{l:58,r:26,t:34,b:34}),x=rank=>f.l+Math.log2(rank)/Math.log2(768)*f.iw;
-    const floor=Math.min(-5, ...rows.map(r=>r.percent),random?.percent??0);
-    const y=value=>f.t+f.ih*(1-(value-floor)/(65-floor));
-    let s='';
-    [0,20,40,60].forEach(value=>{s+=`<line x1="${f.l}" x2="${f.w-f.r}" y1="${y(value)}" y2="${y(value)}" stroke="${gridStroke()}"/>`+text(f.l-10,y(value)+4,value+'%','text-anchor="end"');});
-    s+=text(f.l,15,'Local penalty removed');
-    [1,16,64,256,768].forEach(rank=>s+=text(x(rank),f.h-9,rank===1?'0 (baseline)':fmt(rank),'text-anchor="middle"'));
-    s+=`<circle cx="${x(1)}" cy="${y(0)}" r="4" fill="${token('--muted')}"/>`;
-    rows.forEach((r,index)=>{
-      const selected=el('held').value===r.arm;
-      const tabstop=selected||(!rows.some(row=>row.arm===el('held').value)&&index===0);
-      s+=`<g role="button" tabindex="${tabstop?0:-1}" data-arm="${r.arm}" aria-label="Preserve sharpest ${r.rank} directions: ${r.approximate?'approximately ':''}${r.percent.toFixed(1)} percent recovery" aria-pressed="${selected}"><circle cx="${x(r.rank)}" cy="${y(r.percent)}" r="16" fill="transparent"/><circle cx="${x(r.rank)}" cy="${y(r.percent)}" r="${selected?7:5}" fill="${token('--teal')}" stroke="${token('--surface')}" stroke-width="2"/>${selected?`<circle cx="${x(r.rank)}" cy="${y(r.percent)}" r="11" fill="none" stroke="${token('--teal')}"/>`:''}<title>Sharpest ${r.rank}: ${r.approximate?'≈ ':''}${r.percent.toFixed(1)}% recovery${r.approximate?' (from rounded paper-table penalties)':''}</title></g>`;
-    });
-    if(random) s+=`<path d="M${x(768)-5},${y(random.percent)-5}l10,10m-10,0l10,-10" stroke="${token('--orange')}" stroke-width="2"/><title>Random 768: ${random.percent.toFixed(1)}% recovery</title>`;
-    el('rank-recovery-chart').innerHTML=`<title>Measured recovery at training step ${fmt(anchor)}; green circles are sharp directions, rust cross is random 768</title>${s}`;
-    if(focused)el('rank-recovery-chart').querySelector(`[data-arm="${focused}"]`)?.focus({preventScroll:true});
-    el('rank-lens-note').textContent='';
-  }
-  el('rank-recovery-chart').addEventListener('click', event=>{
-    const point=event.target.closest('[data-arm]');
-    if(point){el('held').value=point.dataset.arm;drawIntervention();}
-  });
-  el('rank-recovery-chart').addEventListener('keydown', event=>{
-    const point=event.target.closest('[data-arm]');
-    if(!point)return;
-    const points=[...el('rank-recovery-chart').querySelectorAll('[data-arm]')];
-    let target=point;
-    if(event.key==='ArrowLeft')target=points[Math.max(0,points.indexOf(point)-1)];
-    else if(event.key==='ArrowRight')target=points[Math.min(points.length-1,points.indexOf(point)+1)];
-    else if(event.key==='Home')target=points[0];
-    else if(event.key==='End')target=points.at(-1);
-    else if(event.key!=='Enter'&&event.key!==' ')return;
-    event.preventDefault();const arm=target.dataset.arm;el('held').value=arm;drawIntervention();
-    el('rank-recovery-chart').querySelector(`[data-arm="${arm}"]`).focus({preventScroll:true});
-  });
-  addEventListener('batchsize:intervention', drawRankLens);
-  addEventListener('batchsize:theme', ()=>{drawPhaseMap();drawMatchup();drawRankLens();});
+  addEventListener('batchsize:theme', ()=>{drawPhaseMap();drawMatchup();});
   let chartResize;
-  addEventListener('resize',()=>{clearTimeout(chartResize);chartResize=setTimeout(()=>{drawMatchup();drawRankLens();},100);});
-  drawMatchup();drawPhaseMap();drawRankLens();
+  addEventListener('resize',()=>{clearTimeout(chartResize);chartResize=setTimeout(()=>{drawMatchup();},100);});
+  drawMatchup();drawPhaseMap();
 })();
