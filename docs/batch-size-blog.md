@@ -225,6 +225,8 @@ The geometry playground keeps playback actions and progress in a horizontal stri
 
 ## Narrative style
 
+Standalone prose, section labels, and research questions share a centered 760px reading column. The wider research pitches are centered at their existing 1040px limit; figures retain the full article width. Text remains left aligned, and descriptions inside visualization grids stay aligned with their own panels.
+
 The rewritten scaling-rule chapter is the reference for the rest of the main prose. Its unit is a research section rather than an individual widget: motivation and question, a compact concrete setup, then numbered findings. Use the researchers’ voice, retain the conditions and numbers needed to read the results, and avoid beginner definitions or click-by-click instructions in the surrounding paragraphs. Control labels and preset descriptions carry the interaction guidance.
 
 Rankings, the quadratic mechanism, directional scaling, the intervention, and the conclusion follow this structure. Keep expected loss at the 4,096-sample tuning budget separate from the extended sampled trajectory. The directional calculation freezes the parameter; the intervention affects matrix directions and does not establish CNR as their predictor. The 59.5% maximum refers to all measured checkpoints, while the displayed 5K checkpoint gives 59.3%. Detailed protocols retain their technical granularity.
