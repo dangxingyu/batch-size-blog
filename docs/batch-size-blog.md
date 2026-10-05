@@ -61,6 +61,12 @@ protocol, endpoint fields and hashes are included in the downloadable dataset.
 
 ## Interactions and computation
 
+The 3D and 2D landscapes are projections of the same geometry-lab run. The icon view toggle preserves the current paths, seed, batch, curvature, starting point, playback progress, and live loss. Shared Run/Reset/Resample/Speed and camera controls apply to both views, and the 3D surface rebuilds when curvature changes. Both views end at 4K processed samples. Tabler cube/square icons are vendored with their MIT license.
+
+The SignSGD chart uses κ = B′/B and η(κB)/η(B). Linear and square-root guides use rust and teal; the selected measured curve and fitted exponent share a color blended between them according to the exponent. Only the chosen CNR curve is drawn; this color interpolation never interpolates measurement values. The local movement panel uses one exponent slider with adjacent preset choices. Its batch-1 arrow has a fixed length across all slider settings, and the duplicated exponent rail and compromise button are removed.
+
+The branch curves and vertical endpoint-penalty bars share one comparison layout, with bars to the right on desktop. Selected top-k bars use the same color as their curve. Mobile stacks the views. All endpoint values and missing states retain the original measured data.
+
 - The leaderboard and pair comparison use reported losses at four measured batches.
   Replicate counts are retained in downloadable data and omitted from the ranking labels and tooltips.
   Whiskers are observed min–max ranges. The pair chart's ±0.002-nat band is a tuning
@@ -81,13 +87,13 @@ protocol, endpoint fields and hashes are included in the downloadable dataset.
   readable without relying on hue. Expected losses are shown beside the winner.
 - The held-rank lens uses measured ranks only. Arrow keys move between available
   ranks and focus survives a chart redraw. Missing branches remain “Not run.”
-- The hero caches projected trajectories and vector meshes at each drawing scale.
+- The 3D projection caches trajectories and vector meshes at each drawing scale.
   Playback takes 60 seconds; large batches
   smoothly interpolate between actual optimizer states. This is a visual tween,
   not an additional optimizer update. Both optimizer trajectories stop at 4,096 processed samples, matching the tuning budget, winner labels, expected-loss bars, and phase map. Its camera follows the recent paths, keeps
   the full accumulated trace as cached vectors, and
   holds the completed view until explicit Replay.
-  Hero and sandbox animation loops stop when
+  The shared animation loop stops when
   their view is hidden or the document loses visibility. Manual pause freezes the
   current frame. Reduced-motion startup shows a static completed hero trajectory.
 - The sandbox runs for 60 seconds at the default 1× (30 seconds at 2×, 15 seconds at 4×). Its paths and live loss end at the 4,096-sample tuning budget; the x axis ends at 4K, with no continuation beyond that point. The 3D hero uses the same 4K endpoint. The noise button reads “Resample noise.”
@@ -195,8 +201,7 @@ Expected-loss bars retain a neutral full-length track and a small origin marker 
 
 ## Screenshot feedback pass (October 2026)
 
-- The opening is now a text-led introduction. The existing 3D quadratic appears in
-  the mechanism chapter next to a guided small-batch / whole-budget comparison.
+- The opening is now a text-led introduction. The mechanism chapter contains a single geometry experiment with switchable 3D and 2D projections.
 - Scaling-rule search starts with validation loss. Background measurements use
   an ochre line in both themes. “Best at this batch” lives directly below the batch
   slider and follows batch changes, including playback. Power Lines now also has
@@ -221,7 +226,7 @@ Expected-loss bars retain a neutral full-length track and a small origin marker 
   not training trajectories or new data.
 
 The SignSGD learning-rate panel uses a wide chart with the CNR slider and fitted exponent in a compact sidebar. Its SVG height adapts to its rendered width (190–260px), retaining all independently tuned dots and the same log axes. Narrow layouts stack the chart and settings.
-The local movement panel aligns the quadratic illustration and response chart above one shared controls row. Direction readouts use the same method colors; the exponent rail and compromise action share a compact feedback strip. Both panels preserve the existing definitions and numerical results.
+The local movement panel aligns the quadratic illustration and response chart above one shared controls row. Direction readouts use the same method colors; one exponent slider and its preset buttons share a single control group. Both panels preserve the existing definitions and numerical results.
 
 The geometry playground keeps playback actions and progress in a horizontal strip beside the starting-direction presets, directly beneath the batch, curvature, and noise sliders. The toolbar stacks below the presets on narrow screens; the idle action reads “Run.”
 

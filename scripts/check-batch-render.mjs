@@ -19,8 +19,11 @@ function canvas(){
 const nodes={landscape:canvas(),'landscape-overview':canvas(),'sim-overview':{},'sim-window':{},'sim-zoom':{},'sim-auto-view':{setAttribute(){}},'sim-full-view':{setAttribute(){}},'sim-loss':{clientWidth:480,setAttribute(){},
   set innerHTML(value){this.markup=value;for(const method of ['sgd','newton'])nodes['sim-loss-'+method]={setAttribute(name,value){this[name]=value;}};},
   get innerHTML(){return this.markup;}},'sim-progress':{},'sim-progress-bar':{style:{}},'sim-play-label':{},'sim-play-icon':{}};
-for(const id of ['sim-batch','sim-sharp','sim-noise','sim-batch-output','sim-sharp-output','sim-noise-output','sim-updates','sim-seed','preset-small','preset-large'])
-  nodes[id]={value:'',classList:{toggle(){}},setAttribute(){}};
+for(const id of ['sim-batch','sim-sharp','sim-noise','sim-batch-output','sim-sharp-output','sim-noise-output','sim-updates','sim-seed','preset-small','preset-large','projection-3d','projection-2d'])
+  nodes[id]={value:'',attributes:{},listeners:{},classList:{toggle(){}},setAttribute(key,value){this.attributes[key]=String(value);},addEventListener(type,handler){this.listeners[type]=handler;}};
+nodes['hero-canvas']=canvas();
+nodes['geometry-lab']={dataset:{}};
+nodes['landscape-panel-3d']={hidden:false};nodes['landscape-panel-2d']={hidden:true};
 const compassNodes=Object.fromEntries(['flat','sharp','origin'].map(name=>[name,{attributes:{},setAttribute(key,value){this.attributes[key]=String(value);}}]));
 const compass={querySelector(selector){
   if(selector==='circle')return compassNodes.origin;
@@ -30,7 +33,7 @@ const compass={querySelector(selector){
 }};
 const document={documentElement:{dataset:{theme:'light'}},hidden:false,createElement:canvas,
   querySelector(selector){assert.equal(selector,'.coordinate-compass svg');return compass;}};
-const context=vm.createContext({document,Path2D:VectorPath,window:{devicePixelRatio:2},
+const context=vm.createContext({document,Path2D:VectorPath,window:{devicePixelRatio:2,matchMedia:()=>({matches:false})},
   getComputedStyle:()=>({getPropertyValue:name=>name}),requestAnimationFrame:()=>1,cancelAnimationFrame(){},
   Event:class Event{constructor(type){this.type=type;}},dispatchEvent(){},
   $:id=>nodes[id],token:name=>name,svgText:(x,y,text)=>`<text>${text}</text>`,colors:{sgd:'#a44530',newton:'#176d63'},fmt:n=>n.toLocaleString('en-US')});
@@ -41,11 +44,17 @@ const renderer=source.slice(source.indexOf('function renderLandscape()'),source.
 const tuning=source.slice(source.indexOf('const tuningCache='),source.indexOf('const hero='));
 const simulationState=source.slice(source.indexOf('const sim='),source.indexOf('let simRAF='));
 const configure=source.slice(source.indexOf('function configureSimulation()'),source.indexOf('function renderRisk()'));
+const projectionState=source.slice(source.indexOf('const reducedMotion='),source.indexOf('const tuningCache='));
+const projectionRenderer=source.slice(source.indexOf('const hero='),source.indexOf('const sim='));
 vm.runInContext(`
   const NQM=window.NQM,SimulationCamera=window.SimulationCamera;
   ${size}
   function frame(w,h,m){return {w,h,...m,iw:w-m.l-m.r,ih:h-m.t-m.b};}
   function axes(f,min,max,xticks,x){globalThis.lossAxes={f,xticks,x};return {svg:'<line/>',y:v=>f.t+f.ih*(1-(v-min)/(max-min))};}
+  ${projectionState}
+  globalThis.defaultProjection=landscapeView;
+  landscapeView='2d';
+  ${projectionRenderer}
   ${simulationState}
   const simLayer={canvas:document.createElement('canvas'),key:'',paths:null,end:-1,painted:-1,
     trails:{sgd:document.createElement('canvas'),newton:document.createElement('canvas')}};
@@ -184,38 +193,66 @@ assert.equal(nodes.landscape.dataset.zoom,'1.000');
 assert.equal(nodes['sim-overview'].hidden,true);
 console.log('PASS: automatic camera framing across batches, noise levels and screen sizes, bounded detail work, and full overview.');
 
-// Exercise the production hero's projected-path cache and sparse-step animation.
-
-nodes['hero-canvas']=canvas();
-for(const id of ['hero-batch','hero-batch-output','hero-winner','hero-view','hero-motion','hero-axis-flat','hero-axis-sharp'])nodes[id]={value:'8',style:{},setAttribute(){}};
-vm.runInContext(`
-  const reducedMotion={matches:false};let heroPaused=false,heroTime=0,heroRAF=0,heroVisible=true,lastHero=0;
-  const heroBackdrop={key:'',paths:null};
-  const hero={batch:256,sharp:20,noise:8,start:[1,1],paths:{},tuned:{}};
-  ${source.slice(source.indexOf('function configureHero()'),source.indexOf("$('hero-motion').addEventListener"))}
-`,context);
+// The 3D surface and 2D paths are projections of the same experiment and playback.
+assert.equal(context.defaultProjection,'3d','The geometry panel initially shows its 3D surface.');
+vm.runInContext("simVisible=true;sim.playing=false;setLandscapeProjection('3d');setSimulationView('auto')",context);
 for(const exponent of [0,8,12,8,0]){
-  nodes['hero-batch'].value=String(exponent);
-  vm.runInContext('configureHero()',context);
-  const state=vm.runInContext('({duration:hero.duration,length:heroBackdrop.prepared.count,paths:hero.paths})',context);
+  vm.runInContext(`sim.batch=2**${exponent};setup();`,context);
+  const state=vm.runInContext('({sim,hero,duration:hero.duration,length:heroBackdrop.prepared.count,paths:hero.paths})',context);
   assert.equal(state.length,4096/(2**exponent)+1,'Changing batch rebuilds the projected paths for the same 4K sample budget.');
+  assert.equal(state.hero.paths,state.sim.paths,'The 3D projection uses the same sampled paths as the 2D projection.');
+  assert.equal(state.hero.start,state.sim.start);
+  assert.equal(state.hero.tuned,state.sim.tuned);
+  assert.equal(state.hero.sharp,state.sim.sharp);
+  assert.equal(state.hero.noise,state.sim.noise);
   for(const method of ['sgd','newton'])
-    assert.equal(state.paths[method].at(-1).samples,4096,'Both cover paths stop at 4,096 processed samples.');
-  for(const progress of [0,.1,.5,.9,1])vm.runInContext(`drawHero(hero.duration*${progress})`,context);
+    assert.equal(state.paths[method].at(-1).samples,4096,'Both 3D paths stop at 4,096 processed samples.');
+  for(const progress of [0,.1,.5,.9,1])vm.runInContext(`sim.progress=${progress};renderSim()`,context);
   assert.equal(nodes['hero-canvas'].dataset.progress,'1.000');
+  assert.equal(nodes['hero-canvas'].dataset.samples,'4096');
   const paths=vm.runInContext('heroBackdrop.history',context);
-  for(const method of ['sgd','newton'])assert.equal(paths[method].points.length,state.length,'The hero retains its full trace.');
-  assert.equal(state.duration,60000,'The cover holds a full 60-second playback, including large batches.');
+  for(const method of ['sgd','newton'])assert.equal(paths[method].points.length,state.length,'The 3D projection retains its full trace.');
+  assert.equal(state.duration,60000,'Both projections share a full 60-second playback, including large batches.');
 }
-vm.runInContext('reducedMotion.matches=true;heroPaused=true;configureHero()',context);
+vm.runInContext("reducedMotion.matches=true;setSimulationView('overview')",context);
 assert.equal(nodes['hero-canvas'].dataset.progress,'1.000');
 assert.equal(nodes['hero-canvas'].dataset.zoom,'1.000');
-console.log('PASS: hero batch changes rebuild 4K-sample paths with 60-second playback, full traces, and static reduced-motion startup.');
+console.log('PASS: the 3D projection shares 4K-sample paths, 60-second playback, tuning and full traces with the 2D projection.');
 
-vm.runInContext('reducedMotion.matches=false;heroPaused=false;heroVisible=true;heroTime=hero.duration-20;lastHero=100;heroLoop(140)',context);
+vm.runInContext("reducedMotion.matches=false;sim.progress=1-20/sim.duration;sim.speed=1;sim.playing=true;sim.last=100;tickSim(140)",context);
 assert.equal(nodes['hero-canvas'].dataset.animating,'false');
-assert.equal(nodes['hero-motion'].textContent,'Replay');
-assert.equal(vm.runInContext('heroTime===hero.duration',context),true,'Completion holds the focused final frame instead of resetting the camera.');
+assert.equal(nodes['sim-play-label'].textContent,'Replay');
+assert.equal(vm.runInContext('sim.progress',context),1,'Completion holds the final frame for explicit replay.');
+
+vm.runInContext("sim.batch=256;sim.sharp=20;sim.noise=8;sim.start=[1,1];setup();sim.progress=.375;sim.playing=true;renderSim();syncSimPlayback();globalThis.sharedPaths=sim.paths;",context);
+const expectedSamples=1536,lossBeforeSwitch=nodes['sim-loss-sgd'].d;
+for(const view of ['2d','3d','2d','3d']){
+  nodes['projection-'+view].listeners.click();
+  const state=vm.runInContext('({progress:sim.progress,playing:sim.playing,paths:sim.paths,heroPaths:hero.paths})',context);
+  assert.equal(state.paths,context.sharedPaths,'Changing projection preserves the same random run.');
+  assert.equal(state.heroPaths,context.sharedPaths);
+  assert.equal(state.progress,.375,'Changing projection preserves playback progress.');
+  assert.equal(state.playing,true,'Changing projection preserves the playback state.');
+  assert.equal(nodes['geometry-lab'].dataset.projection,view);
+  assert.equal(nodes['landscape-panel-'+view].hidden,false);
+  assert.equal(nodes['landscape-panel-'+(view==='3d'?'2d':'3d')].hidden,true);
+  assert.equal(nodes['projection-'+view].attributes['aria-pressed'],'true');
+  assert.equal(nodes['sim-progress'].textContent,'1,536 / 4,096 samples');
+  assert.equal(nodes['sim-loss-sgd'].d,lossBeforeSwitch,'The loss curve remains synchronized when projections change.');
+  assert.equal(nodes[view==='3d'?'hero-canvas':'landscape'].dataset.samples,String(expectedSamples));
+  assert.equal(nodes[view==='3d'?'hero-canvas':'landscape'].dataset.animating,'true');
+}
+vm.runInContext('sim.progress=1;renderSim();sim.progress=0;renderSim()',context);
+for(const method of ['sgd','newton'])assert.equal(vm.runInContext(`heroBackdrop.history.${method}.points.length`,context),1,'Replay clears the old 3D trace before appending again.');
+
+// Curvature must invalidate the surface even if the sampled path identity stays fixed.
+vm.runInContext('sim.sharp=2;configureHero();renderSim();globalThis.oldSurface={key:heroBackdrop.key,meshes:heroBackdrop.meshes,points:heroBackdrop.points,paths:hero.paths};sim.sharp=60;configureHero();renderSim()',context);
+const surface=vm.runInContext('({old:oldSurface,key:heroBackdrop.key,meshes:heroBackdrop.meshes,points:heroBackdrop.points,paths:hero.paths})',context);
+assert.equal(surface.paths,surface.old.paths,'This probe holds the path identity fixed.');
+assert.notEqual(surface.key,surface.old.key,'Changing sharp-direction curvature invalidates the 3D surface key.');
+assert.notEqual(surface.meshes,surface.old.meshes,'Changing curvature rebuilds the surface mesh.');
+assert.notEqual(surface.points.sgd[0][1],surface.old.points.sgd[0][1],'The displayed surface height responds to the current curvature.');
+console.log('PASS: projection switching preserves paths, progress, loss and playback; replay resets traces; curvature rebuilds the 3D surface.');
 for(const noise of [0,8,80])for(const batch of [1,256,4096]){
   const zooms=vm.runInContext(`
     sim.noise=${noise};sim.batch=${batch};setup();
@@ -227,7 +264,7 @@ for(const noise of [0,8,80])for(const batch of [1,256,4096]){
     assert.ok(Math.log(zooms[i]/zooms[i-1])<.011,'Zoom moves gradually between adjacent frames.');
   }
 }
-console.log('PASS: monotonic smooth zoom and a final hero frame that waits for explicit replay.');
+console.log('PASS: monotonic smooth zoom and a final frame that waits for explicit replay.');
 
 console.log('PASS: full vector traces persist through auto zoom, replay, resize and reseeding in both figures.');
 

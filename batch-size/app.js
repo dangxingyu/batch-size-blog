@@ -72,7 +72,7 @@ $('ranking-view-tabs').addEventListener('click',e=>{const b=e.target.closest('[d
 
 function canvasSize(canvas){const rect=canvas.getBoundingClientRect(),dpr=Math.min(Math.max(window.devicePixelRatio||1,2),3);if(canvas.width!==Math.round(rect.width*dpr)||canvas.height!==Math.round(rect.height*dpr)){canvas.width=Math.round(rect.width*dpr);canvas.height=Math.round(rect.height*dpr);}const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);return {ctx,w:rect.width,h:rect.height,dpr};}
 const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
-let heroPaused=reducedMotion.matches,heroTime=0,heroVisible=true,lastHero=0,heroRAF=0;
+let landscapeView='3d';
 const heroBackdrop={key:'',paths:null};
 const tuningCache=new Map();
 function tunedMethods(config){
@@ -87,16 +87,9 @@ function tunedMethods(config){
 }
 const hero={batch:256,sharp:20,noise:8,start:[1,1],paths:{},tuned:{}};
 function configureHero(){
-  hero.batch=2**+$('hero-batch').value;
-  hero.tuned=tunedMethods(hero);hero.paths={};
-  const steps=NQM.T/hero.batch;
-  ['sgd','newton'].forEach(m=>{hero.paths[m]=NQM.trajectory(hero,m,hero.tuned[m].eta,7,steps);});
-  hero.duration=60000;
-  $('hero-batch-output').textContent=fmt(hero.batch);
-  $('hero-batch').setAttribute('aria-valuetext',`${hero.batch} samples per batch`);
-  const winningMethod=hero.tuned.sgd.total<hero.tuned.newton.total?'sgd':'newton';
-  $('hero-winner').innerHTML=`<span class="hero-method-${winningMethod}">${winningMethod==='sgd'?'SGD':'Newton'}</span> leads`;
-  heroTime=heroPaused?hero.duration:0;updateHeroMotion();drawHero(heroTime);syncHeroPlayback();
+  // Both projections render this same sampled run; only the camera changes.
+  Object.assign(hero,{batch:sim.batch,sharp:sim.sharp,noise:sim.noise,start:sim.start,
+    paths:sim.paths,tuned:sim.tuned,duration:sim.duration});
 }
 function syncHeroCompass(horizontal,vertical){
   const svg=document.querySelector('.coordinate-compass svg');
@@ -114,8 +107,8 @@ function drawHero(time){
   const canvas=$('hero-canvas'),{ctx,w,h,dpr}=canvasSize(canvas);
   const ox=w*.5,oy=h*.68;
   const basisX=w*.155,basisY=h*.11;
-  const project=(x,y)=>[ox+(x-y)*basisX,oy+(x+y)*basisY-Math.log1p(.5*(x*x+20*y*y))*h*.20];
-  const key=`${w}:${h}:${dpr}:${document.documentElement.dataset.theme}`;
+  const project=(x,y)=>[ox+(x-y)*basisX,oy+(x+y)*basisY-Math.log1p(.5*(x*x+hero.sharp*y*y))*h*.20];
+  const key=`${w}:${h}:${dpr}:${hero.sharp}:${document.documentElement.dataset.theme}`;
   if(heroBackdrop.key!==key){
     heroBackdrop.key=key;heroBackdrop.paths=null;
     syncHeroCompass(basisX,basisY);
@@ -135,7 +128,7 @@ function drawHero(time){
     heroBackdrop.view=SimulationCamera.layout(heroBackdrop.prepared,w,h,{base,cy:oy,limitX:w*.5-30,limitY:top});
   }
   const progress=Math.min(1,time/hero.duration);
-  const camera=SimulationCamera.sample(heroBackdrop.prepared,heroBackdrop.view,progress,reducedMotion.matches?'overview':'auto');
+  const camera=SimulationCamera.sample(heroBackdrop.prepared,heroBackdrop.view,progress,simCamera.mode);
   const scale=camera.scale,palette=heroBackdrop.palette;
   const view=([x,y])=>[ox+(x-ox)*scale,oy+(y-oy)*scale];
   const octave=Math.log2(Math.max(1,scale)),level=2**Math.floor(octave),fraction=octave-Math.floor(octave);
@@ -190,32 +183,8 @@ function drawHero(time){
   if(camera.from===0){const start=view(project(...hero.start));ctx.beginPath();ctx.arc(...start,4,0,Math.PI*2);ctx.strokeStyle=palette.ink;ctx.lineWidth=1;ctx.stroke();ctx.fillText('same start',start[0]+10,start[1]-10);}
   canvas.dataset.zoom=camera.zoom.toFixed(3);canvas.dataset.duration=hero.duration.toFixed(0);canvas.dataset.progress=progress.toFixed(3);
   canvas.dataset.steps=String(hero.paths.sgd.length-1);canvas.dataset.samples=String(Math.floor(progress*(hero.paths.sgd.length-1))*hero.batch);
+  $('sim-zoom').textContent=camera.zoom.toFixed(1)+'×';
 }
-function heroLoop(ts){
-  heroRAF=0;if(heroPaused||!heroVisible||document.hidden)return;
-  if(lastHero)heroTime=Math.min(hero.duration,heroTime+Math.min(ts-lastHero,50));
-  lastHero=ts;drawHero(heroTime);
-  if(heroTime>=hero.duration){updateHeroMotion();syncHeroPlayback();}
-  else heroRAF=requestAnimationFrame(heroLoop);
-}
-function syncHeroPlayback(){
-  const running=!heroPaused&&heroVisible&&!document.hidden&&heroTime<hero.duration;$('hero-canvas').dataset.animating=String(running);
-  if(!running){cancelAnimationFrame(heroRAF);heroRAF=0;lastHero=0;}
-  else if(!heroRAF){lastHero=0;heroRAF=requestAnimationFrame(heroLoop);}
-}
-function updateHeroMotion(){
-  const label=heroTime>=hero.duration?'Replay':heroPaused?'Play':'Pause';
-  $('hero-motion').textContent=label;$('hero-motion').setAttribute('aria-label',label+' landscape animation');
-}
-$('hero-motion').addEventListener('click',()=>{
-  if(heroTime>=hero.duration){heroTime=0;heroPaused=false;}else heroPaused=!heroPaused;
-  updateHeroMotion();syncHeroPlayback();drawHero(heroTime);
-});
-$('hero-batch').addEventListener('input',configureHero);
-new IntersectionObserver(entries=>{heroVisible=entries[0].isIntersecting;syncHeroPlayback();},{threshold:0}).observe($('hero-canvas'));
-reducedMotion.addEventListener('change',e=>{if(e.matches){heroPaused=true;heroTime=hero.duration;updateHeroMotion();syncHeroPlayback();drawHero(heroTime);}});
-document.fonts.ready.then(()=>{heroBackdrop.key='';drawHero(heroTime);simLayer.key='';simDetail.painted='';renderSim();});
-
 const sim={batch:1,sharp:20,noise:8,start:[1,1],seed:7,speed:1,duration:60000,progress:0,playing:false,paths:{},tuned:{},last:0};
 let simRAF=0,simConfigRAF=0,simVisible=true;
 const simLayer={canvas:document.createElement('canvas'),key:'',paths:null,end:-1,painted:-1,
@@ -233,6 +202,7 @@ function configureSimulation(){
   const minLoss=Math.min(...Object.values(sim.paths).map(ps=>Math.min(...ps.map(p=>Math.max(p.loss,1e-15)))));
   sim.runLossBounds={ymax:Math.ceil(Math.log10(maxLoss)),ymin:Math.floor(Math.log10(minLoss))};
   if(sim.runLossBounds.ymax<=sim.runLossBounds.ymin)sim.runLossBounds.ymax=sim.runLossBounds.ymin+1;
+  configureHero();
   syncSimPlayback();
   $('sim-batch-output').textContent=fmt(sim.batch);$('sim-sharp-output').textContent=sim.sharp+'×';$('sim-noise-output').textContent=sim.noise;$('sim-updates').textContent=fmt(steps);$('sim-seed').textContent='SEED '+sim.seed;
   $('sim-batch').setAttribute('aria-valuetext',`${sim.batch} samples per batch; ${steps} trajectory updates`);
@@ -363,7 +333,7 @@ function setSimulationView(mode){
   simCamera.mode=mode;
   $('sim-auto-view').setAttribute('aria-pressed',String(mode==='auto'));
   $('sim-full-view').setAttribute('aria-pressed',String(mode==='overview'));
-  renderLandscape();
+  renderSim();
 }
 function renderLoss(){
   const chart=$('sim-loss'),width=Math.max(240,Math.min(1100,chart.clientWidth));
@@ -395,7 +365,8 @@ function renderLoss(){
   });
 }
 function renderSim(){
-  renderLandscape();renderLoss();
+  if(landscapeView==='3d')drawHero(sim.progress*sim.duration);else renderLandscape();
+  renderLoss();
   const steps=sim.paths.sgd.length-1,samples=Math.floor(sim.progress*steps)*sim.batch,total=steps*sim.batch;
   const progress=`${fmt(samples)} / ${fmt(total)} samples`,label=sim.playing?'Pause':sim.progress>=1?'Replay':'Run',icon=sim.playing?'Ⅱ':sim.progress>=1?'↻':'▶';
   $('landscape').dataset.steps=String(steps);$('landscape').dataset.samples=String(samples);
@@ -404,15 +375,26 @@ function renderSim(){
   if($('sim-play-label').textContent!==label)$('sim-play-label').textContent=label;
   if($('sim-play-icon').textContent!==icon)$('sim-play-icon').textContent=icon;
 }
+function setLandscapeProjection(view){
+  if(view!=='3d'&&view!=='2d')return;
+  landscapeView=view;
+  $('geometry-lab').dataset.projection=view;
+  $('landscape-panel-3d').hidden=view!=='3d';$('landscape-panel-2d').hidden=view!=='2d';
+  ['3d','2d'].forEach(mode=>{const button=$('projection-'+mode);button.classList.toggle('active',mode===view);button.setAttribute('aria-pressed',String(mode===view));});
+  heroBackdrop.key='';simLayer.key='';simDetail.painted='';
+  if(sim.paths.sgd){renderSim();syncSimPlayback();}
+}
+['3d','2d'].forEach(view=>$('projection-'+view).addEventListener('click',()=>setLandscapeProjection(view)));
 function tickSim(ts){simRAF=0;if(!sim.playing||!simVisible||document.hidden)return;if(sim.last)sim.progress=Math.min(1,sim.progress+Math.min(ts-sim.last,60)*sim.speed/sim.duration);sim.last=ts;if(sim.progress>=1)sim.playing=false;renderSim();if(sim.playing)simRAF=requestAnimationFrame(tickSim);else syncSimPlayback();}
 function syncSimPlayback(){
-  const running=sim.playing&&simVisible&&!document.hidden;$('landscape').dataset.animating=String(running);
+  const running=sim.playing&&simVisible&&!document.hidden;
+  $('landscape').dataset.animating=String(running&&landscapeView==='2d');$('hero-canvas').dataset.animating=String(running&&landscapeView==='3d');
   if(!running){cancelAnimationFrame(simRAF);simRAF=0;sim.last=0;}
   else if(!simRAF){sim.last=0;simRAF=requestAnimationFrame(tickSim);}
 }
 $('sim-play').addEventListener('click',()=>{sim.playing=!sim.playing;if(sim.progress>=1)sim.progress=0;renderSim();syncSimPlayback();});
 new IntersectionObserver(entries=>{simVisible=entries[0].isIntersecting;syncSimPlayback();},{threshold:0}).observe($('landscape').closest('.sandbox'));
-document.addEventListener('visibilitychange',()=>{syncHeroPlayback();syncSimPlayback();});
+document.addEventListener('visibilitychange',syncSimPlayback);
 $('sim-reset').addEventListener('click',configureSimulation);
 $('sim-reseed').addEventListener('click',()=>{sim.seed++;configureSimulation();});
 ['sim-batch','sim-sharp','sim-noise'].forEach(id=>$(id).addEventListener('input',()=>{if(!simConfigRAF)simConfigRAF=requestAnimationFrame(configureSimulation);}));
@@ -420,7 +402,7 @@ $('sim-speed').addEventListener('change',()=>{sim.speed=Number($('sim-speed').va
 $('sim-auto-view').addEventListener('click',()=>setSimulationView('auto'));
 $('sim-full-view').addEventListener('click',()=>setSimulationView('overview'));
 $('sim-overview').addEventListener('click',()=>setSimulationView('overview'));
-reducedMotion.addEventListener('change',e=>{if(e.matches)setSimulationView('overview');});
+reducedMotion.addEventListener('change',e=>{if(e.matches){sim.playing=false;setSimulationView('overview');syncSimPlayback();}});
 $('preset-small').addEventListener('click',()=>{$('sim-batch').value=0;configureSimulation();});
 $('preset-large').addEventListener('click',()=>{$('sim-batch').value=8;configureSimulation();});
 $('landscape').addEventListener('pointerdown',e=>{const rect=e.currentTarget.getBoundingClientRect(),{scale,cx,cy}=renderLandscape();sim.start=[Math.max(-1.85,Math.min(1.85,(e.clientX-rect.left-cx)/scale)),Math.max(-1.3,Math.min(1.3,(cy-(e.clientY-rect.top))/scale))];configureSimulation();});
@@ -450,7 +432,7 @@ function drawMovementQuadratic(alpha,ratio){
   const svg=$('movement-quadratic'),w=Math.max(240,Math.min(440,svg.clientWidth)),h=350;
   svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
   const x=v=>24+(v+1.2)/2.8*(w-48);
-  const arrowUnit=.7/Math.max(1,...[1,.001].map(c=>NQM.displacement(c,ratio,alpha)));
+  const arrowUnit=.3; // Fixed batch-1 reference length across every exponent and batch ratio.
   let markup=`<title>Local movement at batch ratio ${ratio}, exponent ${alpha.toFixed(2)}. Arrows are normalized to each direction's batch-1 movement.</title>`;
   [1,.001].forEach((cnr,i)=>{
     const top=i*190,color=i?colors.newton:colors.sgd,movement=NQM.displacement(cnr,ratio,alpha),end=1-arrowUnit*movement;
@@ -477,9 +459,10 @@ function drawIntervention(){
   const recovery=arm==='fully scaled'?0:DATA.recovery.find(r=>r.anchor===anchor&&r.arm===arm)?.percent;
   $('anchor-output').textContent=fmt(anchor);$('anchor').setAttribute('aria-valuetext',`Training step ${fmt(anchor)}`);
   [...$('held').options].forEach(o=>{const exists=rows.some(r=>r.arm===o.value);o.textContent=o.textContent.replace(' · not run','')+(exists?'':' · not run');});
-  const show=[{label:'Fully scaled to 2M',row:full},{label:arm==='fully scaled'?'Selected: fully scaled':arm.replace(' held',''),row:selected,highlight:true},...(arm!=='random-768 held'?[{label:'Random 768 directions',row:random,random:true}]:[])];
+  const show=[{label:'Fully scaled to 2M',row:full,highlight:arm==='fully scaled'},...(arm==='fully scaled'?[]:[{label:arm.replace(' held',''),row:selected,highlight:true}]),...(arm!=='random-768 held'?[{label:'Random 768 directions',row:random,random:true}]:[])];
   const max=Math.max(full.penalty,random?.penalty||0,selected?.penalty||0)*1.08;
-  $('penalty-bars').innerHTML=show.map(({label,row,highlight,random})=>`<div class="penalty-row"><div class="penalty-label"><span>${label}</span><strong>${row?'+'+row.penalty.toFixed(row.penaltyPrecision??2):'Not run'}</strong></div><div class="penalty-track"><div class="penalty-fill ${highlight?'highlight':''} ${random?'random':''}" style="width:${row?row.penalty/max*100:0}%"></div></div></div>`).join('');
+  const heldColors={16:'#1a73e8',64:'#9334e6',128:'#e37400',256:'#1e8e3e',768:'#087c75'};
+  $('penalty-bars').innerHTML=show.map(({label,row,highlight,random})=>`<div class="penalty-row"><div class="penalty-label"><span>${label}</span><strong>${row?'+'+row.penalty.toFixed(row.penaltyPrecision??2):'Not run'}</strong></div><div class="penalty-track"><div class="penalty-fill ${highlight?'highlight':''} ${random?'random':''}" style="height:${row?row.penalty/max*100:0}%;background:${row?.arm.startsWith('top-')?heldColors[row.rank]:random||row?.arm==='random-768 held'?token('--muted'):token('--coral')};"></div></div></div>`).join('');
   const approximate=DATA.recovery.find(r=>r.anchor===anchor&&r.arm===arm)?.approximate;
   $('recovery-number').innerHTML=selected&&recovery!==undefined?`${approximate?'≈ ':''}${recovery.toFixed(1)}<span>%</span>`:'Not run';
   $('recovery-number').classList.toggle('missing',!selected);
@@ -505,7 +488,7 @@ function updatePalette(){
 $('theme-toggle').addEventListener('click',()=>{
   document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';
   try{localStorage.setItem('batchsize-theme',document.documentElement.dataset.theme);}catch(e){}
-  updatePalette();drawRankings();renderRisk();renderSim();drawScaling();drawHero(heroTime);
+  updatePalette();drawRankings();renderRisk();renderSim();drawScaling();
   dispatchEvent(new Event('batchsize:theme'));
 });
 // A setup URL preserves the toy experiment, including its starting point and noise seed.
@@ -516,19 +499,20 @@ function loadSetup(){
   $('sim-sharp').value=Math.round(read('sharp',2,60,20));$('sim-noise').value=Math.round(read('noise',0,80,8));
   sim.seed=Math.round(read('seed',0,4294967295,7));sim.start=[read('x',-1.85,1.85,1),read('y',-1.3,1.3,1)];
   const speed=Number(params.get('speed'));sim.speed=[1,2,4].includes(speed)?speed:1;$('sim-speed').value=String(sim.speed);
+  landscapeView=params.get('projection')==='2d'?'2d':'3d';
   simCamera.mode=reducedMotion.matches||params.get('view')==='overview'?'overview':'auto';
   $('sim-auto-view').setAttribute('aria-pressed',String(simCamera.mode==='auto'));$('sim-full-view').setAttribute('aria-pressed',String(simCamera.mode==='overview'));
 }
 $('sim-share').addEventListener('click',async()=>{
   const url=new URL(location.href);url.search='';
-  Object.entries({batch:sim.batch,sharp:sim.sharp,noise:sim.noise,seed:sim.seed,x:sim.start[0],y:sim.start[1],speed:sim.speed,view:simCamera.mode}).forEach(([k,v])=>url.searchParams.set(k,v));url.hash='playground';
+  Object.entries({batch:sim.batch,sharp:sim.sharp,noise:sim.noise,seed:sim.seed,x:sim.start[0],y:sim.start[1],speed:sim.speed,view:simCamera.mode,projection:landscapeView}).forEach(([k,v])=>url.searchParams.set(k,v));url.hash='playground';
   history.replaceState(null,'',url);const feedback=$('share-feedback');
   try{await navigator.clipboard.writeText(url.href);feedback.textContent='Setup link copied. It includes your start point and noise seed.';}
   catch(e){feedback.textContent='Copy this link to share your setup: ';const field=document.createElement('input');field.readOnly=true;field.value=url.href;field.setAttribute('aria-label','Shareable experiment URL');feedback.appendChild(field);field.focus();field.select();}
 });
-let resizeTimer;addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{drawHero(heroTime);renderLandscape();renderLoss();drawRankings();drawScaling();},100);});
-updatePalette();loadSetup();drawRankings();configureSimulation();drawScaling();drawIntervention();configureHero();updateHeroMotion();
-syncHeroPlayback();
+let resizeTimer;addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{renderSim();drawRankings();drawScaling();},100);});
+document.fonts.ready.then(()=>{heroBackdrop.key='';simLayer.key='';simDetail.painted='';renderSim();});
+updatePalette();loadSetup();setLandscapeProjection(landscapeView);drawRankings();configureSimulation();drawScaling();drawIntervention();
 // Reveal only unseen sections, so the first screen and reduced-motion readers stay immediate.
 if(!reducedMotion.matches){
   const reveal=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');reveal.unobserve(e.target);}}),{threshold:.06});

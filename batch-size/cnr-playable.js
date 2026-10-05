@@ -14,29 +14,43 @@
       measuredIndex
     };
   }
+  // Color follows the fitted exponent; the numerical curve remains measured.
+  function scalingColor(exponent, sqrtColor, linearColor) {
+    const mix=Math.max(0,Math.min(1,(exponent-.5)/.5));
+    const channels=color=>{
+      const value=color.trim().replace('#','');
+      const hex=value.length===3?value.split('').map(c=>c+c).join(''):value;
+      return [0,2,4].map(index=>parseInt(hex.slice(index,index+2),16));
+    };
+    const squareRoot=channels(sqrtColor),linear=channels(linearColor);
+    return `rgb(${squareRoot.map((channel,i)=>Math.round(channel+(linear[i]-channel)*mix)).join(' ')})`;
+  }
   function draw() {
     const selected=conditionAt(+$('paper-cnr').value);
     const width=Math.max(240,Math.min(1000,$('cnr-paper-chart').clientWidth));
     const height=Math.round(Math.max(190,Math.min(260,width*.32)));
     const f=researchFrame('cnr-paper-chart',width,height,{l:58,r:20,t:16,b:34});
-    const x=b=>f.l+Math.log2(b)/8*f.iw,y=ratio=>f.t+f.ih*(1-Math.log10(ratio)/Math.log10(400));
+    const referenceBatch=data.groups[selected.measuredIndex].rows[0].batch;
+    const x=kappa=>f.l+Math.log2(kappa)/8*f.iw,y=ratio=>f.t+f.ih*(1-Math.log10(ratio)/Math.log10(400));
     const cnrLabel=Number(selected.cnr.toPrecision(3)).toString();
-    let markup=`<title>Independently tuned SignSGD learning-rate ratios, CNR ${cnrLabel}, fixed momentum 0.9 and 4,096 samples</title>`;
+    const linearColor=token('--orange'),sqrtColor=token('--teal');
+    const tunedColor=scalingColor(selected.fittedExponent,sqrtColor,linearColor);
+    document.querySelector('.cnr-paper-panel').style.setProperty('--cnr-tuned-color',tunedColor);
+    let markup=`<title>Independently tuned SignSGD learning-rate ratios against batch ratio kappa, CNR ${cnrLabel}, fixed momentum 0.9 and 4,096 samples</title>`;
     for(const ratio of [1,10,100]){
       markup+=`<line x1="${f.l}" x2="${f.w-f.r}" y1="${y(ratio)}" y2="${y(ratio)}" stroke="${token('--line')}" stroke-dasharray="2 5"/>`+svgText(f.l-12,y(ratio)+5,ratio+'×','font-size="16" text-anchor="end"');
     }
     for(const b of (f.w<330?[1,16,256]:[1,4,16,64,256]))markup+=svgText(x(b),f.h-13,String(b),`font-size="16" text-anchor="${b===256?'end':'middle'}"`);
     const guides=[1,256];
-    markup+=`<path d="${line(guides,b=>x(b),b=>y(b))}" stroke="${token('--muted')}" stroke-dasharray="2 4" fill="none" opacity=".65"/>`;
-    markup+=`<path d="${line(guides,b=>x(b),b=>y(Math.sqrt(b)))}" stroke="${token('--muted')}" stroke-dasharray="7 3 2 3" fill="none" opacity=".65"/>`;
-    const drawCurve=(curve,active)=>{
+    markup+=`<path class="cnr-guide-linear" d="${line(guides,kappa=>x(kappa),kappa=>y(kappa))}" stroke="${linearColor}" stroke-width="1.8" stroke-dasharray="2 4" fill="none" opacity=".8"/>`;
+    markup+=`<path class="cnr-guide-sqrt" d="${line(guides,kappa=>x(kappa),kappa=>y(Math.sqrt(kappa)))}" stroke="${sqrtColor}" stroke-width="1.8" stroke-dasharray="7 3 2 3" fill="none" opacity=".8"/>`;
+    const drawCurve=curve=>{
       const ratios=curve.rows.map(p=>p.eta/curve.rows[0].eta);
-      return `<g opacity="${active?1:.16}" data-cnr="${curve.cnr}"><path d="${line(curve.rows,p=>x(p.batch),p=>y(p.eta/curve.rows[0].eta))}" stroke="${active?token('--orange'):token('--ink')}" stroke-width="${active?2.7:1.5}" fill="none"/>`+curve.rows.map((p,i)=>`<circle cx="${x(p.batch)}" cy="${y(ratios[i])}" r="${active?3.2:2}" fill="${active?token('--orange'):token('--ink')}" stroke="${token('--surface')}" stroke-width="${active?1.5:0}"><title>${p.source==='paper'?'Paper measurement':'Supplemental tuning'}: CNR ${Number(curve.cnr.toPrecision(3))}, batch ${p.batch}, ${p.processedSamples??4096} samples: learning rate ${p.eta.toPrecision(5)}, ratio ${ratios[i].toFixed(3)}</title></circle>`).join('')+'</g>';
+      return `<g data-cnr="${curve.cnr}"><path class="cnr-tuned-curve" d="${line(curve.rows,p=>x(p.batch/referenceBatch),p=>y(p.eta/curve.rows[0].eta))}" stroke="${tunedColor}" stroke-width="2.7" fill="none"/>`+curve.rows.map((p,i)=>`<circle cx="${x(p.batch/referenceBatch)}" cy="${y(ratios[i])}" r="3.2" fill="${tunedColor}" stroke="${token('--surface')}" stroke-width="1.5"><title>${p.source==='paper'?'Paper measurement':'Supplemental tuning'}: CNR ${Number(curve.cnr.toPrecision(3))}, batch ratio ${p.batch/referenceBatch}, ${p.processedSamples??4096} samples: learning rate ${p.eta.toPrecision(5)}, ratio ${ratios[i].toFixed(3)}</title></circle>`).join('')+'</g>';
     };
-    data.groups.forEach((curve,i)=>{if(i!==selected.measuredIndex && (curve.paperCondition??true))markup+=drawCurve(curve,false);});
-    markup+=drawCurve(data.groups[selected.measuredIndex],true);
+    markup+=drawCurve(data.groups[selected.measuredIndex]);
     $('cnr-paper-chart').innerHTML=markup+researchAxes(f);
-    $('cnr-paper-chart').setAttribute('aria-label',`Tuned learning-rate ratios at CNR ${cnrLabel}`);
+    $('cnr-paper-chart').setAttribute('aria-label',`Tuned learning-rate ratios against batch ratio kappa at CNR ${cnrLabel}`);
     $('cnr-paper-chart').dataset.cnr=selected.cnr;$('cnr-paper-chart').dataset.interpolated='false';
     $('paper-cnr-output').textContent=cnrLabel;
     $('paper-cnr').setAttribute('aria-valuetext',`CNR ${cnrLabel}, independently tuned`);

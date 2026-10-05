@@ -253,31 +253,6 @@
   });
 
 
-  function preservingExponent(cnr, ratio) {
-    return ratio===1 ? null : 1-Math.log(NQM.response(cnr,ratio)/NQM.response(cnr,1))/Math.log(ratio);
-  }
-  function drawChallenge() {
-    const ratio = 2**Number(el('scale-batch').value), alpha = Number(el('scale-alpha').value);
-    const high = preservingExponent(1,ratio), low = preservingExponent(.001,ratio);
-    const rail = el('exponent-rail');
-    rail.setAttribute('aria-label', ratio===1?'No batch change; every exponent preserves both directions':`Current exponent ${alpha.toFixed(2)}. High CNR requires ${high.toFixed(2)}; low CNR requires ${low.toFixed(2)}.`);
-    rail.innerHTML = `<div class="rail-track"></div><span class="rail-end start">0</span><span class="rail-end end">1</span><span class="rail-current" style="left:${alpha*100}%"><b>Your exponent</b></span>` + (ratio===1?'':
-      `<span class="rail-target high" style="left:${high*100}%"><b>High CNR ${high.toFixed(2)}</b></span><span class="rail-target low" style="left:${low*100}%"><b>Low CNR ${low.toFixed(2)}</b></span>`);
-    const movements=[NQM.displacement(1,ratio,alpha),NQM.displacement(.001,ratio,alpha)];
-    const error=Math.max(...movements.map(v=>Math.abs(Math.log(v))));
-    el('challenge-result').innerHTML=ratio===1?'With no batch change, both are preserved for every exponent. Increase the batch to create the challenge.'
-      : error<.05?'Both movements are within about 5% of the reference at this batch ratio.'
-      : `The larger multiplicative deviation is ${Math.exp(error).toFixed(2)}×. High CNR needs ${mathMarkup(mathVariable("α")+`<mo>≈</mo><mn>${high.toFixed(2)}</mn>`)}; low CNR needs ${mathMarkup(mathVariable("α")+`<mo>≈</mo><mn>${low.toFixed(2)}</mn>`)}.`;
-    el('scale-compromise').disabled = ratio===1;
-  }
-  el('scale-compromise').addEventListener('click', () => {
-    const ratio=2**Number(el('scale-batch').value);
-    if(ratio===1) return;
-    el('scale-alpha').value=((preservingExponent(1,ratio)+preservingExponent(.001,ratio))/2).toFixed(2);
-    drawScaling();
-  });
-  addEventListener('batchsize:scaling', drawChallenge);
-
   function drawRankLens() {
     const focused = document.activeElement.closest('#rank-recovery-chart [data-arm]')?.dataset.arm;
     const anchor=Number(el('anchor').value)*1000;
@@ -321,8 +296,8 @@
     el('rank-recovery-chart').querySelector(`[data-arm="${arm}"]`).focus({preventScroll:true});
   });
   addEventListener('batchsize:intervention', drawRankLens);
-  addEventListener('batchsize:theme', ()=>{drawPhaseMap();drawMatchup();drawChallenge();drawRankLens();});
+  addEventListener('batchsize:theme', ()=>{drawPhaseMap();drawMatchup();drawRankLens();});
   let chartResize;
   addEventListener('resize',()=>{clearTimeout(chartResize);chartResize=setTimeout(()=>{drawMatchup();drawRankLens();},100);});
-  drawMatchup();drawPhaseMap();drawChallenge();drawRankLens();
+  drawMatchup();drawPhaseMap();drawRankLens();
 })();
