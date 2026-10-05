@@ -38,7 +38,7 @@
  <h2 id="takeaways-title">TL;DR</h2>
  <ol class="takeaway-list">
   <li><a href="#scaling"><span class="takeaway-number" aria-hidden="true">01</span><p>The best tested scaling rule depends on the task and target batch.</p><span class="takeaway-arrow" aria-hidden="true">↗</span></a></li>
-  <li><a href="#rankings"><span class="takeaway-number" aria-hidden="true">02</span><p>Under HyperBall, Muon outperforms Shampoo at 128K, while Shampoo outperforms Muon at 2M.</p><span class="takeaway-arrow" aria-hidden="true">↗</span></a></li>
+  <li><a href="#rankings"><span class="takeaway-number" aria-hidden="true">02</span><p>Optimizer rankings can reverse as batch size changes, even after independent retuning.</p><span class="takeaway-arrow" aria-hidden="true">↗</span></a></li>
   <li><a href="#directional-scaling"><span class="takeaway-number" aria-hidden="true">03</span><p>In a SignSGD toy experiment, higher curvature-to-noise ratios shift tuned learning rates toward linear scaling.</p><span class="takeaway-arrow" aria-hidden="true">↗</span></a></li>
   <li><a href="#playground"><span class="takeaway-number" aria-hidden="true">04</span><p>On a noisy quadratic, SGD can win at small batches and Newton at large batches, even after optimal retuning.</p><span class="takeaway-arrow" aria-hidden="true">↗</span></a></li>
   <li><a href="#directions"><span class="takeaway-number" aria-hidden="true">05</span><p>In language-model pretraining, keeping the sharpest 0.001% of directions at small batch removes up to 59.5% of the local batch-size penalty.</p><span class="takeaway-arrow" aria-hidden="true">↗</span></a></li>
@@ -93,7 +93,7 @@
 </section>
 
 <section id="rankings" class="chapter wrap">
-  <div class="chapter-head"><div><h2>Optimizer rankings across batch sizes.</h2></div></div><aside class="research-pitch"><span class="pitch-number" aria-hidden="true">02</span><div><h3>Mediating the Muon and Shampoo debate.</h3></div></aside>
+  <div class="chapter-head"><div><h2>Optimizer rankings across batch sizes.</h2></div></div><aside class="research-pitch"><span class="pitch-number" aria-hidden="true">02</span><div><h3>Optimizer rankings can reverse, even after retuning.</h3></div></aside>
 <div class="prose essay-prose">
   <p>Optimizer comparisons often use a single batch size. Yet changing the batch alters both gradient noise and the number of updates available within a fixed training budget. A poor scaling rule can also make an optimizer appear worse than it is. This raises our second question:</p>
 </div>
