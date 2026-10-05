@@ -34,7 +34,7 @@ body{font-size:17px;-webkit-font-smoothing:antialiased}h1,h2{font-variation-sett
 .mechanism-exposition .pseudo-equation{display:grid;grid-template-columns:72px minmax(0,1fr);gap:14px}
 .method-sgd{color:var(--coral)}
 .method-newton{color:var(--teal)}
-.component-copy{font-size:16px;line-height:1.85;color:var(--muted);max-width:760px}
+.component-copy{font-size:16px;line-height:1.85;color:var(--muted);max-width:none}
 .component-copy strong{color:var(--ink);font-weight:600}
 .component-copy p+p{margin-top:15px}
 .component-intro{margin-bottom:28px}
