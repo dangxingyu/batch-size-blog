@@ -36,6 +36,11 @@
     {
       "path": "scripts/plot_muonw_transfer_comparison.py",
       "sha256": "c4ffc3d783a2ae49b08e6a9fe97f1e0a57b8f252ae8349185589d66f50ab1535"
+    },
+    {
+      "path": "src/appendices/lm_directional_protocol.tex",
+      "sha256": "793e24a479713153c2f66c5e3b9f6e4d31c86c98d8409a87dbc1fc1318aa39cd",
+      "source_revision": "467c973"
     }
   ],
   "notes": [
@@ -74,5 +79,19 @@
     "sample_budget": 4096,
     "metric": "Monte Carlo expected terminal loss; independently tuned learning rate per batch",
     "source": "figures/signsgd_cnr_scaling_b09/training.csv"
+  },
+  "directional_endpoint_supplement": {
+    "source": "paper table",
+    "sourceRevision": "467c973",
+    "path": "src/appendices/lm_directional_protocol.tex",
+    "sha256": "793e24a479713153c2f66c5e3b9f6e4d31c86c98d8409a87dbc1fc1318aa39cd",
+    "penaltyPrecision": 1,
+    "branchBaseSteps": {
+      "12000": 992,
+      "other_checkpoints": 1024
+    },
+    "scope": "Even-checkpoint top-16/64/128/256 penalties. Absolute losses and raw curves are unavailable in this table.",
+    "recovery": "Approximate recovery computed from the published one-decimal held and fully-scaled penalties.",
+    "endpoints": 24
   }
 }

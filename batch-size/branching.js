@@ -5,8 +5,8 @@
   const el=id=>document.getElementById(id),chart=el('branch-trajectory-chart');
   if(!chart||!data)return;
   let closeView=false,frame=0;
-  // Odd checkpoints have the most complete rank sweeps. Keep all raw data downloadable.
-  const anchors=Object.keys(data.anchors).map(Number).filter(a=>(a/1000)%2===1).sort((a,b)=>a-b);
+  // Show every measured checkpoint; missing rank sweeps remain absent.
+  const anchors=Object.keys(data.anchors).map(Number).sort((a,b)=>a-b);
   const ranks=[16,64,128,256,768],rankColors=['#1a73e8','#9334e6','#e37400','#1e8e3e','#087c75'];
   const fmt=n=>n.toLocaleString('en-US');
   const token=name=>getComputedStyle(document.documentElement).getPropertyValue(name).trim();
@@ -73,13 +73,14 @@
       node.addEventListener('click',choose);node.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose();}});
     });
     const armLabel=arm==='fully scaled'?'Fully scaled':arm==='random-768 held'?'Random 768 held':arm.replace('top-','Sharpest ').replace(' held',' held');
-    const entry=(name,color,key,dashed=false)=>`<button type="button" data-branch-arm="${key}" aria-pressed="${key===arm}" ${closeView&&!selected[key]?'disabled':''}><i class="branch-line ${dashed?'dashed':''}" style="color:${color}" aria-hidden="true"></i>${name}${closeView&&!selected[key]?' · not run':''}</button>`;
+    const endpointExists=key=>window.PAPER_DATA?.endpoints.some(r=>r.anchor===anchor&&r.arm===key);
+    const entry=(name,color,key,dashed=false)=>`<button type="button" data-branch-arm="${key}" aria-pressed="${key===arm}" ${!selected[key]?'disabled':''}><i class="branch-line ${dashed?'dashed':''}" style="color:${color}" aria-hidden="true"></i>${name}${!selected[key]?endpointExists(key)?' · curve unavailable':' · not run':''}</button>`;
     el('branch-curve-legend').innerHTML=`<span><i class="branch-line" style="color:${colors.control}" aria-hidden="true"></i>${closeView?'128K control':'128K base / control'}</span>`+entry('Fully scaled to 2M',colors.full,'fully scaled')+ranks.map((k,i)=>entry(`Top-${k}`,rankColors[i],`top-${k} held`)).join('')+entry('Random 768',colors.random,'random-768 held',true);
     el('branch-curve-legend').querySelectorAll('[data-branch-arm]').forEach(button=>button.addEventListener('click',()=>{el('held').value=button.dataset.branchArm;el('held').dispatchEvent(new Event('change'));}));
     el('branch-curve-state').textContent=`Checkpoint ${fmt(anchor)}`;
-    el('branch-curve-caption').textContent=!selected[arm]?`${armLabel} was not run at this checkpoint; no curve is inferred.`:closeView?'All measured ranks from this checkpoint. Select a legend entry to highlight it.':'Branches at 1K, 3K, 5K, 7K, 9K, and 11K. Click a checkpoint to compare all its continuations.';
+    el('branch-curve-caption').textContent=!selected[arm]?endpointExists(arm)?`${armLabel}: the endpoint penalty is available below; its raw loss curve has not been imported.`:`${armLabel} was not run at this checkpoint; no curve is inferred.`:closeView?'All measured ranks from this checkpoint. Select a legend entry to highlight it.':'Branches at every checkpoint from 1K to 12K. Click a checkpoint to compare its measured continuations.';
     el('branch-close').setAttribute('aria-pressed',String(closeView));el('branch-all').setAttribute('aria-pressed',String(!closeView));
-    chart.setAttribute('aria-label',`${closeView?'All measured branch loss curves from':'Base run and all measured ranks at odd checkpoints; selected checkpoint'} ${fmt(anchor)}. ${selected[arm]?armLabel+' highlighted.':armLabel+' was not run.'}`);
+    chart.setAttribute('aria-label',`${closeView?'All measured branch loss curves from':'Base run and all measured ranks at every checkpoint; selected checkpoint'} ${fmt(anchor)}. ${selected[arm]?armLabel+' highlighted.':armLabel+(endpointExists(arm)?' curve unavailable; endpoint penalty available.':' was not run.')}`);
   }
   function schedule(){if(!frame)frame=requestAnimationFrame(render);}
   el('branch-all').addEventListener('click',()=>{closeView=false;render();});

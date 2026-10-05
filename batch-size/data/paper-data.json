@@ -485,6 +485,54 @@
     },
     {
       "anchor": 2000,
+      "arm": "top-16 held",
+      "rank": 16,
+      "loss": null,
+      "control": null,
+      "penalty": 52.1,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 2000,
+      "arm": "top-64 held",
+      "rank": 64,
+      "loss": null,
+      "control": null,
+      "penalty": 45.8,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 2000,
+      "arm": "top-128 held",
+      "rank": 128,
+      "loss": null,
+      "control": null,
+      "penalty": 39.4,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 2000,
+      "arm": "top-256 held",
+      "rank": 256,
+      "loss": null,
+      "control": null,
+      "penalty": 38.6,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 2000,
       "arm": "top-768 held",
       "rank": 768,
       "loss": 3.719793,
@@ -578,6 +626,54 @@
       "loss": 3.615659,
       "control": 3.575381,
       "penalty": 40.28
+    },
+    {
+      "anchor": 4000,
+      "arm": "top-16 held",
+      "rank": 16,
+      "loss": null,
+      "control": null,
+      "penalty": 29.3,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 4000,
+      "arm": "top-64 held",
+      "rank": 64,
+      "loss": null,
+      "control": null,
+      "penalty": 27.3,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 4000,
+      "arm": "top-128 held",
+      "rank": 128,
+      "loss": null,
+      "control": null,
+      "penalty": 25.5,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 4000,
+      "arm": "top-256 held",
+      "rank": 256,
+      "loss": null,
+      "control": null,
+      "penalty": 23.2,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
     },
     {
       "anchor": 4000,
@@ -677,6 +773,54 @@
     },
     {
       "anchor": 6000,
+      "arm": "top-16 held",
+      "rank": 16,
+      "loss": null,
+      "control": null,
+      "penalty": 21.9,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 6000,
+      "arm": "top-64 held",
+      "rank": 64,
+      "loss": null,
+      "control": null,
+      "penalty": 16.7,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 6000,
+      "arm": "top-128 held",
+      "rank": 128,
+      "loss": null,
+      "control": null,
+      "penalty": 14.1,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 6000,
+      "arm": "top-256 held",
+      "rank": 256,
+      "loss": null,
+      "control": null,
+      "penalty": 12.5,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 6000,
       "arm": "top-768 held",
       "rank": 768,
       "loss": 3.502153,
@@ -762,6 +906,54 @@
       "loss": 3.435304,
       "control": 3.41469,
       "penalty": 20.61
+    },
+    {
+      "anchor": 8000,
+      "arm": "top-16 held",
+      "rank": 16,
+      "loss": null,
+      "control": null,
+      "penalty": 18.1,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 8000,
+      "arm": "top-64 held",
+      "rank": 64,
+      "loss": null,
+      "control": null,
+      "penalty": 15.6,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 8000,
+      "arm": "top-128 held",
+      "rank": 128,
+      "loss": null,
+      "control": null,
+      "penalty": 14.2,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 8000,
+      "arm": "top-256 held",
+      "rank": 256,
+      "loss": null,
+      "control": null,
+      "penalty": 13.0,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
     },
     {
       "anchor": 8000,
@@ -853,6 +1045,54 @@
     },
     {
       "anchor": 10000,
+      "arm": "top-16 held",
+      "rank": 16,
+      "loss": null,
+      "control": null,
+      "penalty": 11.5,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 10000,
+      "arm": "top-64 held",
+      "rank": 64,
+      "loss": null,
+      "control": null,
+      "penalty": 11.3,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 10000,
+      "arm": "top-128 held",
+      "rank": 128,
+      "loss": null,
+      "control": null,
+      "penalty": 11.3,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 10000,
+      "arm": "top-256 held",
+      "rank": 256,
+      "loss": null,
+      "control": null,
+      "penalty": 11.2,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 10000,
       "arm": "top-768 held",
       "rank": 768,
       "loss": 3.348238,
@@ -941,6 +1181,54 @@
     },
     {
       "anchor": 12000,
+      "arm": "top-16 held",
+      "rank": 16,
+      "loss": null,
+      "control": null,
+      "penalty": 12.9,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 992
+    },
+    {
+      "anchor": 12000,
+      "arm": "top-64 held",
+      "rank": 64,
+      "loss": null,
+      "control": null,
+      "penalty": 12.9,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 992
+    },
+    {
+      "anchor": 12000,
+      "arm": "top-128 held",
+      "rank": 128,
+      "loss": null,
+      "control": null,
+      "penalty": 12.9,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 992
+    },
+    {
+      "anchor": 12000,
+      "arm": "top-256 held",
+      "rank": 256,
+      "loss": null,
+      "control": null,
+      "penalty": 13.0,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 992
+    },
+    {
+      "anchor": 12000,
       "arm": "top-768 held",
       "rank": 768,
       "loss": 3.278245,
@@ -989,6 +1277,54 @@
     },
     {
       "anchor": 2000,
+      "arm": "top-16 held",
+      "percent": -2.3575638506876384,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 50.9,
+      "heldPenalty": 52.1,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 2000,
+      "arm": "top-64 held",
+      "percent": 10.019646365422396,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 50.9,
+      "heldPenalty": 45.8,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 2000,
+      "arm": "top-128 held",
+      "percent": 22.593320235756387,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 50.9,
+      "heldPenalty": 39.4,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 2000,
+      "arm": "top-256 held",
+      "percent": 24.165029469548127,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 50.9,
+      "heldPenalty": 38.6,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 2000,
       "arm": "top-768 held",
       "percent": 40.1
     },
@@ -1026,6 +1362,54 @@
       "anchor": 3000,
       "arm": "random-768 held",
       "percent": 0.3
+    },
+    {
+      "anchor": 4000,
+      "arm": "top-16 held",
+      "percent": 27.29528535980148,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 40.3,
+      "heldPenalty": 29.3,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 4000,
+      "arm": "top-64 held",
+      "percent": 32.258064516129025,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 40.3,
+      "heldPenalty": 27.3,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 4000,
+      "arm": "top-128 held",
+      "percent": 36.724565756823814,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 40.3,
+      "heldPenalty": 25.5,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 4000,
+      "arm": "top-256 held",
+      "percent": 42.4317617866005,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 40.3,
+      "heldPenalty": 23.2,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
     },
     {
       "anchor": 4000,
@@ -1069,6 +1453,54 @@
     },
     {
       "anchor": 6000,
+      "arm": "top-16 held",
+      "percent": 12.749003984063755,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 25.1,
+      "heldPenalty": 21.9,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 6000,
+      "arm": "top-64 held",
+      "percent": 33.46613545816734,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 25.1,
+      "heldPenalty": 16.7,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 6000,
+      "arm": "top-128 held",
+      "percent": 43.82470119521913,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 25.1,
+      "heldPenalty": 14.1,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 6000,
+      "arm": "top-256 held",
+      "percent": 50.199203187250994,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 25.1,
+      "heldPenalty": 12.5,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 6000,
       "arm": "top-768 held",
       "percent": 59.5
     },
@@ -1101,6 +1533,54 @@
       "anchor": 7000,
       "arm": "random-768 held",
       "percent": -0.4
+    },
+    {
+      "anchor": 8000,
+      "arm": "top-16 held",
+      "percent": 12.135922330097081,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 20.6,
+      "heldPenalty": 18.1,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 8000,
+      "arm": "top-64 held",
+      "percent": 24.271844660194187,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 20.6,
+      "heldPenalty": 15.6,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 8000,
+      "arm": "top-128 held",
+      "percent": 31.06796116504855,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 20.6,
+      "heldPenalty": 14.2,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 8000,
+      "arm": "top-256 held",
+      "percent": 36.893203883495154,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 20.6,
+      "heldPenalty": 13.0,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
     },
     {
       "anchor": 8000,
@@ -1139,6 +1619,54 @@
     },
     {
       "anchor": 10000,
+      "arm": "top-16 held",
+      "percent": 8.730158730158733,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 12.6,
+      "heldPenalty": 11.5,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 10000,
+      "arm": "top-64 held",
+      "percent": 10.317460317460315,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 12.6,
+      "heldPenalty": 11.3,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 10000,
+      "arm": "top-128 held",
+      "percent": 10.317460317460315,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 12.6,
+      "heldPenalty": 11.3,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 10000,
+      "arm": "top-256 held",
+      "percent": 11.111111111111116,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 12.6,
+      "heldPenalty": 11.2,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 1024
+    },
+    {
+      "anchor": 10000,
       "arm": "top-768 held",
       "percent": 11.4
     },
@@ -1174,6 +1702,54 @@
     },
     {
       "anchor": 12000,
+      "arm": "top-16 held",
+      "percent": 0.0,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 12.9,
+      "heldPenalty": 12.9,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 992
+    },
+    {
+      "anchor": 12000,
+      "arm": "top-64 held",
+      "percent": 0.0,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 12.9,
+      "heldPenalty": 12.9,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 992
+    },
+    {
+      "anchor": 12000,
+      "arm": "top-128 held",
+      "percent": 0.0,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 12.9,
+      "heldPenalty": 12.9,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 992
+    },
+    {
+      "anchor": 12000,
+      "arm": "top-256 held",
+      "percent": -0.7751937984496138,
+      "approximate": true,
+      "source": "paper table",
+      "sourceRevision": "467c973",
+      "fullyScaledPenalty": 12.9,
+      "heldPenalty": 13.0,
+      "penaltyPrecision": 1,
+      "branchBaseSteps": 992
+    },
+    {
+      "anchor": 12000,
       "arm": "top-768 held",
       "percent": -0.0
     },
@@ -1182,5 +1758,18 @@
       "arm": "random-768 held",
       "percent": -0.0
     }
-  ]
+  ],
+  "branchEndpointSupplement": {
+    "source": "paper table",
+    "sourceRevision": "467c973",
+    "path": "src/appendices/lm_directional_protocol.tex",
+    "sha256": "793e24a479713153c2f66c5e3b9f6e4d31c86c98d8409a87dbc1fc1318aa39cd",
+    "penaltyPrecision": 1,
+    "branchBaseSteps": {
+      "12000": 992,
+      "other_checkpoints": 1024
+    },
+    "scope": "Even-checkpoint top-16/64/128/256 penalties. Absolute losses and raw curves are unavailable in this table.",
+    "recovery": "Approximate recovery computed from the published one-decimal held and fully-scaled penalties."
+  }
 }

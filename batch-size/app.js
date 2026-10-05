@@ -469,6 +469,8 @@ function drawMovementQuadratic(alpha,ratio){
 ['scale-alpha','scale-batch'].forEach(id=>$(id).addEventListener('input',drawScaling));
 document.querySelectorAll('#scale-presets button').forEach(b=>b.addEventListener('click',()=>{$('scale-alpha').value=b.dataset.alpha;drawScaling();}));
 
+const interventionAnchors=[...new Set(DATA.endpoints.map(row=>row.anchor))].sort((a,b)=>a-b);
+$('anchor').min=interventionAnchors[0]/1000;$('anchor').max=interventionAnchors.at(-1)/1000;$('anchor').step=1;
 function drawIntervention(){
   const anchor=+$('anchor').value*1000,arm=$('held').value,rows=DATA.endpoints.filter(r=>r.anchor===anchor);
   const full=rows.find(r=>r.arm==='fully scaled'),selected=rows.find(r=>r.arm===arm),random=rows.find(r=>r.arm==='random-768 held');
@@ -477,18 +479,19 @@ function drawIntervention(){
   [...$('held').options].forEach(o=>{const exists=rows.some(r=>r.arm===o.value);o.textContent=o.textContent.replace(' · not run','')+(exists?'':' · not run');});
   const show=[{label:'Fully scaled to 2M',row:full},{label:arm==='fully scaled'?'Selected: fully scaled':arm.replace(' held',''),row:selected,highlight:true},...(arm!=='random-768 held'?[{label:'Random 768 directions',row:random,random:true}]:[])];
   const max=Math.max(full.penalty,random?.penalty||0,selected?.penalty||0)*1.08;
-  $('penalty-bars').innerHTML=show.map(({label,row,highlight,random})=>`<div class="penalty-row"><div class="penalty-label"><span>${label}</span><strong>${row?'+'+row.penalty.toFixed(2):'Not run'}</strong></div><div class="penalty-track"><div class="penalty-fill ${highlight?'highlight':''} ${random?'random':''}" style="width:${row?row.penalty/max*100:0}%"></div></div></div>`).join('');
-  $('recovery-number').innerHTML=selected&&recovery!==undefined?`${recovery.toFixed(1)}<span>%</span>`:'Not run';
+  $('penalty-bars').innerHTML=show.map(({label,row,highlight,random})=>`<div class="penalty-row"><div class="penalty-label"><span>${label}</span><strong>${row?'+'+row.penalty.toFixed(row.penaltyPrecision??2):'Not run'}</strong></div><div class="penalty-track"><div class="penalty-fill ${highlight?'highlight':''} ${random?'random':''}" style="width:${row?row.penalty/max*100:0}%"></div></div></div>`).join('');
+  const approximate=DATA.recovery.find(r=>r.anchor===anchor&&r.arm===arm)?.approximate;
+  $('recovery-number').innerHTML=selected&&recovery!==undefined?`${approximate?'≈ ':''}${recovery.toFixed(1)}<span>%</span>`:'Not run';
   $('recovery-number').classList.toggle('missing',!selected);
   $('recovery-text').textContent=!selected?'This branch was not run at this anchor. Choose another subspace or training step; no result is inferred.':arm==='fully scaled'?'All matrix directions use large-batch updates. This is the baseline penalty.':anchor>=11000?'Near the end of training, preserving these directions changes little. The early-training recovery does not persist throughout training.':arm==='random-768 held'?'A random subspace barely changes the penalty. Negative recovery means the measured loss gap got slightly larger.':`At step ${fmt(anchor)}, keeping ${fmt(selected.rank)} sharp directions on small-batch updates ${recovery>=0?'reduces':'increases'} the local penalty. This is a measured endpoint, not a projected final-training gain.`;
-  $('anchor-strip').innerHTML=Array.from({length:6},(_,i)=>{const checkpoint=2*i+1,a=checkpoint*1000,r=DATA.recovery.find(r=>r.anchor===a&&r.arm==='top-768 held');return `<button class="anchor-cell ${a===anchor?'active':''}" data-anchor="${checkpoint}" aria-pressed="${a===anchor}" aria-label="Step ${a}, top 768 recovery ${r.percent}%"><span>${checkpoint}K</span><i><span style="height:${Math.max(1,r.percent/65*100)}%"></span></i><strong>${r.percent.toFixed(1)}%</strong></button>`;}).join('');
+  $('anchor-strip').innerHTML=interventionAnchors.map(a=>{const checkpoint=a/1000,r=DATA.recovery.find(r=>r.anchor===a&&r.arm==='top-768 held');return `<button class="anchor-cell ${a===anchor?'active':''}" data-anchor="${checkpoint}" aria-pressed="${a===anchor}" aria-label="Step ${a}, top 768 recovery ${r?r.percent+'%':'not run'}"><span>${checkpoint}K</span><i><span style="height:${r?Math.max(1,r.percent/65*100):0}%"></span></i><strong>${r?r.percent.toFixed(1)+'%':'Not run'}</strong></button>`;}).join('');
   document.querySelectorAll('.anchor-cell').forEach(b=>b.addEventListener('click',()=>{$('anchor').value=b.dataset.anchor;drawIntervention();}));
   dispatchEvent(new Event('batchsize:intervention'));
-  $('endpoint-table').innerHTML='<table><caption>Available branch endpoints at step '+fmt(anchor)+'</caption><thead><tr><th scope="col">Branch</th><th scope="col">Validation loss</th><th scope="col">Penalty (10<sup>−3</sup> nats)</th></tr></thead><tbody>'+rows.map(r=>`<tr><th scope="row">${r.arm}</th><td>${r.loss.toFixed(6)}</td><td>${r.penalty.toFixed(2)}</td></tr>`).join('')+'</tbody></table>';
+  $('endpoint-table').innerHTML='<table><caption>Available branch endpoints at step '+fmt(anchor)+'</caption><thead><tr><th scope="col">Branch</th><th scope="col">Validation loss</th><th scope="col">Penalty (10<sup>−3</sup> nats)</th></tr></thead><tbody>'+rows.map(r=>`<tr><th scope="row">${r.arm}</th><td>${r.loss===null?'—':r.loss.toFixed(6)}</td><td>${r.penalty.toFixed(r.penaltyPrecision??2)}</td></tr>`).join('')+'</tbody></table>';
 }
 $('anchor').addEventListener('input',drawIntervention);$('held').addEventListener('change',drawIntervention);
 $('show-random').addEventListener('click',()=>{$('held').value='random-768 held';drawIntervention();});
-$('show-late').addEventListener('click',()=>{$('anchor').value=11;drawIntervention();});
+$('show-late').addEventListener('click',()=>{$('anchor').value=interventionAnchors.at(-1)/1000;drawIntervention();});
 
 // Theme switches redraw the canvases and scientific series as one visual system.
 function updatePalette(){
