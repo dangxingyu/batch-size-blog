@@ -166,16 +166,26 @@
 }
 
 #geometry-lab .geometry-map .phase-cell {
+  display: grid;
+  place-items: center;
+  min-width: 0;
   min-height: 18px;
+  padding: 0;
   border-radius: 3px;
+  line-height: 1;
 }
 
 #geometry-lab .geometry-map .phase-axis,
 #geometry-lab .geometry-map .phase-column,
-#geometry-lab .geometry-map .phase-row,
-#geometry-lab .geometry-map .phase-cell > span {
+#geometry-lab .geometry-map .phase-row {
   font-size: 12px;
   line-height: 1.2;
+}
+
+#geometry-lab .geometry-map .phase-cell > span {
+  font-size: 10px;
+  line-height: 1;
+  padding: 1px 2px;
 }
 
 #geometry-lab .geometry-map .phase-axis .blog-math {
