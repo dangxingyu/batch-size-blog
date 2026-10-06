@@ -12,8 +12,8 @@
       value: measurements.find(r => r.batch === batch && r.optimizer === second).loss
         - measurements.find(r => r.batch === batch && r.optimizer === first).loss }));
     const width = Math.max(240, el('pair-chart').clientWidth || 320);
-    el('pair-chart').setAttribute('viewBox', `0 0 ${width} 210`);
-    const f = frame(width, 210, { l: 76, r: 18, t: 16, b: 35 });
+    el('pair-chart').setAttribute('viewBox', `0 0 ${width} 140`);
+    const f = frame(width, 140, { l: 58, r: 16, t: 12, b: 30 });
     const limit = Math.ceil(Math.max(.004, ...points.map(p => Math.abs(p.value))) * 1.15 / .005) * .005;
     const x = b => f.l + Math.log2(b / rankBatches[0]) / 4 * f.iw;
     const y = v => f.t + f.ih * (.5 - v / (2 * limit));

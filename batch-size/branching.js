@@ -21,7 +21,7 @@
     frame=0;
     const anchor=+el('anchor').value*1000,arm=el('held').value,selected=data.anchors[anchor];
     const hasHighlight=Boolean(selected[arm]?.length);
-    const width=chart.clientWidth||800,height=width<500?310:370;
+    const width=chart.clientWidth||800,height=width<500?230:250;
     const box={left:width<500?49:64,right:width-14,top:35,bottom:height-37};
     const colors={control:token('--ink'),full:token('--coral'),held:token('--teal'),random:token('--muted'),grid:token('--line'),surface:token('--surface')};
     const xmin=closeView?anchor:1000,xmax=closeView?anchor+1024:13000;

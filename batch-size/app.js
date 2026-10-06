@@ -40,7 +40,7 @@ function drawRankings(){
   const {family,index,matrix}=rankState, selected=rankBatches[index];
   const all=DATA.rankings.filter(r=>r.family===family), names=matrix?['SOAP','Muon','Shampoo']:['SOAP','Muon','Shampoo','Adam','Lion'];
   const rows=all.filter(r=>names.includes(r.optimizer));
-  const f=researchFrame('ranking-chart',1100,280,{l:72,r:22,t:20,b:43}),x=b=>f.l+Math.log2(b/131072)/4*f.iw;
+  const f=researchFrame('ranking-chart',1100,220,{l:60,r:18,t:14,b:32}),x=b=>f.l+Math.log2(b/131072)/4*f.iw;
   const best=b=>Math.min(...all.filter(r=>r.batch===b).map(r=>r.loss));
   const value=(loss,batch)=>rankState.view==='gap'?loss-best(batch):loss;
   const bounds=rows.flatMap(r=>[r.loss,...(r.n>1&&r.min!==null&&r.max!==null?[r.min,r.max]:[])].map(loss=>value(loss,r.batch)));
@@ -221,7 +221,7 @@ function drawHero(time){
     ctx.strokeStyle=palette.surface;ctx.lineWidth=1.2;ctx.stroke();
     ctx.beginPath();ctx.arc(...tip,8,0,Math.PI*2);ctx.strokeStyle=colors[method];ctx.globalAlpha=.3;ctx.lineWidth=1;ctx.stroke();ctx.globalAlpha=1;
   });
-  ctx.font=`17px ${token('--sans')}`;ctx.fillStyle=palette.muted;
+  ctx.font=`14px ${token('--sans')}`;ctx.fillStyle=palette.muted;
   ctx.beginPath();ctx.arc(ox,oy,2.5,0,Math.PI*2);ctx.fill();ctx.textAlign='left';
   if(camera.from===0){const start=view(project(...hero.start));ctx.beginPath();ctx.arc(...start,4,0,Math.PI*2);ctx.strokeStyle=palette.ink;ctx.lineWidth=1;ctx.stroke();ctx.fillText('same start',start[0]+10,start[1]-10);}
   canvas.dataset.zoom=camera.zoom.toFixed(3);canvas.dataset.duration=hero.duration.toFixed(0);canvas.dataset.progress=progress.toFixed(3);
@@ -328,7 +328,7 @@ function renderLandscape(){
     const p=current.map((v,i)=>v+(next[i]-v)*(position-end));
     ctx.beginPath();ctx.arc(detailX(p[0]),detailY(p[1]),5,0,2*Math.PI);ctx.fillStyle=colors[m];ctx.fill();ctx.strokeStyle=simLayer.palette.surface;ctx.lineWidth=1.5;ctx.stroke();
   });
-  if(camera.from===0){ctx.beginPath();ctx.arc(detailX(sim.start[0]),detailY(sim.start[1]),5.5,0,2*Math.PI);ctx.strokeStyle=simLayer.palette.ink;ctx.lineWidth=1;ctx.stroke();ctx.font=`17px ${token('--sans')}`;ctx.fillStyle=simLayer.palette.muted;ctx.fillText('start',detailX(sim.start[0])+9,detailY(sim.start[1])-9);}
+  if(camera.from===0){ctx.beginPath();ctx.arc(detailX(sim.start[0]),detailY(sim.start[1]),5.5,0,2*Math.PI);ctx.strokeStyle=simLayer.palette.ink;ctx.lineWidth=1;ctx.stroke();ctx.font=`14px ${token('--sans')}`;ctx.fillStyle=simLayer.palette.muted;ctx.fillText('start',detailX(sim.start[0])+9,detailY(sim.start[1])-9);}
   ctx.beginPath();ctx.arc(cx,cy,2.5,0,2*Math.PI);ctx.fillStyle=simLayer.palette.ink;ctx.fill();ctx.restore();
   if(simCamera.mode==='auto')renderOverview(camera,w,h);
   return {scale:camera.scale,cx,cy};
@@ -345,7 +345,7 @@ function drawFocusedBackdrop(ctx,w,h,camera){
   }
   ctx.globalAlpha=1;
   ctx.strokeStyle=palette.muted;ctx.globalAlpha=.55;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(20,cy);ctx.lineTo(w-20,cy);ctx.moveTo(cx,22);ctx.lineTo(cx,h-22);ctx.stroke();ctx.globalAlpha=1;
-  ctx.font=`17px ${token('--sans')}`;ctx.fillStyle=palette.muted;
+  ctx.font=`14px ${token('--sans')}`;ctx.fillStyle=palette.muted;
   const tickX=SimulationCamera.niceStep((w-64)/scale),tickY=SimulationCamera.niceStep((h-50)/scale);
   for(let i=Math.ceil((24-cx)/scale/tickX);i<=Math.floor((w-32-cx)/scale/tickX);i++){
     const x=cx+i*tickX*scale;ctx.beginPath();ctx.moveTo(x,cy-3);ctx.lineTo(x,cy+3);ctx.stroke();
@@ -379,14 +379,14 @@ function setSimulationView(mode){
   renderSim();
 }
 function renderLoss(){
-  const chart=$('sim-loss'),width=Math.max(240,Math.min(1100,chart.clientWidth));
-  const key=`${width}:${document.documentElement.dataset.theme}`;
+  const chart=$('sim-loss'),width=Math.max(240,Math.min(1100,chart.clientWidth)),height=180;
+  const key=`${width}:${height}:${document.documentElement.dataset.theme}`;
   const {ymax,ymin}=sim.runLossBounds;
   if(simLoss.key!==key||simLoss.paths!==sim.paths){
     simLoss.key=key;simLoss.paths=sim.paths;simLoss.end=-1;
-    chart.setAttribute('viewBox',`0 0 ${width} 240`);
+    chart.setAttribute('viewBox',`0 0 ${width} ${height}`);
     const samples=sim.paths.sgd.at(-1).samples;
-    const f=frame(width,240,{l:86,r:22,t:20,b:38}),x=s=>f.l+s/samples*f.iw;
+    const f=frame(width,height,{l:70,r:18,t:14,b:30}),x=s=>f.l+s/samples*f.iw;
     const xticks=width<340?[[0,'0'],[samples,'4K samples']]:[[0,'0'],[samples/2,'2K'],[samples,'4K samples']];
     const a=axes(f,ymin,ymax,xticks,x,{dark:true,format:v=>scientificSVG(10**v)});
     chart.innerHTML=a.svg+['sgd','newton'].map(m=>`<path id="sim-loss-${m}" fill="none" stroke="${colors[m]}" stroke-width="1.8"/>`).join('');
@@ -501,22 +501,22 @@ function drawScaling(){
   document.querySelectorAll('#scale-presets button').forEach(b=>{b.classList.toggle('active',+b.dataset.alpha===alpha);b.setAttribute('aria-pressed',String(+b.dataset.alpha===alpha));});
 }
 function drawMovementQuadratic(alpha,ratio){
-  const svg=$('movement-quadratic'),w=Math.max(240,Math.min(440,svg.clientWidth)),h=375;
+  const svg=$('movement-quadratic'),w=Math.max(240,Math.min(440,svg.clientWidth)),h=310;
   svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
   const x=v=>24+(v+1.2)/2.8*(w-48);
   const arrowUnit=.3; // Fixed batch-1 reference length across every exponent and batch ratio.
   let markup=`<title>Local movement at batch ratio ${ratio}, exponent ${alpha.toFixed(2)}. Arrows are normalized to each direction's batch-1 movement.</title>`;
   [1,.001].forEach((cnr,i)=>{
-    const top=i*190,color=i?colors.newton:colors.sgd,movement=NQM.displacement(cnr,ratio,alpha),end=1-arrowUnit*movement;
-    const y=v=>top+91-38*v*v,points=Array.from({length:81},(_,k)=>-1.2+2.6*k/80);
-    markup+=svgText(16,top+18,`${i?'Low':'High'} CNR · ${cnr}`,`font-size="16" fill="${color}" font-weight="600"`);
-    markup+=`<path d="${line(points,v=>x(v),y)}" fill="none" stroke="${token('--grid-strong')}" stroke-width="1.5"/><line x1="24" x2="${w-24}" y1="${top+91}" y2="${top+91}" stroke="${token('--line')}"/><circle cx="${x(1)}" cy="${y(1)}" r="4" fill="${token('--ink')}"/>`;
-    markup+=svgText(x(1)+7,y(1)-10,'w = 1','font-size="17"')+svgText(x(0),top+105,'0','font-size="17" text-anchor="middle"');
+    const top=i*155,color=i?colors.newton:colors.sgd,movement=NQM.displacement(cnr,ratio,alpha),end=1-arrowUnit*movement;
+    const y=v=>top+67-26*v*v,points=Array.from({length:81},(_,k)=>-1.2+2.6*k/80);
+    markup+=svgText(16,top+14,`${i?'Low':'High'} CNR · ${cnr}`,`font-size="16" fill="${color}" font-weight="600"`);
+    markup+=`<path d="${line(points,v=>x(v),y)}" fill="none" stroke="${token('--grid-strong')}" stroke-width="1.5"/><line x1="24" x2="${w-24}" y1="${top+67}" y2="${top+67}" stroke="${token('--line')}"/><circle cx="${x(1)}" cy="${y(1)}" r="4" fill="${token('--ink')}"/>`;
+    markup+=svgText(x(1)+7,y(1)-10,'w = 1','font-size="17"')+svgText(x(0),top+82,'0','font-size="17" text-anchor="middle"');
     const arrow=(end,cy,stroke,dashed)=>`<path d="M${x(1)} ${cy}H${x(end)}" fill="none" stroke="${stroke}" stroke-width="${dashed?1.5:3}" ${dashed?'stroke-dasharray="4 3"':''}/><path d="M${x(end)+5} ${cy-4}L${x(end)} ${cy}L${x(end)+5} ${cy+4}" fill="none" stroke="${stroke}" stroke-width="1.5"/>`;
     const local=Array.from({length:21},(_,k)=>end+(1-end)*k/20);
     markup+=`<path d="${line(local,v=>x(v),y)}" fill="none" stroke="${color}" stroke-width="3"/><circle cx="${x(end)}" cy="${y(end)}" r="4" fill="${color}"/>`;
-    markup+=arrow(1-arrowUnit,top+136,token('--muted'),true)+arrow(end,top+168,color,false);
-    markup+=svgText(16,top+121,'Batch 1','font-size="17"')+svgText(16,top+153,`${ratio}× batch · ${movement.toFixed(2)}×`,`font-size="17" fill="${color}"`);
+    markup+=arrow(1-arrowUnit,top+111,token('--muted'),true)+arrow(end,top+142,color,false);
+    markup+=svgText(16,top+97,'Batch 1','font-size="17"')+svgText(16,top+128,`${ratio}× batch · ${movement.toFixed(2)}×`,`font-size="17" fill="${color}"`);
   });
   svg.dataset.alpha=alpha;svg.dataset.ratio=ratio;svg.innerHTML=markup;
 }

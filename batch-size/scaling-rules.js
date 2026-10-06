@@ -35,9 +35,9 @@
     return s.rules.find(r => r.choices.etaM === (name === 'bound' ? 'sqrt' : 'linear') && r.choices.lambdaM === 'fixed' && r.choices.mu === (name === 'bound' ? 'fixed' : 'retention')).id;
   };
   function rebuildPlot() {
-    const s = setting(), svg = node('rule-atlas'), w = Math.max(180, Math.min(1100, svg.clientWidth)), h = innerWidth <= 1000 ? 200 : 280;
+    const s = setting(), svg = node('rule-atlas'), w = Math.max(180, Math.min(1100, svg.clientWidth)), h = 220;
     svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-    const f = frame(w,h,{l:w<360?60:72,r:22,t:20,b:43}), shown=plotIndices();
+    const f = frame(w,h,{l:w<360?48:58,r:18,t:14,b:32}), shown=plotIndices();
     const values=s.rules.flatMap(r=>shown.map(i=>plotValue(r,i)));
     const references=shown.map(i=>state.view==='gap'?0:bestLoss(i));
     const focus=[selected()];

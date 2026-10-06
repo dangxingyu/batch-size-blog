@@ -92,7 +92,7 @@ function checkEnd(progress){
     const p=state.sim.paths[method][end];
     const x=(state.lossAxes.f.l+p.samples/state.sim.paths.sgd.at(-1).samples*state.lossAxes.f.iw).toFixed(2);
     const logLoss=Math.max(-5,Math.log10(Math.max(p.loss,1e-15)));
-    const y=(20+182*(1-(logLoss+5)/7)).toFixed(2);
+    const y=(state.lossAxes.f.t+state.lossAxes.f.ih*(1-(logLoss+5)/7)).toFixed(2);
     assert.ok(path.endsWith(`${x},${y}`),'The displayed loss path ends at the actual current update.');
   }
 }

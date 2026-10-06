@@ -22,7 +22,7 @@
   function draw() {
     const selected=conditionAt(+$('paper-cnr').value);
     const width=Math.max(240,Math.min(1000,$('cnr-paper-chart').clientWidth));
-    const height=Math.round(Math.max(190,Math.min(260,width*.32)));
+    const height=Math.round(Math.max(160,Math.min(210,width*.3)));
     const f=researchFrame('cnr-paper-chart',width,height,{l:58,r:20,t:16,b:34});
     const referenceBatch=data.groups[selected.measuredIndex].rows[0].batch;
     const x=kappa=>f.l+Math.log2(kappa)/8*f.iw,y=ratio=>f.t+f.ih*(1-Math.log10(ratio)/Math.log10(400));
