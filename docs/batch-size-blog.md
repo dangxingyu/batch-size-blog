@@ -3,22 +3,62 @@
 The standalone article is `index.html`. The existing anchors and measured CSVs remain stable.
 The article follows the manuscript: scaling-rule derivations and search, retuned
 optimizer crossovers, the quadratic mechanism, directional scaling, then the
-sharp-subspace intervention. The local SignSGD section is `#directional-scaling`. It uses the personal site's Fraunces and
-Instrument Sans identity, with rust and green identifying scientific comparisons.
+sharp-subspace intervention. The local SignSGD section is `#directional-scaling`. It uses the Apple
+system sans-serif stack, with platform fallbacks, and a white, UC San Diego navy (#182B49), and
+yellow (#FFCD00) reading theme. Headings, prose, controls, SVG labels, and canvas labels share the
+system font; mathematical notation retains KaTeX's specialized typesetting fonts.
+Scientific comparisons retain distinct series colors. The final `ucsd-theme.css` layer supplies
+shared widget colors and high-contrast navy dark mode. Light mode is the default; a saved dark-mode
+choice is restored before stylesheets load, including the browser theme color. The root page
+background and body share the theme color. The existing theme toggle
+persists choices and redraws the figures. Theme initialization is checked for both saved modes and
+blocked storage.
+The blog uses “Muon” as the reader-facing name for the paper’s MuonW–AdamW setup;
+source filenames, measurements, and explicit auxiliary AdamW protocol details retain their original names.
 The measured experiments, noisy-quadratic illustration, and local SignSGD argument
 must remain explicitly distinguished.
 
 ## Evidence and typography
 
-Retained figure explanations, controls, legends, metric labels, and protocol text use 17px on desktop and 16px on phones. Repeated summaries and bookkeeping labels are omitted. Substantive mechanism takeaways remain below their titles at the same reading size. The local High/Low CNR quadratic panels have a wider vertical separation, and the checkpoint close-up includes a Go back button that restores the across-training view.
+Retained figure explanations, controls, legends, metric labels, and protocol text use 16px on desktop and 15px on phones. Repeated summaries and bookkeeping labels are omitted. Explanatory mechanism text remains below the section titles at the same reading size; duplicate numbered claim headings are omitted. The local High/Low CNR quadratic panels have a wider vertical separation, and the checkpoint close-up includes a Go back button that restores the across-training view.
 
-The opening includes five linked TL;DR results directly below Two questions. Each is one sentence linking to its corresponding experiment, without an additional small summary. The SignSGD and SGD/Newton entries identify their toy setting; the intervention entry identifies language-model pretraining and the local penalty. In the optimizer setup, emphasis marks independent retuning at every batch rather than the batch-size range.
+The opening uses the Technical note treatment: a compact, left-aligned sans-serif title below a
+short yellow accent, followed by the byline from Overleaf revision
+0374df8 (`arxiv.tex`): Xingyu Dang†, Kaiyue Wen†, and Sadhika Malladi; † denotes equal contribution.
+The byline uses a horizontal three-column author list, with a smaller affiliation and clickable
+email beneath each name; it wraps on narrow screens and uses theme-aware colors. Author contact
+details were verified against public profiles because the Overleaf block still carries placeholder
+comments: Xingyu Dang — Princeton University, xd7812@cs.princeton.edu
+(https://www.cs.princeton.edu/people/grad); Kaiyue Wen — Stanford University, kaiyuew@stanford.edu
+(https://profiles.stanford.edu/kaiyue-wen); Sadhika Malladi — University of California, San Diego,
+samalladi@ucsd.edu (https://sadhikamalladi.github.io/index.html).
+The introduction proceeds from scaling-rule motivation to Q1, then optimizer-comparison motivation
+to Q2. The questions retain their exact wording from the paper and use compact navy callouts with
+centered, balanced white text and a small 32px-wide yellow Q1/Q2 pennant overlapping the top edge. They fill a dedicated `question-row` that matches the 1080px content column and the TL;DR box.
+Both edges align with the text column, including on phones.
+Prose uses natural line wrapping so the apparent text measure matches the callout centering frame. Q1 appears only in the opening; the scaling-rules section proceeds directly to the methods and experiment. The Q2 callout is also used in the optimizer-comparison section. Yellow is reserved
+for the title accent, questions, and small interaction accents.
+The TL;DR is a compact numbered list of five findings in a lightly shaded, theme-aware box. Each
+finding links directly to its relevant interactive figure: scaling-rule search, optimizer rankings,
+SignSGD scaling, the noisy-quadratic geometry lab, and directional branching. The top contains the title, byline, one Read the paper button with the theme toggle beside it, and prose: no chapter navigation or repeated headline.
+The SignSGD and SGD/Newton entries identify their toy setting; the intervention entry identifies
+language-model pretraining and the local penalty. Main prose matches the author names at 16px on desktop and 15px on
+phones, at a 1.65 line height. The title, authors, introductory text, TL;DR, section headings,
+prose, closing, footer, scaling-rule candidates, and figure containers share one centered 1080px
+content column. Text remains left aligned. The shared column has 32px outer gutters
+(24px on phones, 18px below 370px) and contracts to fit narrower screens. Section headings use 22px and research claims
+17px on desktop, with 20px/16px on phones. Sections use 40px top spacing, reduced to 32px on phones.
+The content width follows the requested alignment with the figures; typography and spacing stay consistent.
+In the optimizer setup, emphasis marks independent
+retuning at every batch rather than the batch-size range.
 
-The opening questions are copied verbatim from the paper’s active introduction. Main prose is written for a general audience around each playable: what the figure shows, how to use its controls, and what the result means. Short verbal formulas explain scaling presets, optimizer updates, loss decomposition, and branch penalties. Formal derivations, experiment settings, and qualifications stay in collapsed details. Candidate derivations appears fully expanded immediately before Scaling-rule search. Five large editorial pitches summarize the results and mechanism; the late-training limitation is ordinary prose. The original measurements retain source revision 462dc51. Directional curves and endpoints use the complete latest Overleaf CSV export at revision 83b7052, including the rerun smaller top-k branches at even checkpoints.
+The article has no footnotes currently. If needed later, use traditional footnotes rather than margin notes.
 
-An underlined **Paper** link sits directly below the article title and points to
-`batch-size/paper.pdf` as the submission placeholder. Replace its label and URL
-with arXiv when the preprint is public.
+The opening questions are copied verbatim from the paper’s active introduction. The scaling-rules section opens with two sentences of motivation and a third introducing Muon as the testbed, then defines the Muon update and presents the three candidate rules without an additional subheading, a brief experiment description using “hundreds of scaling rules,” the interactive figure, and its main finding. Exact grid sizes and the distinction between the paper’s comparison recipes and the figure’s best-completion presets remain in the figure and measurement notes. Main prose is written for a general audience around each playable: what the figure shows, how to use its controls, and what the result means. Short verbal formulas explain scaling presets, optimizer updates, loss decomposition, and branch penalties. Formal derivations, experiment settings, and qualifications stay in collapsed details. Candidate derivations appears fully expanded before the short experiment description and Scaling-rule search. Each section opens with one larger, unnumbered heading; duplicate numbered claim headings are removed. Explanatory text and the late-training limitation remain ordinary prose. The original measurements retain source revision 462dc51. Directional curves and endpoints use the complete latest Overleaf CSV export at revision 83b7052, including the rerun smaller top-k branches at even checkpoints.
+
+The Read the paper button beneath the title/byline and the scaling-rule section link to
+`batch-size/paper.pdf` as the submission placeholder.
+Replace that destination with arXiv when the preprint is public.
 
 KaTeX typesets all displayed variables from MathML source: italic scalar variables, numeric
 subscripts, bold parameter vectors, and upright optimizer-group subscripts.
@@ -235,8 +275,20 @@ The geometry playground keeps playback actions and progress in a horizontal stri
 
 Standalone prose and research questions use the same content width as the figures, with the original section and pitch alignment. Descriptions inside visualization grids fill their own panels; their surrounding grid determines the available width.
 
-The rewritten scaling-rule chapter is the reference for the rest of the main prose. Its unit is a research section rather than an individual widget: motivation and question, a compact concrete setup, then numbered findings. Use the researchers’ voice, retain the conditions and numbers needed to read the results, and avoid beginner definitions or click-by-click instructions in the surrounding paragraphs. Control labels and preset descriptions carry the interaction guidance.
+The rewritten scaling-rule chapter is the reference for the rest of the main prose. Each section opens with one or two sentences of motivation, followed by a compact setup. Keep findings brief and avoid repeating results and protocol details already shown in the widgets. Use the researchers’ voice and retain the conditions needed to interpret each claim. Control labels and preset descriptions carry the interaction guidance.
 
 The curvature-and-noise chapter explicitly introduces the noisy quadratic model (NQM): a quadratic loss paired with noisy gradient estimates. Its two-dimensional SGD/Newton example is distinguished from the language-model experiments.
 
 Rankings, the quadratic mechanism, directional scaling, the intervention, and the conclusion follow this structure. Keep expected loss at the 4,096-sample budget distinct from the single sampled trajectory at that same budget. The directional calculation freezes the parameter; the intervention affects matrix directions and does not establish CNR as their predictor. The 59.5% maximum refers to all measured checkpoints, while the displayed 5K checkpoint gives 59.3%. Detailed protocols retain their technical granularity.
+
+The Muon update preceding the candidate rules follows `src/preliminaries.tex` in the paper: normalized
+momentum, a Nesterov blend with mixing weight equal to momentum retention, Newton–Schulz
+orthogonalization with fixed matrix-shape rescaling, and decoupled weight decay. The blog names the
+orthogonalized direction U_t to keep the three steps short. It defines W_t, G_t, M_t, U_t, μ, η_M,
+λ_M, initialization M_0 = 0, and the matrix-group subscript before the scaling formulas. Auxiliary
+parameters still use AdamW. The update and its notation share a 50/50 panel: a “Muon optimizer” label above three equations on the left and a compact
+definition list on the right, including the weight and minibatch-gradient symbols. The panel uses theme-aware colors and stacks below 900px. Definitions
+do not occupy a separate main-text paragraph. This exposition does not change any interactive
+widget or measured data.
+
+The October prose pass removes the scaling-result paragraph and repeated Q2 in the rankings section. The rest of the article uses shorter motivations and experiment descriptions. The quadratic model, SignSGD update and CNR, and branch penalty/recovery definitions use the same two-column equation-and-notation treatment as Muon. These panels inherit theme colors and stack below 900px. Widget markup, protocol drawers, controls, and data are unchanged. The intervention summary retains the local scope, random-subspace comparison, and loss of benefit late in training.

@@ -5,38 +5,6 @@
   const gridStroke = () => token('--line');
   const text = (x, y, label, extra = '') => svgText(x, y, label, `font-size="17" ${extra}`);
 
-  function closeChapters(restoreFocus = false) {
-    el('mobile-chapters').hidden = true;
-    el('chapter-menu').setAttribute('aria-expanded', 'false');
-    el('chapter-menu').setAttribute('aria-label', 'Open article sections');
-    if (restoreFocus) el('chapter-menu').focus({ preventScroll: true });
-  }
-  el('chapter-menu').addEventListener('click', () => {
-    const opening = el('mobile-chapters').hidden;
-    el('mobile-chapters').hidden = !opening;
-    el('chapter-menu').setAttribute('aria-expanded', String(opening));
-    el('chapter-menu').setAttribute('aria-label', `${opening ? 'Close' : 'Open'} article sections`);
-    const current = document.querySelector('.site-header nav a[aria-current]');
-    el('mobile-chapters').querySelectorAll('a').forEach(link => {
-      if (current && link.hash === current.hash) link.setAttribute('aria-current', 'location');
-      else link.removeAttribute('aria-current');
-    });
-  });
-  el('mobile-chapters').addEventListener('click', event => {
-    const link = event.target.closest('a[href]');
-    if (!link) return;
-    closeChapters();
-    const heading = document.querySelector(`${link.hash} h2`);
-    requestAnimationFrame(() => { heading.tabIndex = -1; heading.focus({ preventScroll: true }); });
-  });
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && !el('mobile-chapters').hidden) closeChapters(true);
-  });
-  document.addEventListener('pointerdown', event => {
-    if (!el('mobile-chapters').hidden && !event.target.closest('#mobile-chapters, #chapter-menu')) closeChapters();
-  });
-  matchMedia('(min-width:761px)').addEventListener('change', event => { if (event.matches) closeChapters(); });
-
   function drawMatchup() {
     const first = el('pair-a').value, second = el('pair-b').value;
     const measurements = DATA.rankings.filter(r => r.family === rankState.family);
