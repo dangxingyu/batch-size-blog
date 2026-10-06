@@ -169,10 +169,9 @@
       cell.tabIndex = !cell.disabled && batchMatch && Number(cell.dataset.noise) === closest ? 0 : -1;
     });
     const result = winnerResult(sim.tuned.sgd.total, sim.tuned.newton.total);
-    el('phase-winner').textContent = result.winner;
+    el('phase-winner').textContent = result.tied ? 'Close or tied' : `${result.winner} wins`;
     el('phase-winner').style.color = result.tied ? token('--ink') : colors[result.winner === 'SGD' ? 'sgd' : 'newton'];
-    el('phase-detail').innerHTML = `${result.tied ? 'Expected losses are similar.' : `The other method’s expected loss is ${result.factor >= 1000 ? scientificHTML(result.factor) : result.factor.toFixed(2)}× larger.`}`;
-    ['sgd', 'newton'].forEach(method => { el(`phase-${method}-loss`).textContent = sim.tuned[method].total.toPrecision(3); });
+    el('phase-winner').setAttribute('aria-label', result.tied ? 'Expected losses are close or tied at 4,096 samples.' : `${result.winner} has lower expected loss at 4,096 samples.`);
     const starts = { both: [1, 1], flat: [1, 0], sharp: [0, 1] };
     document.querySelectorAll('.phase-starts button').forEach(button => {
       const selected = starts[button.dataset.start].every((v, i) => Math.abs(sim.start[i] - v) < 1e-10);

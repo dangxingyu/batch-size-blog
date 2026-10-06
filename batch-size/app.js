@@ -387,7 +387,7 @@ function setSimulationView(mode){
   renderSim();
 }
 function renderLoss(){
-  const chart=$('sim-loss'),width=Math.max(240,Math.min(1100,chart.clientWidth)),height=180;
+  const chart=$('sim-loss'),width=Math.max(240,Math.min(1100,chart.clientWidth)),height=150;
   const key=`${width}:${height}:${document.documentElement.dataset.theme}`;
   const {ymax,ymin}=sim.runLossBounds;
   if(simLoss.key!==key||simLoss.paths!==sim.paths){

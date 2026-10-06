@@ -123,7 +123,7 @@ The branch curves and vertical endpoint-penalty bars share one comparison layout
   Batch/noise selection and theme changes reuse the current numerical map. A worker
   failure falls back to the same kernel, yielding on the main thread between rows.
   Busy maps show their status and disable stale cells until current results arrive.
-- The geometry experiment and winner map share one bordered component. Shared batch, curvature, noise and starting-point controls sit above the two views; map tiles load the same experiment. Desktop shows paths and map side by side, followed by one shared selected-experiment readout and playback toolbar, with live and expected losses below. Narrow layouts stack the views and keep map scrolling inside its container.
+- The geometry experiment and winner map share one bordered component. Shared batch, curvature, noise, starting-point and playback controls sit above the two views; map tiles load the same experiment. Desktop places live loss directly below the paths and expected loss below the map, with a compact winner label beside the path title. Narrow layouts keep paths and live loss together before the map and expected loss, with map scrolling inside its container.
 - Initialization presets share the sandbox's state. Phase-map arrows stay in their
   row/column; Home and End select the row's endpoints. Optional letters make the map
   readable without relying on hue. Expected losses are shown beside the winner.
