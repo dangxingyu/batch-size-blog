@@ -94,7 +94,7 @@
    </div>
   </div>
 </div>
-  <section class="candidate-derivations" aria-label="Candidate scaling rules"><p>Muon is often used alongside AdamW, but we show only the Muon scaling rules here. The candidates below prescribe how to change these hyperparameters when the batch size grows by a factor of <math><mi>κ</mi></math>. Primes denote their values at the new batch size.</p>
+  <section class="candidate-derivations" aria-label="Candidate scaling rules"><p>In these experiments, Muon updates matrix weights and AdamW updates auxiliary parameters. The candidate equations below show only the Muon part. They prescribe how to change its hyperparameters when the batch size grows by a factor of <math><mi>κ</mi></math>. Primes denote their values at the new batch size.</p>
  <div class="rule-candidates">
   <div><h3><a class="rule-source" href="https://proceedings.neurips.cc/paper_files/paper/2022/hash/32ac710102f0620d0f28d5d05a44fe08-Abstract-Conference.html" target="_blank" rel="noopener" title="SDE-matching framework: Malladi et al., On the SDEs and Scaling Rules for Adaptive Gradient Algorithms">Matching an SDE</a></h3><span class="tag rule-rate-label">Linear learning rate.</span><p><math aria-label="Muon scaling prescription"><msup><msub><mi>η</mi><mtext>M</mtext></msub><mrow><mo>′</mo></mrow></msup><mo>=</mo><mi>κ</mi><msub><mi>η</mi><mtext>M</mtext></msub><mo>,</mo><msup><mi>μ</mi><mo>′</mo></msup><mo>=</mo><msup><mi>μ</mi><mrow><mi>κ</mi></mrow></msup><mo>,</mo><msup><msub><mi>λ</mi><mtext>M</mtext></msub><mrow><mo>′</mo></mrow></msup><mo>=</mo><msub><mi>λ</mi><mtext>M</mtext></msub></math></p><span class="small-text">This approach aims to preserve an SDE approximation of training. The derivation holds the gradient–momentum mixing coefficient fixed, but Muon ties it to momentum, so the match is not exact.</span></div>
   <div><h3><a class="rule-source" href="https://arxiv.org/abs/2603.15958" target="_blank" rel="noopener" title="Bound-minimization framework: Shulgin et al., Deriving Hyperparameter Scaling Laws via Modern Optimization Theory">Minimizing a bound</a></h3><span class="tag rule-rate-label">Square-root learning rate.</span><p><math aria-label="Muon scaling prescription"><msup><msub><mi>η</mi><mtext>M</mtext></msub><mrow><mo>′</mo></mrow></msup><mo>=</mo><msqrt><mi>κ</mi></msqrt><msub><mi>η</mi><mtext>M</mtext></msub><mo>,</mo><msup><mi>μ</mi><mo>′</mo></msup><mo>=</mo><mi>μ</mi><mo>,</mo><msup><msub><mi>λ</mi><mtext>M</mtext></msub><mrow><mo>′</mo></mrow></msup><mo>=</mo><msub><mi>λ</mi><mtext>M</mtext></msub></math></p><span class="small-text">This approach balances two terms in a theoretical convergence bound: one for initialization and one for loss smoothness. The square-root rule applies until the bound’s effective step-size cap is reached.</span></div>
@@ -102,7 +102,7 @@
  </div>
  </section>
 <div class="prose essay-prose">
-  <p>We tune Muon at a reference batch size for language modeling and image classification, then increase the batch size while keeping each task’s training budget fixed. We compare hundreds of scaling rules, including the candidates above and other combinations of learning-rate, momentum, and weight-decay adjustments.</p>
+  <p>We tune this configuration at a reference batch size for language modeling and image classification, then increase the batch size while keeping each task’s training budget fixed. We compare hundreds of scaling rules, including the candidates above and other combinations of learning-rate, momentum, and weight-decay adjustments.</p>
 </div>
  <div id="rule-lab" class="light-panel rule-lab">
   <div class="panel-top rule-lab-header"><h3>Scaling-rule search.</h3><div id="rule-task-tabs" class="segmented" role="group" aria-label="Scaling-rule experiment"><button data-task="llm" class="active" aria-pressed="true">Language model</button><button data-task="cifar" aria-pressed="false">CIFAR-5M</button></div></div>
@@ -133,6 +133,7 @@
 <div class="prose essay-prose">
   <p>A comparison at one batch size may miss changes in which optimizer works best. We test whether rankings change when each optimizer is tuned separately at every batch size.</p>
   <p>We compare Adam, Lion, Muon, SOAP, and Shampoo in language-model pretraining, using batches from 128K to 2M tokens and the same total training budget. We test both weight decay, which shrinks weights, and HyperBall, which keeps each hidden matrix’s norm fixed.</p>
+  <p>Under HyperBall, Muon outperforms Shampoo at 128K tokens per update, while Shampoo outperforms Muon at 2M.</p>
 </div>
   <div id="optimizer-comparison" class="experiment light-panel">
     <div class="panel-top"><div><h3>Optimizer rankings.</h3></div><div class="segmented" id="family-tabs" aria-label="Weight norm control"><button class="active" data-family="standard_wd" aria-pressed="true">Weight decay</button><button data-family="hyperball" aria-pressed="false">HyperBall</button></div></div>
