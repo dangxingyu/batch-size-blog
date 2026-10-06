@@ -103,11 +103,53 @@ function syncHeroCompass(horizontal,vertical){
   }
   svg.querySelector('circle').setAttribute('cy',origin[1]);
 }
+function projectSurfacePoint([x,y],{w,h,sharp,scale=1}){
+  return [w*.5+(x-y)*w*.155*scale,
+    h*.68+((x+y)*h*.11-Math.log1p(.5*(x*x+sharp*y*y))*h*.20)*scale];
+}
+function pickSurfaceStart([px,py],{w,h,sharp,scale}){
+  if(!Number.isFinite(px)||!Number.isFinite(py)||!(scale>0)||!(w>0)||!(h>0))return null;
+  // Undo the rendered camera before intersecting the log-height surface.
+  const difference=(px-w*.5)/(w*.155*scale),target=(py-h*.68)/(h*scale);
+  const level=2**Math.floor(Math.log2(Math.max(1,scale)));
+  const limitX=Math.min(1.85,2/level),limitY=Math.min(1.3,1.2/level);
+  let min=Math.max(-2*limitX-difference,-2*limitY+difference);
+  let max=Math.min(2*limitX-difference,2*limitY+difference);
+  if(min>max+1e-10)return null;
+  if(min>max)min=max=(min+max)/2;
+  // x=(sum+difference)/2, y=(sum-difference)/2. The derivative has
+  // at most two roots, so its extrema partition every possible intersection.
+  const a=(1+sharp)/8,b=difference*(1-sharp)/4,c=difference*difference*(1+sharp)/8;
+  const height=sum=>.11*sum-.2*Math.log1p(a*sum*sum+b*sum+c)-target;
+  const qa=.11*a,qb=.11*b-.4*a,qc=.11*(1+c)-.2*b;
+  const discriminant=qb*qb-4*qa*qc,breaks=[min,max];
+  if(discriminant>=0){
+    const root=Math.sqrt(discriminant);
+    for(const sum of [(-qb-root)/(2*qa),(-qb+root)/(2*qa)])if(sum>min&&sum<max)breaks.push(sum);
+  }
+  breaks.sort((a,b)=>a-b);
+  const intersections=[],tolerance=1e-11;
+  const add=sum=>{if(!intersections.some(value=>Math.abs(value-sum)<1e-8))intersections.push(sum);};
+  for(const sum of breaks)if(Math.abs(height(sum))<tolerance)add(sum);
+  for(let i=1;i<breaks.length;i++){
+    let lo=breaks[i-1],hi=breaks[i],left=height(lo),right=height(hi);
+    if(left*right>=0)continue;
+    for(let step=0;step<60;step++){
+      const middle=(lo+hi)/2,value=height(middle);
+      if(left*value<=0){hi=middle;right=value;}else{lo=middle;left=value;}
+    }
+    add((lo+hi)/2);
+  }
+  if(!intersections.length)return null;
+  // Overlapping surface patches are resolved to the foreground intersection.
+  const sum=Math.max(...intersections);
+  return [(sum+difference)/2,(sum-difference)/2];
+}
 function drawHero(time){
   const canvas=$('hero-canvas'),{ctx,w,h,dpr}=canvasSize(canvas);
   const ox=w*.5,oy=h*.68;
   const basisX=w*.155,basisY=h*.11;
-  const project=(x,y)=>[ox+(x-y)*basisX,oy+(x+y)*basisY-Math.log1p(.5*(x*x+hero.sharp*y*y))*h*.20];
+  const project=(x,y)=>projectSurfacePoint([x,y],{w,h,sharp:hero.sharp});
   const key=`${w}:${h}:${dpr}:${hero.sharp}:${document.documentElement.dataset.theme}`;
   if(heroBackdrop.key!==key){
     heroBackdrop.key=key;heroBackdrop.paths=null;
@@ -130,6 +172,7 @@ function drawHero(time){
   const progress=Math.min(1,time/hero.duration);
   const camera=SimulationCamera.sample(heroBackdrop.prepared,heroBackdrop.view,progress,simCamera.mode);
   const scale=camera.scale,palette=heroBackdrop.palette;
+  heroBackdrop.surface={w,h,sharp:hero.sharp,scale};
   const view=([x,y])=>[ox+(x-ox)*scale,oy+(y-oy)*scale];
   const octave=Math.log2(Math.max(1,scale)),level=2**Math.floor(octave),fraction=octave-Math.floor(octave);
   const blend=fraction*fraction*(3-2*fraction);
@@ -405,8 +448,37 @@ $('sim-overview').addEventListener('click',()=>setSimulationView('overview'));
 reducedMotion.addEventListener('change',e=>{if(e.matches){sim.playing=false;setSimulationView('overview');syncSimPlayback();}});
 $('preset-small').addEventListener('click',()=>{$('sim-batch').value=0;configureSimulation();});
 $('preset-large').addEventListener('click',()=>{$('sim-batch').value=8;configureSimulation();});
-$('landscape').addEventListener('pointerdown',e=>{const rect=e.currentTarget.getBoundingClientRect(),{scale,cx,cy}=renderLandscape();sim.start=[Math.max(-1.85,Math.min(1.85,(e.clientX-rect.left-cx)/scale)),Math.max(-1.3,Math.min(1.3,(cy-(e.clientY-rect.top))/scale))];configureSimulation();});
-$('landscape').addEventListener('keydown',e=>{const d={ArrowLeft:[-.1,0],ArrowRight:[.1,0],ArrowUp:[0,.1],ArrowDown:[0,-.1]}[e.key];if(d){e.preventDefault();sim.start=[Math.max(-1.85,Math.min(1.85,sim.start[0]+d[0])),Math.max(-1.3,Math.min(1.3,sim.start[1]+d[1]))];configureSimulation();}});
+function setSimulationStart(point){
+  sim.start=[Math.max(-1.85,Math.min(1.85,point[0])),Math.max(-1.3,Math.min(1.3,point[1]))];
+  configureSimulation();
+}
+function moveStartWithKeys(e){
+  const delta={ArrowLeft:[-.1,0],ArrowRight:[.1,0],ArrowUp:[0,.1],ArrowDown:[0,-.1]}[e.key];
+  if(delta){e.preventDefault();setSimulationStart(sim.start.map((value,i)=>value+delta[i]));}
+}
+$('landscape').addEventListener('pointerdown',e=>{const rect=e.currentTarget.getBoundingClientRect(),{scale,cx,cy}=renderLandscape();setSimulationStart([(e.clientX-rect.left-cx)/scale,(cy-(e.clientY-rect.top))/scale]);});
+['landscape','hero-canvas'].forEach(id=>$(id).addEventListener('keydown',moveStartWithKeys));
+let surfacePointer=null;
+$('hero-canvas').addEventListener('pointerdown',e=>{
+  if(!e.isPrimary||e.button!==0||landscapeView!=='3d')return;
+  drawHero(sim.progress*sim.duration);
+  const rect=e.currentTarget.getBoundingClientRect();
+  surfacePointer={id:e.pointerId,x:e.clientX,y:e.clientY,point:[e.clientX-rect.left,e.clientY-rect.top],view:heroBackdrop.surface,moved:false};
+  e.currentTarget.setPointerCapture(e.pointerId);
+});
+$('hero-canvas').addEventListener('pointermove',e=>{
+  if(surfacePointer?.id===e.pointerId&&Math.hypot(e.clientX-surfacePointer.x,e.clientY-surfacePointer.y)>6)surfacePointer.moved=true;
+});
+$('hero-canvas').addEventListener('pointercancel',()=>{surfacePointer=null;});
+$('hero-canvas').addEventListener('lostpointercapture',()=>{surfacePointer=null;});
+$('hero-canvas').addEventListener('pointerup',e=>{
+  const pointer=surfacePointer;surfacePointer=null;
+  if(!pointer||pointer.id!==e.pointerId||pointer.moved||landscapeView!=='3d')return;
+  const origin=[pointer.view.w*.5,pointer.view.h*.68];
+  // The visible minimum marker remains selectable through overlapping mesh lines.
+  const point=Math.hypot(pointer.point[0]-origin[0],pointer.point[1]-origin[1])<=5?[0,0]:pickSurfaceStart(pointer.point,pointer.view);
+  if(point){e.currentTarget.focus({preventScroll:true});setSimulationStart(point);}
+});
 
 function drawScaling(){
   const alpha=+$('scale-alpha').value,ratio=2**+$('scale-batch').value;

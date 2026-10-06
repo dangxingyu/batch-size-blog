@@ -156,6 +156,28 @@ try {
   console.log(`PASS: 624 cells checked against independent moments; worker cancellation and cooperative fallback verified (${result.computeMs.toFixed(1)} ms for the final worker map).`);
 } finally { await worker.terminate(); }
 
+// The clickable 3D surface must use the very same projection and zoom as its mesh.
+const appSource=fs.readFileSync(path.join(assets,'app.js'),'utf8');
+const picking=vm.createContext({});
+vm.runInContext(appSource.slice(appSource.indexOf('function projectSurfacePoint('),appSource.indexOf('function drawHero(')),picking);
+let pickingCases=0;
+for(const w of [300,720])for(const h of [290,340])for(const sharp of [2,20,60])for(const scale of [.45,1,1.8,3.6,8.2,31.9]){
+  const view={w,h,sharp,scale},level=2**Math.floor(Math.log2(Math.max(1,scale)));
+  const limitX=Math.min(1.85,2/level),limitY=Math.min(1.3,1.2/level);
+  for(let ix=-4;ix<=4;ix++)for(let iy=-4;iy<=4;iy++){
+    const start=[ix/4*limitX,iy/4*limitY],screen=picking.projectSurfacePoint(start,view);
+    const chosen=picking.pickSurfaceStart(screen,view);
+    assert(chosen,'Every projected selectable surface point has an intersection, including mesh corners.');
+    assert(Math.abs(chosen[0])<=limitX+1e-8&&Math.abs(chosen[1])<=limitY+1e-8,'Picking stays inside the visible mesh and parameter bounds.');
+    assert(chosen[0]+chosen[1]>=start[0]+start[1]-1e-7,'An overlap selects its foreground surface intersection.');
+    const projected=picking.projectSurfacePoint(chosen,view);
+    assert(Math.hypot(screen[0]-projected[0],screen[1]-projected[1])<1e-6,'The picked point reprojects to the clicked CSS pixel through the current camera.');
+    pickingCases++;
+  }
+  assert.equal(picking.pickSurfaceStart([w*20,h],view),null,'Outside-surface clicks do not invent a starting point.');
+}
+console.log(`PASS: ${pickingCases} 3D surface picks at mobile/desktop sizes, varied curvature and current zoom, including bounds and foreground overlap handling.`);
+
 await import('./check-batch-render.mjs');
 
 await import("./check-scaling-rule-data.mjs");

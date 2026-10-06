@@ -70,10 +70,11 @@
   height: 412px;
 }
 
-.geometry-lab[data-projection="3d"] .arena-caption,
 .geometry-lab[data-projection="3d"] .arena-legend .axis-key {
   display: none;
 }
+
+.geometry-paths #hero-canvas { cursor: crosshair; }
 
 .geometry-paths .arena-legend {
   padding: 12px 18px 18px;

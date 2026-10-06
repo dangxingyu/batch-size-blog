@@ -17,13 +17,7 @@
   // Color follows the fitted exponent; the numerical curve remains measured.
   function scalingColor(exponent, sqrtColor, linearColor) {
     const mix=Math.max(0,Math.min(1,(exponent-.5)/.5));
-    const channels=color=>{
-      const value=color.trim().replace('#','');
-      const hex=value.length===3?value.split('').map(c=>c+c).join(''):value;
-      return [0,2,4].map(index=>parseInt(hex.slice(index,index+2),16));
-    };
-    const squareRoot=channels(sqrtColor),linear=channels(linearColor);
-    return `rgb(${squareRoot.map((channel,i)=>Math.round(channel+(linear[i]-channel)*mix)).join(' ')})`;
+    return `color-mix(in oklch shorter hue, ${sqrtColor} ${(1-mix)*100}%, ${linearColor} ${mix*100}%)`;
   }
   function draw() {
     const selected=conditionAt(+$('paper-cnr').value);
@@ -33,7 +27,7 @@
     const referenceBatch=data.groups[selected.measuredIndex].rows[0].batch;
     const x=kappa=>f.l+Math.log2(kappa)/8*f.iw,y=ratio=>f.t+f.ih*(1-Math.log10(ratio)/Math.log10(400));
     const cnrLabel=Number(selected.cnr.toPrecision(3)).toString();
-    const linearColor=token('--orange'),sqrtColor=token('--teal');
+    const linearColor=token('--cnr-linear-color'),sqrtColor=token('--cnr-sqrt-color');
     const tunedColor=scalingColor(selected.fittedExponent,sqrtColor,linearColor);
     document.querySelector('.cnr-paper-panel').style.setProperty('--cnr-tuned-color',tunedColor);
     let markup=`<title>Independently tuned SignSGD learning-rate ratios against batch ratio kappa, CNR ${cnrLabel}, fixed momentum 0.9 and 4,096 samples</title>`;

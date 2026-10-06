@@ -1,16 +1,26 @@
 /* The guide hues anchor the selected curve's fitted-exponent color. */
+:root {
+  --cnr-sqrt-color: #6d28d9;
+  --cnr-linear-color: #c2410c;
+}
+
+:root[data-theme=dark] {
+  --cnr-sqrt-color: #bca2ff;
+  --cnr-linear-color: #ffb454;
+}
+
 .cnr-paper-panel {
-  --cnr-tuned-color: var(--teal);
+  --cnr-tuned-color: var(--cnr-sqrt-color);
 }
 
 .cnr-paper-panel .cnr-paper-legend .cnr-linear,
 .cnr-paper-panel .cnr-paper-legend .guide-linear {
-  color: var(--orange);
+  color: var(--cnr-linear-color);
 }
 
 .cnr-paper-panel .cnr-paper-legend .cnr-sqrt,
 .cnr-paper-panel .cnr-paper-legend .guide-sqrt {
-  color: var(--teal);
+  color: var(--cnr-sqrt-color);
 }
 
 .cnr-paper-panel .cnr-paper-legend :is(math, .blog-math) {
