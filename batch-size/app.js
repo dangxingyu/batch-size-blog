@@ -429,7 +429,7 @@ function drawScaling(){
   document.querySelectorAll('#scale-presets button').forEach(b=>{b.classList.toggle('active',+b.dataset.alpha===alpha);b.setAttribute('aria-pressed',String(+b.dataset.alpha===alpha));});
 }
 function drawMovementQuadratic(alpha,ratio){
-  const svg=$('movement-quadratic'),w=Math.max(240,Math.min(440,svg.clientWidth)),h=350;
+  const svg=$('movement-quadratic'),w=Math.max(240,Math.min(440,svg.clientWidth)),h=375;
   svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
   const x=v=>24+(v+1.2)/2.8*(w-48);
   const arrowUnit=.3; // Fixed batch-1 reference length across every exponent and batch ratio.
@@ -443,8 +443,8 @@ function drawMovementQuadratic(alpha,ratio){
     const arrow=(end,cy,stroke,dashed)=>`<path d="M${x(1)} ${cy}H${x(end)}" fill="none" stroke="${stroke}" stroke-width="${dashed?1.5:3}" ${dashed?'stroke-dasharray="4 3"':''}/><path d="M${x(end)+5} ${cy-4}L${x(end)} ${cy}L${x(end)+5} ${cy+4}" fill="none" stroke="${stroke}" stroke-width="1.5"/>`;
     const local=Array.from({length:21},(_,k)=>end+(1-end)*k/20);
     markup+=`<path d="${line(local,v=>x(v),y)}" fill="none" stroke="${color}" stroke-width="3"/><circle cx="${x(end)}" cy="${y(end)}" r="4" fill="${color}"/>`;
-    markup+=arrow(1-arrowUnit,top+118,token('--muted'),true)+arrow(end,top+140,color,false);
-    markup+=svgText(16,top+121,'Batch 1','font-size="17"')+svgText(16,top+143,`${ratio}× batch · ${movement.toFixed(2)}×`,`font-size="17" fill="${color}"`);
+    markup+=arrow(1-arrowUnit,top+136,token('--muted'),true)+arrow(end,top+168,color,false);
+    markup+=svgText(16,top+121,'Batch 1','font-size="17"')+svgText(16,top+153,`${ratio}× batch · ${movement.toFixed(2)}×`,`font-size="17" fill="${color}"`);
   });
   svg.dataset.alpha=alpha;svg.dataset.ratio=ratio;svg.innerHTML=markup;
 }

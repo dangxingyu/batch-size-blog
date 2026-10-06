@@ -5,7 +5,7 @@
   if (!data || !node('rule-lab')) return;
   const choiceNames = { fixed: 'Fixed', sqrt: 'Square-root', linear: 'Linear', retention: 'EMA' };
   const variables = { etaM: mathVariable('η','M'), etaA: mathVariable('η','A'), lambdaM: mathVariable('λ','M'), lambdaA: mathVariable('λ','A'), mu: mathVariable('μ'), beta1: mathVariable('β',1), beta2: mathVariable('β',2) };
-  const state = { task: 'llm', view: 'loss', range: 'detail', index: 0, selected: '', preset: 'common', running: false, visible: false, frame: 0, last: 0, elapsed: 0, holding: true, from: 0, to: 0, geometry: null };
+  const state = { task: 'llm', view: 'loss', range: 'detail', index: 0, selected: '', preset: 'common', geometry: null };
   const settings = Object.fromEntries(Object.entries(data.settings).map(([key,value])=>[key,window.RuleAtlasAxis.scaleUpSetting(value)]));
   const setting = () => settings[state.task];
   const selected = () => setting().rules.find(rule => rule.id === state.selected);
@@ -40,7 +40,7 @@
     const f = frame(w,h,{l:w<360?60:72,r:22,t:20,b:43}), shown=plotIndices();
     const values=s.rules.flatMap(r=>shown.map(i=>plotValue(r,i)));
     const references=shown.map(i=>state.view==='gap'?0:bestLoss(i));
-    const focus=state.running&&state.preset==='batch'?s.rules.filter(r=>s.bestAtBatch.includes(r.id)):[selected()];
+    const focus=[selected()];
     const domains=window.RuleAtlasAxis.domains(values,references,focus.flatMap(r=>shown.map(i=>plotValue(r,i))),state.view==='gap');
     const domain=domains[state.range], {bottom,top,step:tickStep,precision}=domain;
     const x = b => f.l + Math.log2(b/batchAt(shown[0])) / Math.log2(batchAt(shown.at(-1))/batchAt(shown[0])) * f.iw;
@@ -74,40 +74,18 @@
     svg.setAttribute('tabindex','0');
     svg.setAttribute('aria-label',`${s.rules.length} complete rules, ${plotted} measured runs. ${state.range==='detail'?'Detail of the selected rule; use Full range to see every endpoint.':'Full range.'} Click a curve; use left and right arrow keys to select rules.`);
     svg.dataset.rules = s.rules.length; svg.dataset.runs = plotted;svg.dataset.view=state.view;svg.dataset.yScale='linear';svg.dataset.range=state.range;svg.dataset.yMin=bottom;svg.dataset.yMax=top;svg.dataset.referenceBatch=s.referenceBatch;svg.dataset.referenceLoss=s.referenceLoss;
-    rebuildOverview();
     updateSelection();
   }
-  function rebuildOverview() {
-    const s=setting(), g=state.geometry, svg=node('rule-overview'), h=62;
-    const f=frame(g.f.w,h,{l:g.f.l,r:g.f.r,t:12,b:10}), {bottom,top,precision}=g.full;
-    const y=value=>f.t+f.ih*(1-(value-bottom)/(top-bottom));
-    g.overview={f,x:g.x,y,points:s.rules.map(r=>g.shown.map(i=>[g.x(batchAt(i)),y(plotValue(r,i))]))};
-    svg.setAttribute('viewBox',`0 0 ${f.w} ${h}`);
-    let markup=`<title>Full linear range of all ${s.measurementCount} measured runs. The shaded band is the main plot's vertical range. Click a curve to inspect its rule.</title><defs><clipPath id="rule-overview-clip"><rect x="${f.l-4}" y="${f.t}" width="${f.iw+8}" height="${f.ih+3}"/></clipPath></defs>`;
-    [bottom,top].forEach(v=>{markup+=svgText(f.l-12,y(v)+5,v.toFixed(precision),'font-size="17" text-anchor="end"');});
-    const clamp=value=>Math.max(bottom,Math.min(top,value));
-    const bandTop=y(clamp(g.domain.top)),bandBottom=y(clamp(g.domain.bottom));
-    markup+=`<rect x="${f.l}" y="${bandTop}" width="${f.iw}" height="${bandBottom-bandTop}" fill="${token('--orange')}" fill-opacity=".08" stroke="${token('--orange')}" stroke-opacity=".35" stroke-width="1"/><g clip-path="url(#rule-overview-clip)"><g class="rule-overview-cloud">`;
-    s.rules.forEach((r,i)=>{markup+=`<path data-rule="${r.id}" d="${line(g.overview.points[i],p=>p[0],p=>p[1])}"><title>Rule ${r.rank}: ${recipeText(r)}</title></path>`;});
-    const baseline=g.shown.map(i=>[g.x(batchAt(i)),y(state.view==='gap'?0:bestLoss(i))]);
-    markup+=`</g><path d="${line(baseline,p=>p[0],p=>p[1])}" fill="none" stroke="${token('--ink')}" stroke-width="1" stroke-dasharray="4 3"/><path id="rule-overview-selection" fill="none" stroke="${token('--orange')}" stroke-width="2" stroke-linejoin="round"/><circle id="rule-overview-current" r="3" fill="${token('--orange')}" stroke="${token('--surface')}" stroke-width="1"/></g><line x1="${f.l}" x2="${f.l}" y1="${f.t}" y2="${h-f.b}" stroke="${token('--muted')}" stroke-width="1"/>`;
-    svg.innerHTML=markup;
-    svg.setAttribute('tabindex','0');svg.dataset.rules=s.rules.length;svg.dataset.runs=s.measurementCount;svg.dataset.yScale='linear';svg.dataset.yMin=bottom;svg.dataset.yMax=top;svg.dataset.range='full';
-  }
-  function cursor(position) {
-    const g = state.geometry, r = selected(), left = indices()[Math.floor(position)], right = indices()[Math.min(Math.floor(position)+1,indices().length-1)], fraction = position-Math.floor(position);
-    const x = g.x(setting().batches[left])*(1-fraction)+g.x(setting().batches[right])*fraction;
-    const y = g.y(plotValue(r,left))*(1-fraction)+g.y(plotValue(r,right))*fraction;
+  function cursor() {
+    const g = state.geometry, x = g.x(setting().batches[state.index]), y = g.y(plotValue(selected(),state.index));
     const lineNode = node('rule-cursor');
     lineNode.setAttribute('x1',x); lineNode.setAttribute('x2',x); lineNode.setAttribute('y1',g.f.t);lineNode.setAttribute('y2',g.f.h-g.f.b);
     node('rule-current-point').setAttribute('cx',x);node('rule-current-point').setAttribute('cy',y);
-    node('rule-overview-current').setAttribute('cx',x);node('rule-overview-current').setAttribute('cy',g.overview.y(plotValue(r,left))*(1-fraction)+g.overview.y(plotValue(r,right))*fraction);
   }
   function updateSelection() {
     const s = setting(), r = selected(), points = state.geometry.points[s.rules.indexOf(r)];
     node('rule-selection').innerHTML = `<path d="${line(points,p=>p[0],p=>p[1])}" fill="none" stroke="${token('--orange')}" stroke-width="2.8" stroke-linejoin="round"/>`+points.map(([cx,cy],i)=>state.geometry.shown[i]===-1?'':`<circle cx="${cx}" cy="${cy}" r="4.5" fill="${token('--orange')}" stroke="${token('--surface')}" stroke-width="1.5"><title>${batchLabel(batchAt(state.geometry.shown[i]))}: ${decimal(r.losses[state.geometry.shown[i]])} nats</title></circle>`).join('');
     node('rule-atlas').dataset.selectedRule = r.id;
-    node('rule-overview-selection').setAttribute('d',line(state.geometry.overview.points[s.rules.indexOf(r)],p=>p[0],p=>p[1]));node('rule-overview').dataset.selectedRule=r.id;
     node('rule-builder').querySelectorAll('select').forEach(select => { select.value = r.choices[select.dataset.coordinate]; });
     node('rule-loss').textContent = decimal(r.losses[state.index]);
     node('rule-baseline-loss').textContent = decimal(bestLoss(state.index));
@@ -131,53 +109,23 @@
       description.hidden = !content;
       description.dataset.preset = state.preset;
     }
-    cursor(indices().indexOf(state.index));
+    cursor();
   }
-  function choose(id,preset='') { pause();state.selected=id;state.preset=preset;if(state.range==='detail')rebuildPlot();else updateSelection(); }
+  function choose(id,preset='') { state.selected=id;state.preset=preset;if(state.range==='detail')rebuildPlot();else updateSelection(); }
   function updateBatch(index) {
     state.index=index;
     node('rule-batch').value=indices().indexOf(index);
     const s=setting(), value=`${batchLabel(s.batches[index])} ${s.unit} / update`;
     node('rule-target-batch').textContent=value;node('rule-batch').setAttribute('aria-valuetext',value);
     node('rule-batch-ticks').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.ruleBatch===index));
-    if (state.preset==='batch' && state.selected!==s.bestAtBatch[index]) {state.selected=s.bestAtBatch[index];if(state.range==='detail'&&!state.running){rebuildPlot();return;}}
+    if (state.preset==='batch' && state.selected!==s.bestAtBatch[index]) {state.selected=s.bestAtBatch[index];if(state.range==='detail'){rebuildPlot();return;}}
     updateSelection();
   }
-  function pause() {
-    state.running=false;cancelAnimationFrame(state.frame);state.frame=0;state.last=0;
-    node('rule-atlas').dataset.playbackPhase='paused';
-    node('rule-play').innerHTML=reducedMotion.matches?'Next batch <span aria-hidden="true">→</span>':'Play batch changes <span aria-hidden="true">▶</span>';node('rule-play').setAttribute('aria-label',reducedMotion.matches?'Next scaling-rule batch':'Play scaling-rule batch changes');
-  }
-  function step(ts) {
-    if (!state.running || !state.visible || document.hidden) {state.frame=0;state.last=0;return;}
-    if (state.last) state.elapsed+=Math.min(100,ts-state.last);
-    state.last=ts;
-    node('rule-atlas').dataset.playbackPhase=state.holding?'hold':'move';
-    if (state.holding) {
-      cursor(state.from);
-      if (state.elapsed>=2000) {
-        if (state.index===indices().at(-1)) {pause();return;}
-        state.elapsed=0;state.holding=false;
-      }
-    } else {
-      const t=Math.min(1,state.elapsed/4500), eased=t*t*(3-2*t);
-      cursor(state.from+(state.to-state.from)*eased);
-      if (t===1) {
-        updateBatch(indices()[state.to]);
-        state.from=state.to;state.to=Math.min(state.from+1,indices().length-1);
-        state.elapsed=0;state.holding=true;
-      }
-    }
-    state.frame=requestAnimationFrame(step);
-  }
   function setTask(task) {
-    pause();state.task=task;state.index=0;state.preset='common';state.selected=setting().commonRuleId;
+    state.task=task;state.index=0;state.preset='common';state.selected=setting().commonRuleId;
     const s=setting();
     document.querySelectorAll('[data-task]').forEach(b=>{b.classList.toggle('active',b.dataset.task===task);b.setAttribute('aria-pressed',b.dataset.task===task);});
     node('rule-lab').querySelector('h3').textContent='Scaling-rule search.';
-    node('rule-count').innerHTML=`${fmt(s.measurementCount)}<span>measured runs</span>`;
-    node('rule-product').innerHTML=`${fmt(s.rules.length)} rules <span>×</span> ${s.batches.length} batches`;
-    node('rule-budget').textContent=`Reference: ${task==='llm'?'128K':fmt(s.referenceBatch)} ${s.unit} / update`;
     node('rule-x-unit').textContent=`${s.unit} / update`;
     rebuildBatchControls();
     node('rule-builder').innerHTML=s.coords.map(c=>`<label for="rule-${c.key}"><span>${mathMarkup(variables[c.key])} ${c.label}</span><select id="rule-${c.key}" data-coordinate="${c.key}" aria-label="${c.label}">${c.choices.map(value=>`<option value="${value}">${choiceNames[value]}</option>`).join('')}</select><output class="rule-coordinate-formula" id="rule-formula-${c.key}" for="rule-${c.key}"></output></label>`).join('');
@@ -191,11 +139,11 @@
   }
   node('rule-view-tabs').addEventListener('click',e=>{
     const button=e.target.closest('[data-rule-view]');if(!button||button.dataset.ruleView===state.view)return;
-    pause();state.view=button.dataset.ruleView;
+    state.view=button.dataset.ruleView;
     if(!indices().includes(state.index))state.index=indices()[0];
     rebuildBatchControls();rebuildPlot();updateBatch(state.index);
   });
-  node('rule-range-tabs').addEventListener('click',e=>{const button=e.target.closest('[data-rule-range]');if(!button||button.dataset.ruleRange===state.range)return;pause();state.range=button.dataset.ruleRange;rebuildPlot();});
+  node('rule-range-tabs').addEventListener('click',e=>{const button=e.target.closest('[data-rule-range]');if(!button||button.dataset.ruleRange===state.range)return;state.range=button.dataset.ruleRange;rebuildPlot();});
   node('rule-reset').addEventListener('click',()=>{state.range='detail';choose(presetId('common'),'common');});
   node('rule-task-tabs').addEventListener('click',e=>{const b=e.target.closest('[data-task]');if(b)setTask(b.dataset.task);});
   node('rule-builder').addEventListener('change',()=>{
@@ -203,8 +151,8 @@
     const r=setting().rules.find(r=>Object.entries(choices).every(([key,value])=>r.choices[key]===value));choose(r.id);
   });
   node('rule-lab').addEventListener('click',e=>{const b=e.target.closest('[data-rule-preset]');if(b)choose(presetId(b.dataset.rulePreset),b.dataset.rulePreset);});
-  node('rule-batch').addEventListener('input',()=>{pause();updateBatch(indices()[+node('rule-batch').value]);});
-  node('rule-batch-ticks').addEventListener('click',e=>{const b=e.target.closest('[data-rule-batch]');if(b){pause();updateBatch(+b.dataset.ruleBatch);}});
+  node('rule-batch').addEventListener('input',()=>{updateBatch(indices()[+node('rule-batch').value]);});
+  node('rule-batch-ticks').addEventListener('click',e=>{const b=e.target.closest('[data-rule-batch]');if(b){updateBatch(+b.dataset.ruleBatch);}});
   function selectFromPlot(e, id, geometry) {
     const svg=node(id),rect=svg.getBoundingClientRect(),g=geometry;
     const px=(e.clientX-rect.left)*g.f.w/rect.width,py=(e.clientY-rect.top)*g.f.h/rect.height;
@@ -221,27 +169,9 @@
     const s=setting(),i=s.rules.indexOf(selected()),next=e.key==='Home'?0:e.key==='End'?s.rules.length-1:Math.max(0,Math.min(s.rules.length-1,i+(e.key==='ArrowRight'?1:-1)));choose(s.rules[next].id);
   }
   node('rule-atlas').addEventListener('click',e=>selectFromPlot(e,'rule-atlas',state.geometry));
-  node('rule-overview').addEventListener('click',e=>selectFromPlot(e,'rule-overview',state.geometry.overview));
   node('rule-atlas').addEventListener('keydown',selectWithKeyboard);
-  node('rule-overview').addEventListener('keydown',selectWithKeyboard);
-  node('rule-play').addEventListener('click',()=>{
-    if(state.running){pause();cursor(indices().indexOf(state.index));return;}
-    if(state.index===indices().at(-1))updateBatch(indices()[0]);
-    if(reducedMotion.matches){updateBatch(indices()[Math.min(indices().indexOf(state.index)+1,indices().length-1)]);return;}
-    state.running=true;state.from=indices().indexOf(state.index);state.to=state.from+1;state.last=0;state.elapsed=0;state.holding=true;
-    if(state.preset==='batch'&&state.range==='detail')rebuildPlot();
-    node('rule-play').innerHTML='Pause <span aria-hidden="true">Ⅱ</span>';node('rule-play').setAttribute('aria-label','Pause scaling-rule batch changes');
-    state.frame=requestAnimationFrame(step);
-  });
-  new IntersectionObserver(entries=>{
-    state.visible=entries[0].isIntersecting;
-    if(!state.visible){cancelAnimationFrame(state.frame);state.frame=0;state.last=0;}
-    else if(state.running&&!state.frame)state.frame=requestAnimationFrame(step);
-  },{threshold:0}).observe(node('rule-lab'));
-  document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(state.frame);state.frame=0;state.last=0;}else if(state.running&&state.visible&&!state.frame)state.frame=requestAnimationFrame(step);});
   let resizeFrame=0;
-  new ResizeObserver(()=>{cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(()=>{pause();rebuildPlot();});}).observe(node('rule-atlas'));
-  new MutationObserver(()=>{pause();rebuildPlot();}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
-  reducedMotion.addEventListener('change',()=>{pause();cursor(indices().indexOf(state.index));});
+  new ResizeObserver(()=>{cancelAnimationFrame(resizeFrame);resizeFrame=requestAnimationFrame(()=>{rebuildPlot();});}).observe(node('rule-atlas'));
+  new MutationObserver(()=>{rebuildPlot();}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
   setTask('llm');
 })();

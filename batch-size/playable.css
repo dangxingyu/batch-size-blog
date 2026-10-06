@@ -240,25 +240,24 @@
 @media(max-width:370px){.directional-text-block{margin-left:15px;margin-right:15px}}
 
 .rule-workspace .figure-axis-name::before{content:none}
-.rule-range-overview{margin:10px 0 12px;padding-top:8px;border-top:1px solid var(--line)}
+.rule-range-controls{margin:10px 0 12px;padding-top:8px;border-top:1px solid var(--line)}
 .rule-range-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 5px;color:var(--muted);font-size:13px}
 .rule-range-toolbar .segmented{margin:0;flex:none}
 .rule-range-toolbar .segmented button{font-size:12px;padding:6px 11px;min-height:32px}
 .rule-range-actions{display:flex;align-items:center;gap:8px}
 .rule-range-reset{font-size:12px;padding:6px 10px;min-height:32px;border:1px solid var(--line);border-radius:6px;color:var(--muted);white-space:nowrap}
 .rule-range-reset:hover{background:var(--sunken);color:var(--ink)}
-#rule-overview{display:block;width:100%;cursor:crosshair}
-.rule-overview-cloud path{fill:none;stroke:var(--ink);stroke-width:1;stroke-opacity:.12;stroke-linejoin:round}
 .rule-cloud .rule-ghost{opacity:.035}
 .rule-cloud .rule-run{opacity:.05}
-@media(max-width:1000px){.rule-range-overview{margin:8px 0 12px;padding-top:8px}.rule-range-toolbar{font-size:12px}.rule-range-toolbar .segmented button{font-size:11px;padding:5px 8px;min-height:30px}.rule-range-actions{gap:6px}.rule-range-reset{font-size:11px;padding:5px 8px;min-height:30px}}
+@media(max-width:1000px){.rule-range-controls{margin:8px 0 12px;padding-top:8px}.rule-range-toolbar{font-size:12px}.rule-range-toolbar .segmented button{font-size:11px;padding:5px 8px;min-height:30px}.rule-range-actions{gap:6px}.rule-range-reset{font-size:11px;padding:5px 8px;min-height:30px}}
 @media(max-height:650px) and (max-width:1000px){.rule-chart-view{position:static}}
 
 .rule-workspace .rule-atlas-key{margin-bottom:10px}
+.rule-workspace .rule-transport{grid-template-columns:minmax(0,1fr)}
 .rule-workspace .rule-transport>label{grid-template-columns:minmax(0,1fr) auto;gap:6px 10px}
 .rule-workspace .rule-transport input{grid-column:1/-1}
 .rule-workspace #rule-target-batch{color:var(--orange);font-size:12px;white-space:nowrap}
-.rule-workspace .rule-batch-ticks{grid-column:2;padding-left:0;margin-top:0}
+.rule-workspace .rule-batch-ticks{grid-column:1;padding-left:0;margin-top:0}
 @media(max-width:440px){.rule-workspace .rule-batch-ticks{grid-column:1}}
 
 /* Keep experiment controls legible beside the larger figure labels. */
@@ -352,7 +351,6 @@ body{--ui-label-size:15px;--ui-button-size:14px;--ui-detail-size:14px}
 :root[data-theme=dark]{--rule-cloud:#d6b25f}
 .rule-cloud .rule-ghost{stroke:var(--rule-cloud);opacity:.17;stroke-width:1.2}
 .rule-cloud .rule-run{fill:var(--rule-cloud);opacity:.23}
-.rule-overview-cloud path{stroke:var(--rule-cloud);opacity:.15}
 .rule-background-swatch{color:var(--rule-cloud);opacity:.8}
 .rule-batch-action{grid-column:1/-1;display:flex;justify-content:flex-end}
 .rule-batch-action button{border:1px solid var(--orange);border-radius:6px;background:var(--surface);color:var(--orange);font:inherit;font-size:14px;min-height:40px;padding:8px 14px}

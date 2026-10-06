@@ -52,7 +52,7 @@ for (const [name, setting] of Object.entries(settings)) {
   const common = domains(values, best.map(() => 0), selected, true);
   assert(common.detail.top < common.full.top / 10, 'The best-common-rule view resolves differences compressed by extreme runs.');
 }
-console.log(`PASS: ${checked} rule/view combinations retain all endpoints in the overview and Full range, and fit the selected curve on linear axes.`);
+console.log(`PASS: ${checked} rule/view combinations retain all endpoints in Full range, and fit the selected curve on linear axes.`);
 
 // Loss ranks use the current batch: the best loss ranks first and ties share a rank.
 assert.equal(lossRank([1,2,2,4],1),1);
@@ -70,29 +70,3 @@ for (const setting of Object.values(data.settings)) {
   }
 }
 console.log('PASS: batch-specific loss ranks start at 1 and preserve ties and do not change plot ranges.');
-
-// Drive the production animation with a deterministic frame clock. Endpoint
-// holds must leave the measured batch and readout unchanged while readers compare.
-const source = readFileSync(new URL('../batch-size/scaling-rules.js', import.meta.url), 'utf8');
-const motion = vm.createContext({document:{hidden:false},requestAnimationFrame:()=>1,cancelAnimationFrame(){},reducedMotion:{matches:false}});
-vm.runInContext(`
-  const state={running:true,visible:true,frame:0,last:0,elapsed:0,holding:true,from:0,to:1,index:0};
-  const element={dataset:{},setAttribute(){}};
-  const node=()=>element, indices=()=>[0,1,2,3];
-  let position=0;
-  const cursor=p=>position=p;
-  const updateBatch=i=>{state.index=i;cursor(i);};
-  ${source.slice(source.indexOf('  function pause()'), source.indexOf('  function setTask('))}
-`, motion);
-const frames = [];
-for (let ts=1000;ts<=23000;ts+=50) frames.push(vm.runInContext(`step(${ts});({ts:${ts},position,index:state.index,running:state.running})`, motion));
-assert(frames.filter(f=>f.ts<=3000).every(f=>f.position===0 && f.index===0), 'Playback holds the starting measurement for two seconds.');
-assert(frames.find(f=>f.ts===4600).position < .5, 'After the old 1.6-second transition, the new cursor has not yet passed halfway.');
-assert(frames.filter(f=>f.ts>=7500 && f.ts<=9500).every(f=>f.position===1 && f.index===1), 'Each reached measurement holds its exact curve point and loss readout for two seconds.');
-assert(frames.filter(f=>f.ts<22500).every(f=>f.running), 'The last endpoint also gets a full reading pause.');
-assert.equal(frames.at(-1).position,3);
-assert.equal(frames.at(-1).running,false);
-for (let i=1;i<frames.length;i++) assert(frames[i].position>=frames[i-1].position, 'The batch cursor never moves backward.');
-vm.runInContext('state.running=true;state.index=0;state.from=0;state.to=1;state.holding=false;state.elapsed=1000;state.last=100;step(150);document.hidden=true;step(10000);document.hidden=false;step(50000)', motion);
-assert.equal(vm.runInContext('state.elapsed',motion),1050,'Leaving and returning to the page preserves the transition without consuming hidden time.');
-console.log('PASS: slower batch transitions, two-second measurement holds, monotonic playback, and preserved progress after a visibility pause.');
