@@ -231,7 +231,7 @@ function drawHero(time){
   });
   ctx.font=`600 13px ${token('--sans')}`;ctx.fillStyle=palette.ink;ctx.textAlign='center';ctx.fillText('Minimizer',ox,oy+22);
   ctx.font=`14px ${token('--sans')}`;ctx.fillStyle=palette.muted;ctx.textAlign='left';
-  if(camera.from===0){const start=view(project(...hero.start));ctx.beginPath();ctx.arc(...start,4,0,Math.PI*2);ctx.strokeStyle=palette.ink;ctx.lineWidth=1;ctx.stroke();ctx.fillText('same start',start[0]+10,start[1]-10);}
+  if(camera.from===0){const start=view(project(...hero.start));ctx.beginPath();ctx.arc(...start,4,0,Math.PI*2);ctx.strokeStyle=palette.ink;ctx.lineWidth=1;ctx.stroke();ctx.fillText('start',start[0]+10,start[1]-10);}
   canvas.dataset.zoom=camera.zoom.toFixed(3);canvas.dataset.duration=hero.duration.toFixed(0);canvas.dataset.progress=progress.toFixed(3);
   canvas.dataset.steps=String(hero.paths.sgd.length-1);canvas.dataset.samples=String(Math.floor(progress*(hero.paths.sgd.length-1))*hero.batch);
   $('sim-zoom').textContent=camera.zoom.toFixed(1)+'×';
