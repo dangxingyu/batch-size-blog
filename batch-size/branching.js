@@ -19,7 +19,15 @@
   }
   function render(){
     frame=0;
-    const anchor=+el('anchor').value*1000,arm=el('held').value,selected=data.anchors[anchor];
+    const anchor=+el('anchor').value*1000,held=el('held'),selected=data.anchors[anchor];
+    const top128Available=Boolean(selected['top-128 held']?.length);
+    const top128Option=[...held.options].find(option=>option.value==='top-128 held');
+    if(top128Option){top128Option.hidden=!top128Available;top128Option.disabled=!top128Available;}
+    const arm=held.value;
+    if(arm==='top-128 held'&&!top128Available){
+      const fallback=selected['top-768 held']?.length?'top-768 held':'fully scaled';
+      if(selected[fallback]?.length){held.value=fallback;held.dispatchEvent(new Event('change'));return;}
+    }
     const hasHighlight=Boolean(selected[arm]?.length);
     const width=chart.clientWidth||800,height=width<500?230:250;
     const box={left:width<500?49:64,right:width-14,top:35,bottom:height-37};
@@ -76,7 +84,7 @@
     const endpointExists=key=>window.PAPER_DATA?.endpoints.some(r=>r.anchor===anchor&&r.arm===key);
     const entry=(name,color,key,dashed=false)=>`<button type="button" data-branch-arm="${key}" aria-pressed="${key===arm}" ${!selected[key]?'disabled':''}><i class="branch-line ${dashed?'dashed':''}" style="color:${color}" aria-hidden="true"></i><span class="branch-legend-label">${name}${!selected[key]?endpointExists(key)?' · curve unavailable':' · not run':''}</span></button>`;
     const control=`<span class="branch-control"><i class="branch-line" style="color:${colors.control}" aria-hidden="true"></i><span class="branch-legend-label">${closeView?'128K control':'128K base / control'}</span></span>`;
-    el('branch-curve-legend').innerHTML=`<div class="branch-legend-group branch-legend-baselines" role="group" aria-label="Reference and comparison branches">${control}${entry('Fully scaled to 2M',colors.full,'fully scaled')}${entry('Random 768',colors.random,'random-768 held',true)}</div><div class="branch-legend-group branch-legend-ranks" role="group" aria-label="Sharpest directions retained">${ranks.map((k,i)=>entry(`Top-${k}`,rankColors[i],`top-${k} held`)).join('')}</div>`;
+    el('branch-curve-legend').innerHTML=`<div class="branch-legend-group branch-legend-baselines" role="group" aria-label="Reference and comparison branches">${control}${entry('Fully scaled to 2M',colors.full,'fully scaled')}${entry('Random 768',colors.random,'random-768 held',true)}</div><div class="branch-legend-group branch-legend-ranks" role="group" aria-label="Sharpest directions retained">${ranks.map((k,i)=>k===128&&!top128Available?'':entry(`Top-${k}`,rankColors[i],`top-${k} held`)).join('')}</div>`;
     el('branch-curve-legend').querySelectorAll('[data-branch-arm]').forEach(button=>button.addEventListener('click',()=>{el('held').value=button.dataset.branchArm;el('held').dispatchEvent(new Event('change'));}));
     el('branch-curve-state').textContent=`Checkpoint ${fmt(anchor)}`;
     el('branch-curve-caption').textContent=!selected[arm]?endpointExists(arm)?`${armLabel}: the endpoint penalty is available below; its raw loss curve has not been imported.`:`${armLabel} was not run at this checkpoint; no curve is inferred.`:'';

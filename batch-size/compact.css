@@ -85,7 +85,7 @@ input[type=range] { margin-block: 8px; }
 .directional-local-panel .movement-quadratic h4,
 .directional-local-panel .figure-axis-heading { min-height: 34px; margin-bottom: 6px; font-size: 14px; line-height: 1.35; }
 .directional-local-panel .figure-axis-name { font-size: 14px; }
-.directional-local-panel #movement-quadratic { height: 310px; }
+.directional-local-panel #movement-quadratic { height: 340px; }
 .directional-local-panel #scaling-chart { height: 220px; }
 .directional-local-panel .figure-x-axis { margin-block: 4px 8px; font-size: 14px; }
 .directional-local-panel .figure-x-axis .blog-math { font-size: 16px; }

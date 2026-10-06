@@ -109,7 +109,7 @@ function projectSurfacePoint([x,y],{w,h,sharp,scale=1}){
     oy+((x+y)*h*.11-Math.log1p(.5*(x*x+sharp*y*y))*h*.20)*scale];
 }
 function surfaceOrigin({w,h}){
-  return [w*.46,h*.76];
+  return [w*.42,h*.80];
 }
 function pickSurfaceStart([px,py],{w,h,sharp,scale}){
   if(!Number.isFinite(px)||!Number.isFinite(py)||!(scale>0)||!(w>0)||!(h>0))return null;
@@ -212,6 +212,9 @@ function drawHero(time){
   ctx.globalAlpha=.32;ctx.lineWidth=1.7/scale;ctx.lineJoin='round';
   for(const method of ['sgd','newton']){ctx.strokeStyle=colors[method];ctx.stroke(heroBackdrop.history[method]);}
   ctx.restore();
+  ctx.beginPath();ctx.arc(ox,oy,7,0,Math.PI*2);ctx.strokeStyle=palette.surface;ctx.lineWidth=4;ctx.stroke();
+  ctx.strokeStyle=palette.ink;ctx.lineWidth=1.8;ctx.stroke();
+  ctx.beginPath();ctx.arc(ox,oy,2.5,0,Math.PI*2);ctx.fillStyle=palette.ink;ctx.fill();
   ['sgd','newton'].forEach(method=>{
     const all=hero.paths[method],points=heroBackdrop.points[method],end=camera.end,next=Math.min(end+1,all.length-1);
     const fraction=progress*(all.length-1)-end;
@@ -226,8 +229,8 @@ function drawHero(time){
     ctx.strokeStyle=palette.surface;ctx.lineWidth=1.2;ctx.stroke();
     ctx.beginPath();ctx.arc(...tip,8,0,Math.PI*2);ctx.strokeStyle=colors[method];ctx.globalAlpha=.3;ctx.lineWidth=1;ctx.stroke();ctx.globalAlpha=1;
   });
-  ctx.font=`14px ${token('--sans')}`;ctx.fillStyle=palette.muted;
-  ctx.beginPath();ctx.arc(ox,oy,2.5,0,Math.PI*2);ctx.fill();ctx.textAlign='left';
+  ctx.font=`600 13px ${token('--sans')}`;ctx.fillStyle=palette.ink;ctx.textAlign='center';ctx.fillText('Minimizer',ox,oy+22);
+  ctx.font=`14px ${token('--sans')}`;ctx.fillStyle=palette.muted;ctx.textAlign='left';
   if(camera.from===0){const start=view(project(...hero.start));ctx.beginPath();ctx.arc(...start,4,0,Math.PI*2);ctx.strokeStyle=palette.ink;ctx.lineWidth=1;ctx.stroke();ctx.fillText('same start',start[0]+10,start[1]-10);}
   canvas.dataset.zoom=camera.zoom.toFixed(3);canvas.dataset.duration=hero.duration.toFixed(0);canvas.dataset.progress=progress.toFixed(3);
   canvas.dataset.steps=String(hero.paths.sgd.length-1);canvas.dataset.samples=String(Math.floor(progress*(hero.paths.sgd.length-1))*hero.batch);
@@ -481,7 +484,7 @@ $('hero-canvas').addEventListener('pointerup',e=>{
   if(!pointer||pointer.id!==e.pointerId||pointer.moved||landscapeView!=='3d')return;
   const origin=surfaceOrigin(pointer.view);
   // The visible minimum marker remains selectable through overlapping mesh lines.
-  const point=Math.hypot(pointer.point[0]-origin[0],pointer.point[1]-origin[1])<=5?[0,0]:pickSurfaceStart(pointer.point,pointer.view);
+  const point=Math.hypot(pointer.point[0]-origin[0],pointer.point[1]-origin[1])<=9?[0,0]:pickSurfaceStart(pointer.point,pointer.view);
   if(point){e.currentTarget.focus({preventScroll:true});setSimulationStart(point);}
 });
 
@@ -506,14 +509,15 @@ function drawScaling(){
   document.querySelectorAll('#scale-presets button').forEach(b=>{b.classList.toggle('active',+b.dataset.alpha===alpha);b.setAttribute('aria-pressed',String(+b.dataset.alpha===alpha));});
 }
 function drawMovementQuadratic(alpha,ratio){
-  const svg=$('movement-quadratic'),w=Math.max(240,Math.min(440,svg.clientWidth)),h=310;
+  const svg=$('movement-quadratic'),w=Math.max(240,Math.min(440,svg.clientWidth)),h=340;
   svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
   const x=v=>24+(v+1.2)/2.8*(w-48);
   const arrowUnit=.3; // Fixed batch-1 reference length across every exponent and batch ratio.
   let markup=`<title>Local movement at batch ratio ${ratio}, exponent ${alpha.toFixed(2)}. Arrows are normalized to each direction's batch-1 movement.</title>`;
   [1,.001].forEach((cnr,i)=>{
-    const top=i*155,color=i?colors.newton:colors.sgd,movement=NQM.displacement(cnr,ratio,alpha),end=1-arrowUnit*movement;
+    const top=i*185,color=i?colors.newton:colors.sgd,movement=NQM.displacement(cnr,ratio,alpha),end=1-arrowUnit*movement;
     const y=v=>top+67-26*v*v,points=Array.from({length:81},(_,k)=>-1.2+2.6*k/80);
+    if(i)markup+=`<line data-movement-separator x1="16" x2="${w-16}" y1="${top-19}" y2="${top-19}" stroke="${token('--line')}"/>`;
     markup+=svgText(16,top+14,`${i?'Low':'High'} CNR · ${cnr}`,`font-size="16" fill="${color}" font-weight="600"`);
     markup+=`<path d="${line(points,v=>x(v),y)}" fill="none" stroke="${token('--grid-strong')}" stroke-width="1.5"/><line x1="24" x2="${w-24}" y1="${top+67}" y2="${top+67}" stroke="${token('--line')}"/><circle cx="${x(1)}" cy="${y(1)}" r="4" fill="${token('--ink')}"/>`;
     markup+=svgText(x(1)+7,y(1)-10,'w = 1','font-size="17"')+svgText(x(0),top+82,'0','font-size="17" text-anchor="middle"');
