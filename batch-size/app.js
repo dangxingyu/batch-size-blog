@@ -104,13 +104,18 @@ function syncHeroCompass(horizontal,vertical){
   svg.querySelector('circle').setAttribute('cy',origin[1]);
 }
 function projectSurfacePoint([x,y],{w,h,sharp,scale=1}){
-  return [w*.5+(x-y)*w*.155*scale,
-    h*.68+((x+y)*h*.11-Math.log1p(.5*(x*x+sharp*y*y))*h*.20)*scale];
+  const [ox,oy]=surfaceOrigin({w,h});
+  return [ox+(x-y)*w*.155*scale,
+    oy+((x+y)*h*.11-Math.log1p(.5*(x*x+sharp*y*y))*h*.20)*scale];
+}
+function surfaceOrigin({w,h}){
+  return [w*.46,h*.76];
 }
 function pickSurfaceStart([px,py],{w,h,sharp,scale}){
   if(!Number.isFinite(px)||!Number.isFinite(py)||!(scale>0)||!(w>0)||!(h>0))return null;
   // Undo the rendered camera before intersecting the log-height surface.
-  const difference=(px-w*.5)/(w*.155*scale),target=(py-h*.68)/(h*scale);
+  const [ox,oy]=surfaceOrigin({w,h});
+  const difference=(px-ox)/(w*.155*scale),target=(py-oy)/(h*scale);
   const level=2**Math.floor(Math.log2(Math.max(1,scale)));
   const limitX=Math.min(1.85,2/level),limitY=Math.min(1.3,1.2/level);
   let min=Math.max(-2*limitX-difference,-2*limitY+difference);
@@ -147,7 +152,7 @@ function pickSurfaceStart([px,py],{w,h,sharp,scale}){
 }
 function drawHero(time){
   const canvas=$('hero-canvas'),{ctx,w,h,dpr}=canvasSize(canvas);
-  const ox=w*.5,oy=h*.68;
+  const [ox,oy]=surfaceOrigin({w,h}),limitX=Math.min(ox,w-ox)-30;
   const basisX=w*.155,basisY=h*.11;
   const project=(x,y)=>projectSurfacePoint([x,y],{w,h,sharp:hero.sharp});
   const key=`${w}:${h}:${dpr}:${hero.sharp}:${document.documentElement.dataset.theme}`;
@@ -166,8 +171,8 @@ function drawHero(time){
     const top=oy-26,bottom=h-oy-26;
     const framed=Object.fromEntries(['sgd','newton'].map(m=>[m,heroBackdrop.points[m].map(([x,y])=>({w:[x-ox,y<=oy?oy-y:(y-oy)*top/bottom]}))]));
     heroBackdrop.prepared=SimulationCamera.prepare(framed);
-    const base=Math.min(1,(w*.5-30)/Math.max(heroBackdrop.prepared.maxX,1e-12),top/Math.max(heroBackdrop.prepared.maxY,1e-12));
-    heroBackdrop.view=SimulationCamera.layout(heroBackdrop.prepared,w,h,{base,cy:oy,limitX:w*.5-30,limitY:top});
+    const base=Math.min(1,limitX/Math.max(heroBackdrop.prepared.maxX,1e-12),top/Math.max(heroBackdrop.prepared.maxY,1e-12));
+    heroBackdrop.view=SimulationCamera.layout(heroBackdrop.prepared,w,h,{base,cy:oy,limitX,limitY:top});
   }
   const progress=Math.min(1,time/hero.duration);
   const camera=SimulationCamera.sample(heroBackdrop.prepared,heroBackdrop.view,progress,simCamera.mode);
@@ -474,7 +479,7 @@ $('hero-canvas').addEventListener('lostpointercapture',()=>{surfacePointer=null;
 $('hero-canvas').addEventListener('pointerup',e=>{
   const pointer=surfacePointer;surfacePointer=null;
   if(!pointer||pointer.id!==e.pointerId||pointer.moved||landscapeView!=='3d')return;
-  const origin=[pointer.view.w*.5,pointer.view.h*.68];
+  const origin=surfaceOrigin(pointer.view);
   // The visible minimum marker remains selectable through overlapping mesh lines.
   const point=Math.hypot(pointer.point[0]-origin[0],pointer.point[1]-origin[1])<=5?[0,0]:pickSurfaceStart(pointer.point,pointer.view);
   if(point){e.currentTarget.focus({preventScroll:true});setSimulationStart(point);}
