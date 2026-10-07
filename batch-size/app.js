@@ -552,8 +552,6 @@ function drawIntervention(){
   $('endpoint-table').innerHTML='<table><caption>Available branch endpoints at step '+fmt(anchor)+'</caption><thead><tr><th scope="col">Branch</th><th scope="col">Validation loss</th><th scope="col">Penalty (10<sup>−3</sup> nats)</th></tr></thead><tbody>'+rows.map(r=>`<tr><th scope="row">${r.arm}</th><td>${r.loss===null?'—':r.loss.toFixed(6)}</td><td>${r.penalty.toFixed(r.penaltyPrecision??2)}</td></tr>`).join('')+'</tbody></table>';
 }
 $('anchor').addEventListener('input',drawIntervention);$('held').addEventListener('change',drawIntervention);
-$('show-random').addEventListener('click',()=>{$('held').value='random-768 held';drawIntervention();});
-$('show-late').addEventListener('click',()=>{$('anchor').value=interventionAnchors.at(-1)/1000;drawIntervention();});
 
 // Theme switches redraw the canvases and scientific series as one visual system.
 function updatePalette(){
