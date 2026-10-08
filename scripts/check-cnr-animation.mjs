@@ -7,54 +7,44 @@ vm.runInContext(fs.readFileSync(new URL('../batch-size/physics.js', import.meta.
 context.module = { exports: {} };
 vm.runInContext(fs.readFileSync(new URL('../batch-size/cnr-animation.js', import.meta.url), 'utf8'), context);
 const model = context.module.exports;
+const distance = p => Math.hypot(...p.w);
 
-// Integrate the Gaussian independently of the erf used by the illustration.
-function gaussianProbability(signal, variance) {
-  const end = Math.min(8, signal / Math.sqrt(variance));
-  const intervals = 2000, step = end / intervals;
-  let integral = 1 + Math.exp(-end * end / 2);
-  for (let i = 1; i < intervals; i++) {
-    integral += (i % 2 ? 4 : 2) * Math.exp(-((i * step) ** 2) / 2);
-  }
-  return .5 + integral * step / (3 * Math.sqrt(2 * Math.PI));
-}
-
-function stationaryVariance(cnr, batch) {
-  let variance = 0;
-  for (let i = 0; i < 300; i++) {
-    variance = .9 ** 2 * variance + .1 ** 2 / (cnr * batch);
-  }
-  return variance;
-}
-
-assert.equal(model.SAMPLE_BUDGET, 64);
+assert.equal(model.STEPS, 64);
+assert.equal(model.STEP_SIZE, .04);
+const endpoints = [];
 for (const cnr of [1, .001]) {
-  const baseline = gaussianProbability(1, stationaryVariance(cnr, 1));
-  for (const batch of [1, 2, 4, 8, 16, 32, 64]) {
-    const variance = stationaryVariance(cnr, batch);
-    const probability = gaussianProbability(1, variance);
-    const mean = model.stationaryMomentum(cnr, batch, 0);
-    assert.equal(mean, 1, 'Both landscapes keep the same curvature and fixed starting position.');
-    assert.ok(Math.abs((model.stationaryMomentum(cnr, batch, 1) - mean) ** 2 - variance) < 1e-10);
-    for (const alpha of [0, .5, 1]) {
-      const state = model.localState(cnr, batch, alpha);
-      assert.equal(state.updates, 64 / batch, 'A shared sample budget changes the number of updates.');
-      assert.ok(Math.abs(state.probability - probability) < 1e-6);
-      const movement = batch ** (alpha - 1) * (2 * probability - 1) / (2 * baseline - 1);
-      assert.ok(Math.abs(state.movement - movement) < 1e-5, 'The ruler must agree with local expected movement.');
+  for (const batch of [1, 64]) {
+    const path = model.trajectory(cnr, batch);
+    assert.equal(path.length, 65);
+    assert.equal(distance(path[0]), Math.SQRT2, 'Every path starts at the same point.');
+    assert.deepEqual(path, model.trajectory(cnr, batch), 'Replay pairs the same noise draws.');
+    for (let k = 0; k < path.length; k++) {
+      assert.ok(Math.abs(path[k].loss - distance(path[k]) ** 2 / 2) < 1e-12, 'Both surfaces are the same quadratic.');
+      assert.ok(distance(path[k]) < 2.8, 'The complete illustrative path fits inside the displayed bowl without clipping.');
+      if (k) for (let axis = 0; axis < 2; axis++) {
+        assert.ok(Math.abs(Math.abs(path[k].w[axis] - path[k - 1].w[axis]) - .04) < 1e-12, 'Changing batch cannot change the step size.');
+      }
     }
+    endpoints.push(distance(path.at(-1)));
   }
 }
+assert.ok(endpoints[0] < .25);
+assert.ok(endpoints[2] > 1.4);
+assert.ok(endpoints[3] < .7, 'The larger batch reduces wandering in the paired illustration.');
 
-const low = model.sampledSigns(.001, 1, 50000, 271828);
-const repeated = model.sampledSigns(.001, 1, 50000, 271828);
-assert.deepEqual(low, repeated, 'The illustration is reproducible.');
-assert.ok(low.every(sign => sign === 1 || sign === -1));
-const observed = low.filter(sign => sign === 1).length / low.length;
-assert.ok(Math.abs(observed - gaussianProbability(1, stationaryVariance(.001, 1))) < .006);
-const larger = model.sampledSigns(.001, 16, 50000, 271828);
-assert.ok(larger.every((sign, i) => sign >= low[i]), 'Larger batches improve direction reliability for paired noise draws.');
-assert.ok(model.localState(1, 16, .5).movement < .251);
-assert.ok(model.localState(.001, 16, .5).movement > .94);
+// Check the qualitative behavior across many seeds, not just the displayed path.
+for (const cnr of [1, .001]) {
+  let small = 0, large = 0;
+  for (let seed = 0; seed < 500; seed++) {
+    small += distance(model.trajectory(cnr, 1, { seed }).at(-1));
+    large += distance(model.trajectory(cnr, 64, { seed }).at(-1));
+  }
+  assert.ok(large < .65 * small, 'Averaging independent samples reduces final wandering across seeds.');
+}
 
-console.log('PASS: CNR direction probabilities and movement match independent Gaussian/momentum calculations; paired stationary samples and fixed-budget update counts verified.');
+// With zero noise, signs initially point downhill and the first steps follow the gradient.
+const noiseless = model.trajectory(Infinity, 1, { steps: 10 });
+assert.ok(Math.abs(noiseless.at(-1).w[0] - .6) < 1e-12);
+assert.ok(Math.abs(noiseless.at(-1).w[1] - .6) < 1e-12);
+assert.ok(noiseless.slice(1).every((p, i) => p.loss < noiseless[i].loss));
+console.log('PASS: moving CNR balls use identical bowls, shared starts, fixed SignSGD steps and reproducible paths; larger batches reduce wandering across 500 seeds.');

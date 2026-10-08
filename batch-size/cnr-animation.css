@@ -1,4 +1,4 @@
-/* The animated comparison sits above its curve and shared controls. */
+/* The moving-ball comparison has its own batch control above the scaling chart. */
 .directional-local-panel .cnr-animation-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -20,8 +20,8 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 6px 12px;
-  margin-bottom: 6px;
+  gap: 8px 12px;
+  margin-bottom: 8px;
 }
 
 .directional-local-panel .cnr-animation-layout .cnr-animation-head h4 {
@@ -36,11 +36,44 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 6px 10px;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
   font-size: 13px;
   line-height: 1.4;
   color: var(--muted);
   font-variant-numeric: tabular-nums;
+}
+
+.directional-local-panel .cnr-animation-layout #cnr-demo-batches {
+  display: flex;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  padding: 3px;
+  gap: 3px;
+  order: 0;
+}
+
+.directional-local-panel .cnr-animation-layout #cnr-demo-batches button {
+  flex: 1;
+  min-width: 0;
+  min-height: 32px;
+  padding: 5px 10px;
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.directional-local-panel .cnr-animation-layout #cnr-animation-play {
+  order: 1;
+  min-width: 72px;
+}
+
+.directional-local-panel .cnr-animation-layout #cnr-animation-budget {
+  order: 2;
+  white-space: nowrap;
 }
 
 .directional-local-panel .cnr-animation-layout .cnr-animation-actions .button,
@@ -62,9 +95,9 @@
 }
 
 .directional-local-panel .cnr-animation-layout .cnr-animation-caption {
-  margin: 6px 0 0;
-  font-size: 13px;
-  line-height: 1.4;
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
   color: var(--muted);
 }
 
@@ -74,7 +107,7 @@
 
 .directional-local-panel .cnr-animation-layout .scaling-grid > div:first-child {
   grid-column: 1;
-  grid-row: 2;
+  grid-row: 3;
   min-width: 0;
 }
 
@@ -118,7 +151,7 @@
 
 .directional-local-panel .cnr-animation-layout .scaling-controls {
   grid-column: 1;
-  grid-row: 3;
+  grid-row: 4;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: start;
@@ -182,13 +215,53 @@
 
   .directional-local-panel .cnr-animation-layout .scaling-controls {
     grid-column: 2;
-    grid-row: 2;
+    grid-row: 3;
   }
 }
 
 @media (max-width: 760px), (pointer: coarse) {
   .directional-local-panel .cnr-animation-layout .cnr-animation-actions .button,
+  .directional-local-panel .cnr-animation-layout #cnr-demo-batches button,
   .directional-local-panel .cnr-animation-layout .exponent-control #scale-presets button {
     min-height: 44px;
   }
+}
+
+@media (max-width: 760px) {
+  .directional-local-panel .cnr-animation-layout .cnr-animation-actions {
+    width: 100%;
+  }
+
+  .directional-local-panel .cnr-animation-layout #cnr-demo-batches {
+    flex-basis: 100%;
+  }
+
+  .directional-local-panel .cnr-animation-layout #cnr-animation-budget {
+    margin-left: auto;
+  }
+}
+
+.directional-local-panel .movement-model-copy {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+.directional-local-panel .movement-model-copy h4 {
+  margin: 0 0 6px;
+  font-size: 14px;
+}
+.directional-local-panel .movement-model-copy p {
+  margin: 4px 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.directional-local-panel > .component-intro {
+  display: block;
+  margin-bottom: 12px;
+}
+.directional-local-panel > .component-intro p {
+  max-width: none;
+  margin: 0;
 }
