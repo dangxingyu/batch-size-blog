@@ -56,9 +56,8 @@ The article has no footnotes currently. If needed later, use traditional footnot
 
 The opening questions are copied verbatim from the paper’s active introduction. The scaling-rules section opens with two sentences of motivation and a third introducing Muon as the testbed, then defines the Muon update and presents the three candidate rules without an additional subheading, a brief experiment description using “hundreds of scaling rules,” the interactive figure, and its main finding. Exact grid sizes and the distinction between the paper’s comparison recipes and the figure’s best-completion presets remain in the figure and measurement notes. Main prose is written for a general audience around each playable: what the figure shows, how to use its controls, and what the result means. Short verbal formulas explain scaling presets, optimizer updates, loss decomposition, and branch penalties. Formal derivations, experiment settings, and qualifications stay in collapsed details. Candidate derivations appears fully expanded before the short experiment description and Scaling-rule search. Each section opens with one larger, unnumbered heading; duplicate numbered claim headings are removed. Explanatory text and the late-training limitation remain ordinary prose. The original measurements retain source revision 462dc51. Directional curves and endpoints use the complete latest Overleaf CSV export at revision 83b7052, including the rerun smaller top-k branches at even checkpoints.
 
-The Read the paper button beneath the title/byline and the scaling-rule section link to
-`batch-size/paper.pdf` as the submission placeholder.
-Replace that destination with arXiv when the preprint is public.
+The Read the paper button, scaling-rule section link, and citations to our paper all point to
+`https://arxiv.org/abs/2610.08975`.
 
 KaTeX typesets all displayed variables from MathML source: italic scalar variables, numeric
 subscripts, bold parameter vectors, and upright optimizer-group subscripts.
