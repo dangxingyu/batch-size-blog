@@ -202,7 +202,7 @@
   <dt><math><mi>η</mi></math></dt><dd>Learning rate</dd>
   <dt><math><msub><mi>z</mi><mi>i</mi></msub></math></dt><dd>Independent standard Gaussian noise, redrawn each step</dd>
  </dl></div>
- <p class="nqm-model-assumptions">Here <math><msub><mi>h</mi><mi>1</mi></msub><mo>=</mo><mn>1</mn></math> and <math><msub><mi>c</mi><mi>2</mi></msub><mo>=</mo><mn>0</mn></math>: the first direction is flat and noisy; the second is sharp and noiseless.</p>
+ <p class="nqm-model-assumptions">In our setting, <math><msub><mi>h</mi><mi>1</mi></msub><mo>=</mo><mn>1</mn></math> and <math><msub><mi>c</mi><mi>2</mi></msub><mo>=</mo><mn>0</mn></math>: the first direction is flat and noisy; the second is sharp and noiseless.</p>
 </div>
   <p>We tune each method’s learning rate to minimize expected loss after 4,096 samples. Larger batches reduce noise but leave fewer updates. This tradeoff can favor SGD at small batches and Newton at large batches.</p>
   <p>The map compares expected losses; the paths show one sampled run. This example illustrates the mechanism behind the paper’s theorem that rankings can reverse even after optimal tuning.<a class="citation-ref" id="cite-8" href="#note-8" role="doc-noteref" aria-label="Citation 8: Our paper, Theorem 5.1"><sup>8</sup></a></p>
