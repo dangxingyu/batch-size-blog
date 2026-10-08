@@ -3,13 +3,14 @@
   'use strict';
   const nqm = root.NQM;
   if (!nqm) return;
-  const STEPS = 64, STEP_SIZE = .04, MOMENTUM = .9, SEED = 271828;
-  const DURATION_MS = 12000;
+  const STEPS = 48, STEP_SIZE = .07, MOMENTUM = .9, SEED = 271828;
+  const CNRS = Object.freeze([3, .01]), START = Object.freeze([1.4, .8]);
+  const DURATION_MS = 6000;
 
   function trajectory(cnr, batch, options = {}) {
     const count = options.steps ?? STEPS, eta = options.stepSize ?? STEP_SIZE;
     const random = nqm.rng(options.seed ?? SEED);
-    const w = [...(options.start || [1, 1])], momentum = [0, 0];
+    const w = [...(options.start || START)], momentum = [0, 0];
     const noiseScale = Math.sqrt(1 / (cnr * batch));
     const path = [{ w: [...w], loss: .5 * (w[0] ** 2 + w[1] ** 2) }];
     for (let step = 0; step < count; step++) {
@@ -23,7 +24,7 @@
     return path;
   }
 
-  const api = { STEPS, STEP_SIZE, MOMENTUM, SEED, DURATION_MS, trajectory };
+  const api = { STEPS, STEP_SIZE, MOMENTUM, SEED, CNRS, START, DURATION_MS, trajectory };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   if (typeof window !== 'undefined') root.CnrAnimation = api;
   if (typeof document === 'undefined') return;
@@ -36,7 +37,7 @@
   const caption = document.getElementById('cnr-animation-caption');
   if (!container || !svg || !play || !budget || choices.length !== 2) return;
   const preference = root.matchMedia('(prefers-reduced-motion: reduce)');
-  const cnrs = [1, .001];
+  const cnrs = CNRS;
   let batch = 1, paths = [], marks = [], elapsed = 0, frameId = 0, lastTime = null;
   let wanted = false, complete = false, autoPlayed = false, visible = false, width = 0;
   let redrawTimer = 0;
@@ -140,7 +141,7 @@
     svg.style.height = height + 'px';
     svg.setAttribute('aria-labelledby', 'cnr-ball-title cnr-ball-description');
     svg.dataset.batch = batch;
-    let markup = '<title id="cnr-ball-title">Two balls find the bottom of the same valley</title><desc id="cnr-ball-description">The surfaces and starts are identical. The left ball has less gradient noise; the right has more. Select Large batch to average 64 samples per update. Both take 64 SignSGD updates of the same size. These are simulated paths on a two-dimensional quadratic, not measured training runs.</desc>';
+    let markup = '<title id="cnr-ball-title">Two balls find the bottom of the same valley</title><desc id="cnr-ball-description">The surfaces and starts are identical. The left ball has less gradient noise; the right has more. Select Large batch to average 64 samples per update. Both take ' + STEPS + ' SignSGD updates of the same size. These are simulated paths on a two-dimensional quadratic, not measured training runs.</desc>';
     const separator = horizontal ? '<line x1="' + (panelWidth + gap / 2) + '" x2="' + (panelWidth + gap / 2) + '" y1="8" y2="' + (height - 8) + '" stroke="' + line + '"/>' : '<line x1="16" x2="' + (width - 16) + '" y1="' + (panelHeight + gap / 2) + '" y2="' + (panelHeight + gap / 2) + '" stroke="' + line + '"/>';
     markup += separator;
     marks = [];
@@ -148,7 +149,7 @@
       const offsetX = horizontal ? i * (panelWidth + gap) : 0;
       const offsetY = horizontal ? 0 : i * (panelHeight + gap);
       const sx = (panelWidth - 64) / (2 * Math.SQRT2 * radius);
-      const mark = { cx: panelWidth / 2, bottom: horizontal ? 226 : 211, sx, sy: sx * .58, sz: sx * .30, w: [1, 1], point: [0, 0], prefix: [], step: -1 };
+      const mark = { cx: panelWidth / 2, bottom: horizontal ? 226 : 211, sx, sy: sx * .58, sz: sx * .30, w: [...START], point: [0, 0], prefix: [], step: -1 };
       const point = [0, 0], value = [0, 0];
       let rim = '';
       for (let k = 0; k <= 100; k++) {
@@ -158,7 +159,7 @@
       }
       markup += '<g data-cnr-panel="' + i + '" data-cnr="' + cnrs[i] + '" data-curvature="1" transform="translate(' + offsetX + ' ' + offsetY + ')">';
       markup += text(16, 20, i ? 'More noise' : 'Less noise', 'fill="' + colors[i] + '" font-weight="600" style="font-size:16px"');
-      markup += text(16, 42, i ? 'Low CNR' : 'High CNR', 'fill="' + muted + '"');
+      markup += text(16, 42, (i ? 'Low CNR · ' : 'High CNR · ') + cnrs[i], 'fill="' + muted + '"');
       markup += '<defs><radialGradient id="cnr-ball-' + i + '" cx="30%" cy="25%"><stop offset="0" stop-color="' + surface + '"/><stop offset=".35" stop-color="' + colors[i] + '"/><stop offset="1" stop-color="' + ink + '"/></radialGradient></defs>';
       markup += '<g data-bowl fill="none" stroke="' + grid + '" stroke-width="1"><path d="' + rim + 'Z" fill="' + colors[i] + '" fill-opacity=".07" stroke-opacity=".55"/>';
       for (let r = .4; r < radius; r += .4) {
