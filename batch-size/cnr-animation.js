@@ -46,8 +46,8 @@
   function project(w, mark, point) {
     const x = mark.sx * (w[0] - w[1]);
     const y = -mark.sy * (w[0] + w[1]) - mark.sz * .5 * (w[0] ** 2 + w[1] ** 2);
-    point[0] = mark.cx + mark.cosTilt * x - mark.sinTilt * y;
-    point[1] = mark.bottom + mark.sinTilt * x + mark.cosTilt * y;
+    point[0] = mark.cx + x;
+    point[1] = mark.bottom + y;
     return point;
   }
   function coord(point) { return point[0].toFixed(2) + ' ' + point[1].toFixed(2); }
@@ -135,8 +135,7 @@
     const ink = token(style, '--ink'), muted = token(style, '--muted');
     const line = token(style, '--line'), grid = token(style, '--grid-strong');
     const surface = token(style, '--surface'), colors = [token(style, '--coral'), token(style, '--teal')];
-    const radius = 2.8, tilt = -16 * Math.PI / 180;
-    const cosTilt = Math.cos(tilt), sinTilt = Math.sin(tilt);
+    const radius = 2.8;
     svg.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
     svg.style.height = height + 'px';
     svg.setAttribute('aria-labelledby', 'cnr-ball-title cnr-ball-description');
@@ -149,7 +148,7 @@
       const offsetX = horizontal ? i * (panelWidth + gap) : 0;
       const offsetY = horizontal ? 0 : i * (panelHeight + gap);
       const sx = (panelWidth - 64) / (2 * Math.SQRT2 * radius);
-      const mark = { cx: panelWidth / 2 - 25 * radius ** 2 / 2 * sinTilt, bottom: horizontal ? 226 : 211, sx, sy: sx * .28, sz: 25, cosTilt, sinTilt, w: [1, 1], point: [0, 0], prefix: [], step: -1 };
+      const mark = { cx: panelWidth / 2, bottom: horizontal ? 226 : 211, sx, sy: sx * .58, sz: sx * .30, w: [1, 1], point: [0, 0], prefix: [], step: -1 };
       const point = [0, 0], value = [0, 0];
       let rim = '';
       for (let k = 0; k <= 100; k++) {
