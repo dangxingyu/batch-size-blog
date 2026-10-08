@@ -444,3 +444,6 @@
     left: 24px;
   }
 }
+
+/* The live-loss title already names the plotted quantity. */
+.geometry-paths .sim-loss-panel .figure-axis-name::before { content: none; }

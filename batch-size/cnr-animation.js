@@ -44,8 +44,10 @@
   function token(style, name) { return style.getPropertyValue(name).trim() || 'currentColor'; }
   function text(x, y, value, attrs = '') { return '<text x="' + x + '" y="' + y + '" font-size="14" ' + attrs + '>' + value + '</text>'; }
   function project(w, mark, point) {
-    point[0] = mark.cx + mark.sx * (w[0] - w[1]);
-    point[1] = mark.bottom - mark.sy * (w[0] + w[1]) - mark.sz * .5 * (w[0] ** 2 + w[1] ** 2);
+    const x = mark.sx * (w[0] - w[1]);
+    const y = -mark.sy * (w[0] + w[1]) - mark.sz * .5 * (w[0] ** 2 + w[1] ** 2);
+    point[0] = mark.cx + mark.cosTilt * x - mark.sinTilt * y;
+    point[1] = mark.bottom + mark.sinTilt * x + mark.cosTilt * y;
     return point;
   }
   function coord(point) { return point[0].toFixed(2) + ' ' + point[1].toFixed(2); }
@@ -133,7 +135,8 @@
     const ink = token(style, '--ink'), muted = token(style, '--muted');
     const line = token(style, '--line'), grid = token(style, '--grid-strong');
     const surface = token(style, '--surface'), colors = [token(style, '--coral'), token(style, '--teal')];
-    const radius = 2.8;
+    const radius = 2.8, tilt = -16 * Math.PI / 180;
+    const cosTilt = Math.cos(tilt), sinTilt = Math.sin(tilt);
     svg.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
     svg.style.height = height + 'px';
     svg.setAttribute('aria-labelledby', 'cnr-ball-title cnr-ball-description');
@@ -145,8 +148,8 @@
     for (let i = 0; i < 2; i++) {
       const offsetX = horizontal ? i * (panelWidth + gap) : 0;
       const offsetY = horizontal ? 0 : i * (panelHeight + gap);
-      const sx = (panelWidth - 44) / (2 * Math.SQRT2 * radius);
-      const mark = { cx: panelWidth / 2, bottom: horizontal ? 226 : 211, sx, sy: sx * .28, sz: 25, w: [1, 1], point: [0, 0], prefix: [], step: -1 };
+      const sx = (panelWidth - 64) / (2 * Math.SQRT2 * radius);
+      const mark = { cx: panelWidth / 2 - 25 * radius ** 2 / 2 * sinTilt, bottom: horizontal ? 226 : 211, sx, sy: sx * .28, sz: 25, cosTilt, sinTilt, w: [1, 1], point: [0, 0], prefix: [], step: -1 };
       const point = [0, 0], value = [0, 0];
       let rim = '';
       for (let k = 0; k <= 100; k++) {
@@ -181,7 +184,7 @@
       markup += '</g>';
       // The goal stays visible, including when the ball arrives.
       markup += '<circle cx="' + mark.cx + '" cy="' + mark.bottom + '" r="10" fill="' + surface + '" stroke="' + ink + '" stroke-width="1.3"/><path d="M' + (mark.cx - 5) + ' ' + mark.bottom + 'H' + (mark.cx + 5) + 'M' + mark.cx + ' ' + (mark.bottom - 5) + 'V' + (mark.bottom + 5) + '" stroke="' + ink + '" stroke-width="1.5"/>';
-      markup += text(mark.cx, mark.bottom + 25, 'Bottom', 'fill="' + ink + '" text-anchor="middle"');
+      markup += text(mark.cx, mark.bottom + 34, 'Bottom', 'fill="' + ink + '" text-anchor="middle"');
       project(paths[i][0].w, mark, point);
       markup += '<circle cx="' + point[0] + '" cy="' + point[1] + '" r="8" fill="none" stroke="' + muted + '" stroke-dasharray="2 2"/>' + text(point[0] + 12, point[1] - 8, 'Start', 'fill="' + muted + '"');
       let prefix = '';
@@ -206,7 +209,7 @@
   function reset(nextBatch, run = false) {
     cancel(); batch = nextBatch; elapsed = 0; complete = false;
     paths = [trajectory(cnrs[0], batch), trajectory(cnrs[1], batch)];
-    caption.textContent = batch === 1 ? 'Watch the noisy ball wander. Switch to Large batch to average more samples in each step.' : 'Averaging 64 samples makes the noisy directions more reliable. The valley and step size stay the same.';
+    caption.textContent = batch === 1 ? 'Watch the noisy ball wander. Switch to Large batch to average more samples in each step.' : '';
     wanted = run;
     geometry();
     if (preference.matches) { elapsed = DURATION_MS; complete = true; wanted = false; render(1); }

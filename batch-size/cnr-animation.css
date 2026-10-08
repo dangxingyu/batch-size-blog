@@ -101,6 +101,10 @@
   color: var(--muted);
 }
 
+.directional-local-panel .cnr-animation-layout .cnr-animation-caption:empty {
+  display: none;
+}
+
 .directional-local-panel .cnr-animation-layout > .scaling-grid {
   display: contents;
 }
