@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="batch-size/ucsd-theme.css?v=140f47f1">
   <link rel="stylesheet" href="batch-size/article-navigation.css">
   <link rel="stylesheet" href="batch-size/compact.css?v=e62c538d">
-  <link rel="stylesheet" href="batch-size/compact-evidence.css?v=685204df">
+  <link rel="stylesheet" href="batch-size/compact-evidence.css?v=189ddf53">
   <link rel="stylesheet" href="batch-size/compact-geometry.css?v=0c14a5a5">
   <link rel="canonical" href="https://dangxingyu.github.io/batch-size-blog/">
   <meta property="og:type" content="article"><meta property="og:title" content="The best optimizer depends on batch size">
@@ -157,7 +157,7 @@
   <p>Under HyperBall, Muon outperforms Shampoo at 128K tokens per update, while Shampoo outperforms Muon at 2M.<a class="citation-ref" id="cite-6" href="#note-6" role="doc-noteref" aria-label="Citation 6: Our paper, Section 4"><sup>6</sup></a></p>
 </div>
   <div id="optimizer-comparison" class="experiment light-panel">
-    <div class="panel-top"><div><h3>Optimizer rankings.</h3></div><div class="segmented" id="family-tabs" aria-label="Weight norm control"><button class="active" data-family="standard_wd" aria-pressed="true">Weight decay</button><button data-family="hyperball" aria-pressed="false">HyperBall</button></div></div>
+    <div class="panel-top"><div><h3>Optimizer rankings.</h3><p class="ranking-instruction">Change the batch size and watch the winner change.</p></div><div class="segmented" id="family-tabs" aria-label="Weight norm control"><button class="active" data-family="standard_wd" aria-pressed="true">Weight decay</button><button data-family="hyperball" aria-pressed="false">HyperBall</button></div></div>
     <div class="ranking-grid"><div><div class="figure-axis-heading comparison-heading"><div><span class="figure-axis-name" id="ranking-axis-title">Validation loss</span><span class="figure-axis-quantity" id="ranking-axis-quantity"><math><mi>L</mi></math><span class="figure-axis-unit">nats</span></span></div><div id="ranking-view-tabs" class="segmented" role="group" aria-label="Optimizer comparison vertical axis"><button data-ranking-view="loss" class="active" aria-pressed="true">Validation loss</button><button data-ranking-view="gap" aria-pressed="false">Loss gap</button></div></div><div class="chart-top"><label class="check"><input id="matrix-only" type="checkbox" aria-label="matrix optimizers only" checked> matrix optimizers only</label></div><svg id="ranking-chart" viewBox="0 0 650 310" role="img" aria-labelledby="ranking-chart-title"><title id="ranking-chart-title">Validation loss versus batch size</title></svg><p class="figure-x-axis"><span>Batch size</span><math><msup><mi>B</mi><mo>′</mo></msup></math><span class="figure-axis-unit">tokens / update</span></p><div class="legend figure-legend" id="rank-legend"></div></div><div class="leaderboard"><div class="board-head"><span>At <strong id="board-batch">128K</strong> tokens / step</span><span>Loss</span></div><div id="rank-list" aria-live="polite"></div><p id="ranking-insight" class="insight"></p></div></div>
 
     <div class="batch-controls"><label for="rank-batch">Batch size <output id="rank-batch-output">128K tokens</output></label><input id="rank-batch" type="range" min="0" max="3" step="1" value="0"><div class="range-ticks" id="rank-ticks"><button data-index="0">128K</button><button data-index="1">512K</button><button data-index="2">1M</button><button data-index="3">2M</button></div></div>
