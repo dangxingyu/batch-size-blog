@@ -107,19 +107,20 @@
 #optimizer-comparison .batch-controls input { margin: 8px 0; }
 #optimizer-comparison .range-ticks { margin-top: 0; }
 #optimizer-comparison .range-ticks button { min-height: 28px; padding: 3px 4px; font-size: 12px; }
-#optimizer-comparison > .pair-lab { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 12px; padding-top: 12px; }
-#optimizer-comparison > .pair-lab h4 { margin: 0 0 8px; font-size: 14px; }
-#optimizer-comparison > .pair-lab .pair-controls { gap: 5px; }
-#optimizer-comparison > .pair-lab .pair-controls label { min-width: 0; font-size: 12px; gap: 4px; }
+#optimizer-comparison > .pair-lab { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; margin-top: 10px; padding-top: 10px; }
+#optimizer-comparison > .pair-lab h4 { margin: 0 0 6px; font-size: 14px; }
+#optimizer-comparison > .pair-lab .pair-controls { gap: 4px; }
+#optimizer-comparison > .pair-lab .pair-controls label { min-width: 0; font-size: 12px; gap: 3px; }
 #optimizer-comparison > .pair-lab .pair-controls > span { padding-bottom: 6px; font-size: 12px; }
 #optimizer-comparison > .pair-lab .pair-controls select { min-height: 32px; padding: 4px 19px 4px 6px; font-size: 13px; }
 #optimizer-comparison > .pair-lab .pair-result { display: block; grid-column: auto; }
 #optimizer-comparison > .pair-lab :is(.pair-axis, .pair-axis strong, .pair-quantity, .pair-verdict) { font-size: 13px; line-height: 1.4; }
-#optimizer-comparison > .pair-lab .pair-quantity { margin: 2px 0 4px; }
-#optimizer-comparison > .pair-lab .pair-verdict { margin: 0 0 8px; }
+#optimizer-comparison > .pair-lab .pair-axis { gap: 8px; }
+#optimizer-comparison > .pair-lab .pair-quantity { margin: 1px 0 2px; }
+#optimizer-comparison > .pair-lab .pair-verdict { margin: 0 0 6px; }
 #optimizer-comparison > .pair-lab .pair-note { min-width: 0; }
 #optimizer-comparison > .pair-lab .pair-note summary { font-size: 12px; line-height: 1.4; padding-bottom: 4px; }
-#optimizer-comparison > .pair-lab #pair-chart { height: 140px; }
+#optimizer-comparison > .pair-lab #pair-chart { height: 112px; min-height: 0; }
 
 /* Keep penalties next to the branch curves, with two short legend rows. */
 #branching .tiny-fraction strong { font-size: 30px; }
@@ -183,7 +184,7 @@
   #optimizer-comparison .batch-controls label { grid-column: 1; grid-row: 1 / 3; flex-direction: column; align-items: start; justify-content: center; gap: 2px; margin: 0; }
   #optimizer-comparison .batch-controls input { grid-column: 2; grid-row: 1; }
   #optimizer-comparison .batch-controls .range-ticks { grid-column: 2; grid-row: 2; }
-  #optimizer-comparison > .pair-lab { grid-template-columns: minmax(0, .95fr) minmax(0, 1.3fr) minmax(0, .75fr); gap: 16px; }
+  #optimizer-comparison > .pair-lab { grid-template-columns: minmax(0, .95fr) minmax(0, 1.3fr) minmax(0, .75fr); gap: 12px; }
   #branching .branch-comparison-layout { grid-template-columns: minmax(0, 1fr) 218px; gap: 16px; }
   #branching .branch-penalty-side { border-top: 0; border-left: 1px solid var(--line); padding: 0 0 0 14px; }
   #branching .branch-legend-baselines { grid-template-columns: repeat(3, minmax(0, 1fr)); }
