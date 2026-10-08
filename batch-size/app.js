@@ -93,6 +93,8 @@ function configureHero(){
 }
 function syncHeroCompass(horizontal,vertical){
   const svg=document.querySelector('.coordinate-compass svg');
+  // An unlaid-out canvas has no projection basis yet; the next sized draw resyncs.
+  if(!(horizontal>0&&vertical>0))return;
   const length=Math.hypot(horizontal,vertical),dx=horizontal/length,dy=vertical/length;
   const origin=[50,31-32*vertical/horizontal];
   for(const [axis,sign] of [['flat',1],['sharp',-1]]){

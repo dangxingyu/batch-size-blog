@@ -22,7 +22,7 @@
 .citation-note { display: grid; grid-template-columns: 12px minmax(0, 1fr); gap: 8px; color: var(--muted); font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; scroll-margin-top: 80px; }
 .citation-note a { color: inherit; text-decoration: underline; text-decoration-color: var(--grid-strong); text-underline-offset: 3px; }
 .citation-note a:hover { color: var(--orange); text-decoration-color: currentColor; }
-.citation-note .note-number { font-size: 11px; line-height: 1.8; }
+.citation-note .note-number { font-size: 11px; line-height: 1.8; white-space: nowrap; }
 .citation-note p { font: inherit; margin: 5px 0 0; }
 .citation-note p + p { margin-top: 8px; }
 .citation-note .note-backlink { display: inline-block; margin-top: 5px; text-decoration: none; }

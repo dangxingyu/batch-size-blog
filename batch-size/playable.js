@@ -27,7 +27,7 @@
     points.forEach(p => {
       const sign = p.value > 0 ? first : p.value < 0 ? second : 'Tie';
       markup += `<circle cx="${x(p.batch)}" cy="${y(p.value)}" r="${p.batch===rankBatches[rankState.index]?5.5:3.5}" fill="${sign==='Tie'?token('--muted'):colors[sign]}" stroke="${token('--surface')}" stroke-width="2"><title>${batchName(p.batch)}: ${sign}${sign==='Tie'?'':` leads by ${Math.abs(p.value).toFixed(4)} nats`}</title></circle>`;
-      markup += svgText(x(p.batch), f.h-13, batchName(p.batch), `font-size="17" text-anchor="${p.batch===rankBatches.at(-1)?'end':'middle'}"`);
+      markup += svgText(x(p.batch), f.h-13, batchName(p.batch), `font-size="17" text-anchor="${p.batch===rankBatches.at(-1)?'end':p.batch===rankBatches[0]?'start':'middle'}"`);
     });
     el('pair-chart').innerHTML = `<title>${first} versus ${second}: positive values favor ${first}, negative values favor ${second}</title>${markup}${researchAxes(f)}`;
     const start = points[0].value, end = points[3].value;

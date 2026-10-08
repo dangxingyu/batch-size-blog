@@ -14,6 +14,7 @@
       case 'mtext': return `\\text{${escapeText(text)}}`;
       case 'msub': return `{${children[0]}}_{${children[1]}}`;
       case 'msup': return `{${children[0]}}^{${children[1]}}`;
+      case 'msubsup': return `{${children[0]}}_{${children[1]}}^{${children[2]}}`;
       case 'mfrac': return `\\frac{${children[0]}}{${children[1]}}`;
       case 'msqrt': return `\\sqrt{${children.join('')}}`;
       case 'mover': if (element.children[1].textContent === '^') return `\\hat{${children[0]}}`; break;
