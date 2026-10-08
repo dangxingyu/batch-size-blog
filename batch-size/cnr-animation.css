@@ -1,0 +1,194 @@
+/* The animated comparison sits above its curve and shared controls. */
+.directional-local-panel .cnr-animation-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 14px 18px;
+  margin-top: 0;
+}
+
+.directional-local-panel .cnr-animation-layout > .cnr-animation {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+}
+
+.directional-local-panel .cnr-animation-layout .cnr-animation-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-bottom: 6px;
+}
+
+.directional-local-panel .cnr-animation-layout .cnr-animation-head h4 {
+  display: block;
+  min-height: 0;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.directional-local-panel .cnr-animation-layout .cnr-animation-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.directional-local-panel .cnr-animation-layout .cnr-animation-actions .button,
+.directional-local-panel .cnr-animation-layout .exponent-control #scale-presets button {
+  min-height: 32px;
+  padding: 5px 10px;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.directional-local-panel .cnr-animation-layout #movement-quadratic {
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  min-height: 0;
+  margin: 0;
+}
+
+.directional-local-panel .cnr-animation-layout .cnr-animation-caption {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.directional-local-panel .cnr-animation-layout > .scaling-grid {
+  display: contents;
+}
+
+.directional-local-panel .cnr-animation-layout .scaling-grid > div:first-child {
+  grid-column: 1;
+  grid-row: 2;
+  min-width: 0;
+}
+
+.directional-local-panel .cnr-animation-layout .figure-axis-heading {
+  min-height: 0;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.directional-local-panel .cnr-animation-layout .figure-axis-name {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.directional-local-panel .cnr-animation-layout .figure-axis-reference {
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.directional-local-panel .cnr-animation-layout #scaling-chart {
+  width: 100%;
+  height: 220px;
+  min-height: 0;
+}
+
+.directional-local-panel .cnr-animation-layout .figure-x-axis {
+  gap: 8px;
+  margin: 4px 0 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.directional-local-panel .cnr-animation-layout .legend.figure-legend,
+.directional-local-panel .cnr-animation-layout .legend.figure-legend > span:last-child {
+  width: auto;
+  gap: 6px 12px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.directional-local-panel .cnr-animation-layout .scaling-controls {
+  grid-column: 1;
+  grid-row: 3;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+}
+
+.directional-local-panel .cnr-animation-layout .scaling-controls > .exponent-control {
+  grid-column: 1;
+  grid-row: 1;
+  gap: 6px;
+}
+
+.directional-local-panel .cnr-animation-layout .scaling-controls > .control:has(#scale-batch) {
+  grid-column: 1;
+  grid-row: 2;
+  margin: 0;
+}
+
+.directional-local-panel .cnr-animation-layout .scaling-controls .control label {
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  margin-bottom: 4px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.directional-local-panel .cnr-animation-layout .exponent-control #scale-presets {
+  grid-column: auto;
+  grid-row: auto;
+  justify-self: start;
+  width: auto;
+  max-width: 100%;
+  margin: 0;
+}
+
+.directional-local-panel .cnr-animation-layout .scaling-controls .movement-readout {
+  grid-column: 1;
+  grid-row: 3;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  margin: 0;
+}
+
+.directional-local-panel .cnr-animation-layout .movement-value {
+  padding-top: 0;
+}
+
+.directional-local-panel .cnr-animation-layout .movement-value > span,
+.directional-local-panel .cnr-animation-layout .movement-value small {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+@container article (min-width: 700px) {
+  .directional-local-panel .cnr-animation-layout {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, .8fr);
+  }
+
+  .directional-local-panel .cnr-animation-layout .scaling-controls {
+    grid-column: 2;
+    grid-row: 2;
+  }
+}
+
+@media (max-width: 760px), (pointer: coarse) {
+  .directional-local-panel .cnr-animation-layout .cnr-animation-actions .button,
+  .directional-local-panel .cnr-animation-layout .exponent-control #scale-presets button {
+    min-height: 44px;
+  }
+}

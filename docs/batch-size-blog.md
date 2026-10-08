@@ -20,7 +20,7 @@ must remain explicitly distinguished.
 
 ## Evidence and typography
 
-Retained figure explanations, controls, legends, metric labels, and protocol text use 16px on desktop and 15px on phones. Repeated summaries and bookkeeping labels are omitted. Explanatory mechanism text remains below the section titles at the same reading size; duplicate numbered claim headings are omitted. The local High/Low CNR quadratic panels have a wider vertical separation, and the checkpoint close-up includes a Go back button that restores the across-training view.
+Retained figure explanations, controls, legends, metric labels, and protocol text use 16px on desktop and 15px on phones. Repeated summaries and bookkeeping labels are omitted. Explanatory mechanism text remains below the section titles at the same reading size; duplicate numbered claim headings are omitted. The local High/Low CNR landscapes share one animated comparison, and the checkpoint close-up includes a Go back button that restores the across-training view.
 
 The opening uses the Technical note treatment: a compact, left-aligned sans-serif title below a
 short yellow accent, followed by the byline from Overleaf revision
@@ -103,6 +103,8 @@ protocol, endpoint fields and hashes are included in the downloadable dataset.
 The additional recovery-versus-rank plot and checkpoint recovery-card grid are removed. Checkpoint and subspace selection remain in the main curve/penalty comparison; all measurements and downloads are preserved.
 
 The 3D and 2D landscapes are projections of the same geometry-lab run. The icon view toggle preserves the current paths, seed, batch, curvature, starting point, playback progress, and live loss. Shared Run/Reset/Resample/Speed and camera controls apply to both views, and the 3D surface rebuilds when curvature changes. Both views end at 4K processed samples. Click or tap the visible 3D surface to choose a starting point using the current camera projection, including auto zoom. Arrow keys apply the same parameter increments and bounds as the 2D view; scrolling or dragging does not reset the run. A changed point retunes the same shared simulation and winner map. Tabler cube/square icons are vendored with their MIT license.
+
+The local CNR animation keeps both landscapes at curvature h = 1 and the parameter at w = 1. It samples independent stationary momentum values with retention 0.9, pairing Gaussian draws across the two noise levels. Direction arrows illustrate their signs and restart at the fixed point. A shared 64-sample budget gives 64/B updates, showing the reduction in update count at larger batches. The expected-movement rulers use the same analytical model as the adjacent curves, with a fixed batch-1 reference length. These samples illustrate the local model; they add no experimental measurements. Playback runs once and supports pause/replay, offscreen suspension, and a static reduced-motion view.
 
 The SignSGD chart uses κ = B′/B and η(κB)/η(B). Linear and square-root guides use orange and violet, with brighter variants in dark mode. The selected measured curve and fitted exponent share an OKLCH color blend according to the exponent, keeping intermediate colors vivid. Only the chosen CNR curve is drawn; this color interpolation never interpolates measurement values. The local movement panel uses one exponent slider with adjacent preset choices. Its batch-1 arrow has a fixed length across all slider settings, and the duplicated exponent rail and compromise button are removed.
 
