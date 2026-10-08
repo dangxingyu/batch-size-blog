@@ -265,8 +265,8 @@ function configureSimulation(){
 function renderRisk(){
   const max=Math.max(sim.tuned.sgd.total,sim.tuned.newton.total)||1;
   $('sim-risk').innerHTML=['sgd','newton'].map(m=>{const r=sim.tuned[m],value=r.total===0?'≈ 0':r.total<.001?r.total.toExponential(2):r.total.toPrecision(3);return `<div class="risk-label"><span><i class="dot" style="background:${colors[m]}"></i>${m==='sgd'?'SGD':'Newton'} <small>${mathMarkup(mathVariable("η")+`<mo>=</mo><mn>${r.eta.toPrecision(3)}</mn>`)}</small></span><span>${value}</span></div><div class="risk-track"><div style="background-color:${colors[m]};width:${r.bias/max*100}%" title="Initialization bias ${r.bias}"></div><div class="variance" style="background-color:${colors[m]};width:${r.variance/max*100}%" title="Noise contribution ${r.variance}"></div>${r.total/max<.004?`<i class="risk-origin" style="color:${colors[m]}" title="Near-zero expected loss" aria-label="Near-zero expected loss"></i>`:''}</div>`;}).join('');
-  const winner=sim.tuned.sgd.total<sim.tuned.newton.total?'SGD':'Newton',a=sim.tuned.sgd.total,b=sim.tuned.newton.total;
-  $('sim-takeaway').innerHTML=Math.abs(a-b)<1e-12?'<strong>The methods are effectively tied in this setting.</strong> Change the geometry or the noise to explore another regime.':`<strong>${winner} has lower expected final loss here.</strong> ${sim.batch<=16?'With many noisy updates, the two methods balance residual error and injected noise differently. Try the large-batch preset.':'With fewer, cleaner updates, curvature rescaling can become more valuable. Try changing the noise or the starting point.'}`;
+  const result=window.PhaseMap.winner(sim.tuned.sgd.total,sim.tuned.newton.total);
+  $('sim-takeaway').innerHTML=result.tied?'<strong>The methods are close or tied here.</strong> Change the geometry or the noise to explore another regime.':`<strong>${result.winner} has lower expected final loss here.</strong> ${sim.batch<=16?'With many noisy updates, the two methods balance residual error and injected noise differently. Try the large-batch preset.':'With fewer, cleaner updates, curvature rescaling can become more valuable. Try changing the noise or the starting point.'}`;
 }
 function renderLandscape(){
   const {ctx,w,h,dpr}=canvasSize($('landscape'));
@@ -464,7 +464,25 @@ function moveStartWithKeys(e){
   const delta={ArrowLeft:[-.1,0],ArrowRight:[.1,0],ArrowUp:[0,.1],ArrowDown:[0,-.1]}[e.key];
   if(delta){e.preventDefault();setSimulationStart(sim.start.map((value,i)=>value+delta[i]));}
 }
-$('landscape').addEventListener('pointerdown',e=>{const rect=e.currentTarget.getBoundingClientRect(),{scale,cx,cy}=renderLandscape();setSimulationStart([(e.clientX-rect.left-cx)/scale,(cy-(e.clientY-rect.top))/scale]);});
+let landscapePointer=null;
+$('landscape').addEventListener('pointerdown',e=>{
+  if(!e.isPrimary||e.button!==0||landscapeView!=='2d')return;
+  const rect=e.currentTarget.getBoundingClientRect(),view=renderLandscape();
+  landscapePointer={id:e.pointerId,x:e.clientX,y:e.clientY,point:[e.clientX-rect.left,e.clientY-rect.top],view,moved:false};
+  e.currentTarget.setPointerCapture(e.pointerId);
+});
+$('landscape').addEventListener('pointermove',e=>{
+  if(landscapePointer?.id===e.pointerId&&Math.hypot(e.clientX-landscapePointer.x,e.clientY-landscapePointer.y)>6)landscapePointer.moved=true;
+});
+$('landscape').addEventListener('pointercancel',()=>{landscapePointer=null;});
+$('landscape').addEventListener('lostpointercapture',()=>{landscapePointer=null;});
+$('landscape').addEventListener('pointerup',e=>{
+  const pointer=landscapePointer;landscapePointer=null;
+  if(!pointer||pointer.id!==e.pointerId||pointer.moved||landscapeView!=='2d'||Math.hypot(e.clientX-pointer.x,e.clientY-pointer.y)>6)return;
+  const {scale,cx,cy}=pointer.view;
+  e.currentTarget.focus({preventScroll:true});
+  setSimulationStart([(pointer.point[0]-cx)/scale,(cy-pointer.point[1])/scale]);
+});
 ['landscape','hero-canvas'].forEach(id=>$(id).addEventListener('keydown',moveStartWithKeys));
 let surfacePointer=null;
 $('hero-canvas').addEventListener('pointerdown',e=>{
@@ -565,7 +583,7 @@ function updatePalette(){
 $('theme-toggle').addEventListener('click',()=>{
   document.documentElement.dataset.theme=document.documentElement.dataset.theme==='dark'?'light':'dark';
   try{localStorage.setItem('batchsize-theme',document.documentElement.dataset.theme);}catch(e){}
-  updatePalette();drawRankings();renderRisk();renderSim();drawScaling();
+  updatePalette();drawRankings();renderRisk();renderSim();drawScaling();drawIntervention();
   dispatchEvent(new Event('batchsize:theme'));
 });
 // A setup URL preserves the toy experiment, including its starting point and noise seed.

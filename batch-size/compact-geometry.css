@@ -279,10 +279,17 @@
 }
 
 #geometry-lab .arena-legend {
+  flex-wrap: wrap;
   gap: 7px 14px;
   padding: 5px 8px 7px;
   font-size: 14px;
   line-height: 1.4;
+}
+
+#geometry-lab .arena-legend .axis-key {
+  flex-wrap: wrap;
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* Outcomes stay beside the experiment; each result follows its own plot. */

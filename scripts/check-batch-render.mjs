@@ -5,6 +5,7 @@ import vm from 'node:vm';
 const source=fs.readFileSync(new URL('../batch-size/app.js',import.meta.url),'utf8');
 const cameraSource=fs.readFileSync(new URL('../batch-size/simulation-camera.js',import.meta.url),'utf8');
 const physics=fs.readFileSync(new URL('../batch-size/physics.js',import.meta.url),'utf8');
+const phaseSource=fs.readFileSync(new URL('../batch-size/phase-compute.js',import.meta.url),'utf8');
 let ellipses=0,frames=0;
 class VectorPath{constructor(){this.points=[];}moveTo(x,y){this.points.push([x,y]);}lineTo(x,y){this.points.push([x,y]);}}
 function canvas(){
@@ -12,13 +13,15 @@ function canvas(){
     clearRect(){this.segments=[];this.vectorStrokes=[];},drawImage(){frames++;},setLineDash(){},ellipse(){ellipses++;},
     translate(){},scale(){},strokeRect(){},arc(){},fill(){},fillText(){},beginPath(){this.path=[];},moveTo(x,y){this.path=[[x,y]];},
     lineTo(x,y){this.path.push([x,y]);},stroke(path){if(path){this.vectorStrokes.push({path,alpha:this.globalAlpha,color:this.strokeStyle});return;}this.segments.push(...this.path.slice(1));}};
-  const result={getContext:()=>context,getBoundingClientRect:()=>({width:720,height:320}),dataset:{}};
+  const result={getContext:()=>context,getBoundingClientRect:()=>({width:720,height:320}),dataset:{},listeners:{},
+    addEventListener(type,handler){this.listeners[type]=handler;},setPointerCapture(id){this.captured=id;},focus(){this.focused=true;}};
   for(const prop of ['width','height'])Object.defineProperty(result,prop,{get:()=>result['_'+prop],set:v=>{result['_'+prop]=v;context.segments=[];}});
   return result;
 }
 const nodes={landscape:canvas(),'landscape-overview':canvas(),'sim-overview':{},'sim-window':{},'sim-zoom':{},'sim-auto-view':{setAttribute(){}},'sim-full-view':{setAttribute(){}},'sim-loss':{clientWidth:480,setAttribute(){},
   set innerHTML(value){this.markup=value;for(const method of ['sgd','newton'])nodes['sim-loss-'+method]={setAttribute(name,value){this[name]=value;}};},
   get innerHTML(){return this.markup;}},'sim-progress':{},'sim-progress-bar':{style:{}},'sim-play-label':{},'sim-play-icon':{}};
+nodes['sim-risk']={};nodes['sim-takeaway']={};
 for(const id of ['sim-batch','sim-sharp','sim-noise','sim-batch-output','sim-sharp-output','sim-noise-output','sim-updates','sim-seed','preset-small','preset-large','projection-3d','projection-2d'])
   nodes[id]={value:'',attributes:{},listeners:{},classList:{toggle(){}},setAttribute(key,value){this.attributes[key]=String(value);},addEventListener(type,handler){this.listeners[type]=handler;}};
 nodes['hero-canvas']=canvas();
@@ -36,14 +39,18 @@ const document={documentElement:{dataset:{theme:'light'}},hidden:false,createEle
 const context=vm.createContext({document,Path2D:VectorPath,window:{devicePixelRatio:2,matchMedia:()=>({matches:false})},
   getComputedStyle:()=>({getPropertyValue:name=>name}),requestAnimationFrame:()=>1,cancelAnimationFrame(){},
   Event:class Event{constructor(type){this.type=type;}},dispatchEvent(){},
-  $:id=>nodes[id],token:name=>name,svgText:(x,y,text)=>`<text>${text}</text>`,colors:{sgd:'#a44530',newton:'#176d63'},fmt:n=>n.toLocaleString('en-US')});
+  $:id=>nodes[id],token:name=>name,svgText:(x,y,text)=>`<text>${text}</text>`,mathMarkup:body=>body,mathVariable:symbol=>symbol,
+  colors:{sgd:'#a44530',newton:'#176d63'},fmt:n=>n.toLocaleString('en-US')});
 vm.runInContext(physics,context);
 vm.runInContext(cameraSource,context);
+vm.runInContext(phaseSource,context);
+context.window.PhaseMap=context.PhaseMap;
 const size=source.slice(source.indexOf('function canvasSize('),source.indexOf('const reducedMotion='));
 const renderer=source.slice(source.indexOf('function renderLandscape()'),source.indexOf("$('sim-play').addEventListener"));
 const tuning=source.slice(source.indexOf('const tuningCache='),source.indexOf('const hero='));
 const simulationState=source.slice(source.indexOf('const sim='),source.indexOf('let simRAF='));
 const configure=source.slice(source.indexOf('function configureSimulation()'),source.indexOf('function renderRisk()'));
+const risk=source.slice(source.indexOf('function renderRisk()'),source.indexOf('function renderLandscape()'));
 const projectionState=source.slice(source.indexOf('const reducedMotion='),source.indexOf('const tuningCache='));
 const projectionRenderer=source.slice(source.indexOf('const hero='),source.indexOf('const sim='));
 vm.runInContext(`
@@ -62,7 +69,7 @@ vm.runInContext(`
   const simCamera={mode:'overview',paths:null,prepared:null,view:null,size:''};
   const simDetail={canvas:document.createElement('canvas'),key:'',painted:''};
   let simRAF=0,simConfigRAF=0,simVisible=true;
-  function renderRisk() {}
+  ${risk}
   ${configure}
   function setup(){
     $('sim-batch').value=Math.log2(sim.batch);$('sim-sharp').value=sim.sharp;$('sim-noise').value=sim.noise;
@@ -285,3 +292,93 @@ for(const [width,height] of [[252,285],[340,285],[720,300],[1440,300]]){
   }
 }
 console.log('PASS: hero compass directions match the rendered tangent basis across phone and desktop sizes.');
+
+// The expected-loss bars must interpret close results exactly as the winner map.
+// The first case is within 2%; the second is tiny in absolute terms but has a
+// clear relative winner. They exercise both sides of the former mismatch.
+for(const {sharp,noise,batch,start,winner} of [
+  {sharp:60,noise:2,batch:32,start:[1,0],winner:'Close or tied'},
+  {sharp:20,noise:0,batch:32,start:[1,0],winner:'Newton'},
+  {sharp:20,noise:8,batch:1,start:[1,1],winner:'SGD'},
+  {sharp:20,noise:8,batch:4096,start:[1,1],winner:'Newton'}
+]){
+  vm.runInContext(`sim.sharp=${sharp};sim.noise=${noise};sim.batch=${batch};sim.start=${JSON.stringify(start)};setup();`,context);
+  const result=vm.runInContext('window.PhaseMap.winner(sim.tuned.sgd.total,sim.tuned.newton.total)',context);
+  assert.equal(result.winner,winner,'The regression geometry produces its expected map classification.');
+  const takeaway=nodes['sim-takeaway'].innerHTML;
+  if(result.tied){
+    assert.match(takeaway,/close or tied/i,'Close expected losses receive the same interpretation in the bars and map.');
+    assert.doesNotMatch(takeaway,/<strong>(?:SGD|Newton)\b/,'A tied map must not announce a definite winning optimizer.');
+  }else{
+    assert.match(takeaway,new RegExp(`<strong>${winner}\\b`),'A clear relative winner must not be called tied by an absolute threshold.');
+  }
+}
+console.log('PASS: expected-loss takeaway agrees with the winner map for relative ties, tiny clear wins, SGD and Newton.');
+
+// Register production pointer handlers, then exercise gestures rather than
+// comparing source text. A press is only a possible selection until release.
+const pointerHandlers=source.slice(source.indexOf('function setSimulationStart('),source.indexOf('function drawScaling('));
+vm.runInContext(pointerHandlers,context);
+const landscape=nodes.landscape;
+landscape.getBoundingClientRect=()=>({left:100,top:80,width:720,height:320});
+const pointerState=()=>vm.runInContext('({start:[...sim.start],paths:sim.paths,progress:sim.progress})',context);
+function preparePointer(){
+  vm.runInContext("sim.sharp=20;sim.noise=8;sim.batch=32;sim.start=[1,1];simCamera.mode='auto';setup();setLandscapeProjection('2d');",context);
+  const view=vm.runInContext('renderLandscape()',context);
+  const rect=landscape.getBoundingClientRect();
+  return {before:pointerState(),clientX:rect.left+view.cx+.3*view.scale,clientY:rect.top+view.cy-.2*view.scale};
+}
+function dispatchPointer(type,point,extra={}){
+  landscape.listeners[type]({currentTarget:landscape,isPrimary:true,button:0,pointerId:71,pointerType:'mouse',...point,...extra});
+}
+function assertUnchanged(before,message){
+  const after=pointerState();
+  assert.deepEqual(Array.from(after.start),Array.from(before.start),message);
+  assert.equal(after.paths,before.paths,'Ignored gestures must not retune or reseed the selected run.');
+  assert.equal(after.progress,before.progress,'Ignored gestures must preserve playback progress.');
+}
+{
+  const point=preparePointer();
+  dispatchPointer('pointerdown',point);
+  assertUnchanged(point.before,'Pointerdown alone cannot change the initial point.');
+  // Playback can move the camera between press and release. The selected
+  // parameter must still correspond to the coordinate pressed on screen.
+  vm.runInContext('sim.progress=.8;renderSim()',context);
+  dispatchPointer('pointerup',point,{clientX:point.clientX+2,clientY:point.clientY+1});
+  const chosen=pointerState();
+  assert.ok(Math.abs(chosen.start[0]-.3)<1e-10&&Math.abs(chosen.start[1]-.2)<1e-10,'Click selection uses the camera snapshot from pointerdown.');
+  assert.notEqual(chosen.paths,point.before.paths,'A completed click rebuilds the run at its newly selected initial point.');
+  assert.equal(chosen.progress,0,'A new initial point starts a fresh run.');
+  assert.equal(landscape.focused,true,'The selected 2D plot remains available for keyboard adjustment.');
+}
+for(const button of [1,2]){
+  const point=preparePointer();
+  dispatchPointer('pointerdown',point,{button});dispatchPointer('pointerup',point,{button});
+  assertUnchanged(point.before,'Middle and right clicks cannot select a new initial point.');
+}
+{
+  const point=preparePointer();
+  dispatchPointer('pointerdown',point,{isPrimary:false});dispatchPointer('pointerup',point,{isPrimary:false});
+  assertUnchanged(point.before,'A secondary touch or pointer cannot select the initial point.');
+}
+for(const abandoned of ['pointercancel','lostpointercapture','drag','release-drift']){
+  const point=preparePointer();dispatchPointer('pointerdown',point);
+  if(abandoned==='drag'){
+    dispatchPointer('pointermove',point,{clientY:point.clientY+8});
+    dispatchPointer('pointerup',point); // Returning to the pressed pixel is still a drag.
+  }else if(abandoned==='release-drift'){
+    dispatchPointer('pointerup',point,{clientY:point.clientY+8}); // No pointermove event was delivered.
+  }else{
+    dispatchPointer(abandoned,point);dispatchPointer('pointerup',point);
+  }
+  assertUnchanged(point.before,'Scrolling, cancelled gestures and lost capture cannot restart the experiment.');
+}
+{
+  const point=preparePointer();
+  dispatchPointer('pointerdown',point,{pointerType:'touch'});
+  assertUnchanged(point.before,'A touch press cannot restart the experiment before the gesture resolves.');
+  dispatchPointer('pointerup',point,{pointerType:'touch'});
+  const chosen=pointerState();
+  assert.ok(Math.abs(chosen.start[0]-.3)<1e-10&&Math.abs(chosen.start[1]-.2)<1e-10,'A stationary primary touch tap selects the pressed coordinate.');
+}
+console.log('PASS: 2D clicks and taps select on release; drags, cancellations, secondary pointers and other buttons preserve the run.');
