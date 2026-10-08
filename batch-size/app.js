@@ -538,7 +538,8 @@ function drawIntervention(){
   const recovery=arm==='fully scaled'?0:DATA.recovery.find(r=>r.anchor===anchor&&r.arm===arm)?.percent;
   $('anchor-output').textContent=fmt(anchor);$('anchor').setAttribute('aria-valuetext',`Training step ${fmt(anchor)}`);
   [...$('held').options].forEach(o=>{const exists=rows.some(r=>r.arm===o.value);o.textContent=o.textContent.replace(' · not run','')+(exists?'':' · not run');});
-  const show=[{label:'Fully scaled to 2M',row:full,highlight:arm==='fully scaled'},...(arm==='fully scaled'?[]:[{label:arm.replace(' held',''),row:selected,highlight:true}]),...(arm!=='random-768 held'?[{label:'Random 768 directions',row:random,random:true}]:[])];
+  // Bar labels reuse the curve legend's names.
+  const show=[{label:'Fully scaled to 2M',row:full,highlight:arm==='fully scaled'},...(arm==='fully scaled'?[]:[{label:arm==='random-768 held'?'Random 768':arm.replace('top-','Top-').replace(' held',''),row:selected,highlight:true}]),...(arm!=='random-768 held'?[{label:'Random 768',row:random,random:true}]:[])];
   const max=Math.max(full.penalty,random?.penalty||0,selected?.penalty||0)*1.08;
   const heldColors={16:'#1a73e8',64:'#9334e6',128:'#e37400',256:'#1e8e3e',768:'#087c75'};
   $('penalty-bars').innerHTML=show.map(({label,row,highlight,random})=>`<div class="penalty-row"><div class="penalty-label"><span>${label}</span><strong>${row?'+'+row.penalty.toFixed(row.penaltyPrecision??2):'Not run'}</strong></div><div class="penalty-track"><div class="penalty-fill ${highlight?'highlight':''} ${random?'random':''}" style="height:${row?row.penalty/max*100:0}%;background:${row?.arm.startsWith('top-')?heldColors[row.rank]:random||row?.arm==='random-768 held'?token('--muted'):token('--coral')};"></div></div></div>`).join('');
