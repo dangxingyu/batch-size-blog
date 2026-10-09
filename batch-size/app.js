@@ -524,8 +524,30 @@ function drawScaling(){
   vals.forEach((pts,i)=>{const color=i?colors.newton:colors.sgd;s+=`<path d="${line(pts,p=>x(p.r),p=>a.y(p.v))}" fill="none" stroke="${color}" stroke-width="2.7"/><circle cx="${x(ratio)}" cy="${a.y(NQM.displacement(cnrs[i],ratio,alpha))}" r="5" fill="${color}" stroke="#fffefa" stroke-width="2"/>`;});
   s+=researchAxes(f);$('scaling-chart').innerHTML=s;
   $('movement-readout').innerHTML=cnrs.map((c,i)=>{const v=NQM.displacement(c,ratio,alpha);return `<div class="movement-value"><span>${i?'Low':'High'} CNR</span><strong>${v.toFixed(2)}×</strong><small>${Math.abs(v-1)<.02?'Almost preserved':v<1?'Less movement / sample':'More movement / sample'}</small></div>`;}).join('');
+  drawMovementQuadratic(alpha,ratio);
   dispatchEvent(new Event('batchsize:scaling'));
   document.querySelectorAll('#scale-presets button').forEach(b=>{b.classList.toggle('active',+b.dataset.alpha===alpha);b.setAttribute('aria-pressed',String(+b.dataset.alpha===alpha));});
+}
+function drawMovementQuadratic(alpha,ratio){
+  const svg=$('local-movement-quadratic'),w=Math.max(240,Math.min(440,svg.clientWidth)),h=370;
+  svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
+  const x=v=>24+(v+1.2)/2.8*(w-48);
+  const arrowUnit=.3; // Fixed batch-1 reference length across every exponent and batch ratio.
+  let markup=`<title>Local movement at batch ratio ${ratio}, exponent ${alpha.toFixed(2)}. Arrows are normalized to each direction's batch-1 movement.</title>`;
+  [1,.001].forEach((cnr,i)=>{
+    const top=i*190,color=i?colors.newton:colors.sgd,movement=NQM.displacement(cnr,ratio,alpha),end=1-arrowUnit*movement;
+    const y=v=>top+67-26*v*v,points=Array.from({length:81},(_,k)=>-1.2+2.6*k/80);
+    if(i)markup+=`<line data-movement-separator x1="16" x2="${w-16}" y1="${top-14}" y2="${top-14}" stroke="${token('--line')}"/>`;
+    markup+=svgText(16,top+14,`${i?'Low':'High'} CNR · ${cnr}`,`font-size="14" fill="${color}" font-weight="600"`);
+    markup+=`<path d="${line(points,v=>x(v),y)}" fill="none" stroke="${token('--grid-strong')}" stroke-width="1.5"/><line x1="24" x2="${w-24}" y1="${top+67}" y2="${top+67}" stroke="${token('--line')}"/><circle cx="${x(1)}" cy="${y(1)}" r="4" fill="${token('--ink')}"/>`;
+    markup+=svgText(x(1)+7,y(1)-10,'w = 1','font-size="13"')+svgText(x(0),top+82,'0','font-size="13" text-anchor="middle"');
+    const arrow=(end,cy,stroke,dashed)=>`<path data-movement-arrow="${dashed?'baseline':'scaled'}" d="M${x(1)} ${cy}H${x(end)}" fill="none" stroke="${stroke}" stroke-width="${dashed?1.5:3}" ${dashed?'stroke-dasharray="4 3"':''}/><path d="M${x(end)+5} ${cy-4}L${x(end)} ${cy}L${x(end)+5} ${cy+4}" fill="none" stroke="${stroke}" stroke-width="1.5"/>`;
+    const local=Array.from({length:21},(_,k)=>end+(1-end)*k/20);
+    markup+=`<path d="${line(local,v=>x(v),y)}" fill="none" stroke="${color}" stroke-width="3"/><circle cx="${x(end)}" cy="${y(end)}" r="4" fill="${color}"/>`;
+    markup+=arrow(1-arrowUnit,top+115,token('--muted'),true)+arrow(end,top+157,color,false);
+    markup+=svgText(16,top+101,'Batch 1','font-size="13"')+svgText(16,top+143,`${ratio}× batch · ${movement.toFixed(2)}×`,`font-size="13" fill="${color}"`);
+  });
+  svg.dataset.alpha=alpha;svg.dataset.ratio=ratio;svg.innerHTML=markup;
 }
 ['scale-alpha','scale-batch'].forEach(id=>$(id).addEventListener('input',drawScaling));
 document.querySelectorAll('#scale-presets button').forEach(b=>b.addEventListener('click',()=>{$('scale-alpha').value=b.dataset.alpha;drawScaling();}));

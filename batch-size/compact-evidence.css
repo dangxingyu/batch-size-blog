@@ -57,7 +57,23 @@
 #rule-lab > .rule-lab-header { flex-direction: row; justify-content: flex-start; align-items: center; gap: 16px; }
 #rule-lab #rule-task-tabs { width: auto; padding: 3px; gap: 2px; }
 #rule-lab #rule-task-tabs button { flex: none; min-height: 32px; padding: 5px 12px; font-size: 13px; line-height: 1.4; font-weight: 500; }
-#rule-lab .rule-search-guide { gap: 4px; padding-block: 8px; margin-bottom: 12px; font-size: 14px; line-height: 1.4; }
+#rule-lab .rule-search-guide { gap: 10px; padding: 0; margin-bottom: 12px; border: 0; font-size: 14px; line-height: 1.4; }
+.widget-instruction {
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--orange);
+  border-radius: 4px;
+  background: var(--sunken);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.widget-instruction p { margin: 0; }
+.widget-instruction strong { font-weight: 600; }
+/* Extend into the desktop gutter while leaving the outline and citations clear. */
+@media (min-width: 1280px) {
+  #rule-lab .widget-instruction { margin-inline: -29px -17px; padding-inline: 26px 16px; }
+}
 #rule-lab .rule-workspace { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
 #rule-lab .rule-chart-pane { display: block; position: static; min-width: 0; }
 #rule-lab .rule-chart-view { position: static; padding-top: 0; border: 0; box-shadow: none; }

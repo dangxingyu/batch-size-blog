@@ -269,3 +269,39 @@
   max-width: none;
   margin: 0;
 }
+
+/* Keep the local movement schematic distinct from the sampled ball animation. */
+.directional-local-panel .local-movement-comparison {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px 24px;
+  min-width: 0;
+}
+.local-movement-illustration { grid-column: 1; grid-row: 1; min-width: 0; }
+.local-movement-illustration h4 { margin: 0 0 8px; font-size: 14px; line-height: 1.4; }
+#local-movement-quadratic { display: block; width: 100%; max-width: 440px; height: auto; margin-inline: auto; }
+.directional-local-panel .local-movement-comparison .scaling-grid > div:first-child {
+  grid-column: 1;
+  grid-row: 2;
+}
+.directional-local-panel .local-movement-comparison .scaling-controls {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+@container article (min-width: 700px) {
+  .directional-local-panel .local-movement-comparison { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); }
+  .local-movement-illustration { padding-right: 20px; border-right: 1px solid var(--line); }
+  .directional-local-panel .local-movement-comparison .scaling-grid > div:first-child { grid-column: 2; grid-row: 1; }
+  .directional-local-panel .local-movement-comparison .scaling-controls {
+    grid-row: 2;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 20px;
+  }
+  .directional-local-panel .local-movement-comparison .scaling-controls > .exponent-control { grid-column: 1; grid-row: 1; }
+  .directional-local-panel .local-movement-comparison .scaling-controls > .control:has(#scale-batch) { grid-column: 2; grid-row: 1; }
+  .directional-local-panel .local-movement-comparison .scaling-controls > .movement-readout { grid-column: 3; grid-row: 1; }
+}
