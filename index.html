@@ -47,7 +47,7 @@
    <li><a data-outline href="#playground">Curvature and gradient noise</a></li>
    <li><a data-outline href="#directional-scaling">Directional scaling rules</a></li>
    <li><a data-outline href="#directions">The sharp-subspace intervention</a></li>
-   <li><a data-outline href="#conclusion">Choose the optimizer and batch size together</a></li>
+   <li><a data-outline href="#conclusion">Designing optimizers and scaling rules together</a></li>
   </ol>
  </details>
 </nav>
@@ -330,7 +330,7 @@
 </div>
 </div></section>
 
-<section id="conclusion" class="closing wrap"><h2>Choose the optimizer and <span>batch size together.</span></h2><div class="closing-grid">
+<section id="conclusion" class="closing wrap"><h2>Designing optimizers and <span>scaling rules together.</span></h2><div class="closing-grid">
  <div><p>Batch size changes the balance between reducing initialization error and controlling gradient noise. That balance can favor a different optimizer after retuning, and it can shift differently across directions.</p></div>
  <div><p>These results point toward designing optimizers and their scaling rules together, with hyperparameters that can scale differently across directions as batch size increases.</p></div>
  </div></section>
