@@ -2,7 +2,7 @@
 
 Standalone research blog with interactive scaling-rule searches, optimizer comparisons, and noisy-quadratic simulations.
 
-- [Read the blog](https://dangxingyu.github.io/batch-size-blog/)
+- [Read the blog](https://batch-size-scaling.com/)
 - Author: [Xingyu Dang](https://dangxingyu.github.io/)
 
 The article is maintained and deployed here. The personal-site repository links to this project and redirects the old article URL.
