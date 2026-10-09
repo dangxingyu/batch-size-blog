@@ -2,7 +2,8 @@
 .nqm-equation-panel {
   grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
   gap: 14px 24px;
-  padding: 16px 18px;
+  padding: 16px 18px 8px;
+  margin-bottom: 18px;
   font-size: 14px;
   line-height: 1.5;
 }
@@ -96,7 +97,7 @@
   .nqm-equation-panel {
     grid-template-columns: minmax(0, 1fr);
     gap: 14px;
-    padding: 14px 16px;
+    padding: 14px 16px 8px;
   }
 
   .nqm-equation-panel .nqm-model-notation {
