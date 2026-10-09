@@ -74,3 +74,5 @@
 
 .cnr-illustration { margin: 20px 0; border-radius: 8px; overflow: hidden; }
 .cnr-illustration img { display: block; width: 100%; height: auto; }
+
+#cnr-illustration-intro { margin-top: 16px; }

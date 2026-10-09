@@ -21,7 +21,7 @@
   <link rel="stylesheet" href="batch-size/compact.css?v=c5dcb468">
   <link rel="stylesheet" href="batch-size/compact-evidence.css?v=1fec01ef">
   <link rel="stylesheet" href="batch-size/compact-geometry.css?v=d4094210">
-  <link rel="stylesheet" href="batch-size/local-movement.css?v=fb71999b">
+  <link rel="stylesheet" href="batch-size/local-movement.css?v=d1397672">
   <link rel="stylesheet" href="batch-size/quadratic-model.css?v=634908a1">
   <link rel="canonical" href="https://dangxingyu.github.io/batch-size-blog/">
   <meta property="og:type" content="article"><meta property="og:title" content="The best optimizer depends on batch size">
@@ -257,6 +257,8 @@
 <dt><math><mi>h</mi></math></dt><dd>Curvature</dd>
 <dt><math><mi>c</mi></math></dt><dd>Single-example gradient-noise variance</dd></dl><p>The sign determines the update direction; the learning rate sets its magnitude. Higher CNR means less noise relative to squared curvature.</p></div>
 </div>
+  <p id="cnr-illustration-intro">In the binoculars below, the valley’s shape represents curvature and blur represents gradient noise. At the same batch size and distance from the minimum, higher CNR makes the downhill direction easier to identify.</p>
+ <figure id="cnr-illustration" class="cnr-illustration" aria-describedby="cnr-illustration-intro"><img src="batch-size/cnr-binoculars.png?v=cdb0265e" width="1774" height="887" loading="lazy" decoding="async" alt="A children’s-book illustration of one pair of binoculars: the left lens, labeled High CNR, shows a clearly focused steep green valley; the right lens, labeled Low CNR, shows a flat plain blurred like nearsighted vision."></figure>
   <p>We vary the noise and retune the learning rate at each batch size, keeping the 4,096-sample budget and other settings fixed. As CNR increases, the tuned rates shift from roughly square-root toward linear scaling.<a class="citation-ref" id="cite-10" href="#note-10" role="doc-noteref" aria-label="Citation 10: Our paper, Section 5.1"><sup>10</sup></a></p>
   <p>When noise dominates, larger batches make the sign more reliable. Once the sign is reliable, larger batches mainly mean fewer updates. The movement panel below tests whether one scaling rule can preserve movement in two directions with different noise levels.</p>
 </div>
@@ -278,7 +280,6 @@
 </div>
 
 </div>
- <figure id="cnr-illustration" class="cnr-illustration"><img src="batch-size/cnr-binoculars.png?v=cdb0265e" width="1774" height="887" loading="lazy" decoding="async" alt="A children’s-book illustration of one pair of binoculars: the left lens, labeled High CNR, shows a clearly focused steep green valley; the right lens, labeled Low CNR, shows a flat plain blurred like nearsighted vision."></figure>
  <div id="local-movement" class="widget-memo-anchor light-panel scaling-panel directional-local-panel"><div class="panel-top"><div><h3>Can one exponent preserve both directions?</h3></div></div>
 
  <aside class="widget-memo" id="movement-instructions" aria-label="Try it"><strong class="widget-memo-label">Try it</strong><p>Choose a scaling exponent for learning rate, then move <strong>Batch ratio</strong> to compare movement in the two directions. The 1× line marks preserved movement per sample.</p></aside>
