@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "node scripts/serve.mjs",
-    "test": "node scripts/check-batch-playable.mjs && node scripts/check-scaling-rule-view.mjs && node scripts/check-theme.mjs && node scripts/check-cnr-animation.mjs && node scripts/check-math-render.mjs",
+    "test": "node scripts/check-batch-playable.mjs && node scripts/check-scaling-rule-view.mjs && node scripts/check-theme.mjs && node scripts/check-local-movement.mjs && node scripts/check-math-render.mjs",
     "build": "node scripts/build.mjs"
   }
 }

@@ -51,8 +51,6 @@
   .geometry-controls .phase-starts { flex-wrap: wrap; }
   .geometry-controls .transport { flex-wrap: wrap; }
   .movement-visuals { grid-template-columns: minmax(0, 1fr); }
-  .movement-quadratic { padding: 0 0 20px; border-right: 0; border-bottom: 1px solid var(--line); }
-  #movement-quadratic { max-width: 440px; margin-inline: auto; }
   .directional-paper-column { grid-template-columns: minmax(0, 1fr); }
   .branch-comparison-layout { grid-template-columns: minmax(0, 1fr); }
   .branch-penalty-side { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 24px; }
@@ -71,7 +69,7 @@
 }
 
 /* A short invitation to interact, in the same margin as the citations. */
-#optimizer-comparison, .widget-memo-anchor { position: relative; }
+.widget-memo-anchor { position: relative; }
 .widget-memo {
   box-sizing: border-box;
   padding: 14px 16px 16px;
@@ -99,6 +97,7 @@
   box-shadow: 0 3px 9px rgb(0 0 0 / 14%);
 }
 @media (min-width: 1280px) {
+  .pair-memo-anchor > .widget-memo { left: calc(100% + 41px); }
   .widget-memo {
     position: absolute;
     top: 16px;

@@ -307,10 +307,6 @@ body {
   transform: rotate(-45deg);
 }
 
-.directional-local-panel #movement-quadratic {
-  height: 375px;
-}
-
 .directional-local-panel .exponent-rail {
   height: 145px;
 }

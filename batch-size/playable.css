@@ -374,9 +374,6 @@ body{--ui-label-size:15px;--ui-button-size:14px;--ui-detail-size:14px}
 .directional-paper-column{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:36px;align-items:center;margin-bottom:32px}
 .directional-local-panel .panel-top{min-height:0}
 .movement-visuals{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(0,1.6fr);gap:32px;align-items:start;margin-top:24px}
-.movement-quadratic{min-width:0;border-right:1px solid var(--line);padding-right:24px}
-.movement-quadratic h4{font-size:17px;font-weight:600;margin-bottom:16px}
-#movement-quadratic{width:100%;height:auto;display:block}
 .directional-local-panel .scaling-grid{display:block;min-width:0}
 .directional-local-panel .scaling-controls{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .directional-local-panel .scaling-rule-formula{grid-column:1/-1;margin:8px 0}
@@ -393,8 +390,6 @@ body{--ui-label-size:15px;--ui-button-size:14px;--ui-detail-size:14px}
  .mechanism-intro,.directional-paper-column,.movement-visuals{grid-template-columns:1fr;gap:24px}
  .mechanism-intro .hero-art{min-height:0}.mechanism-guide{font-size:15px}
  #rankings .ranking-grid{grid-template-columns:1fr}#rankings .leaderboard{padding-left:0}
- .movement-quadratic{border-right:0;border-bottom:1px solid var(--line);padding:0 0 20px}
- #movement-quadratic{max-width:380px;margin:auto}
  .comparison-heading .segmented{flex-wrap:wrap}.comparison-heading .segmented button{padding:8px;font-size:13px}
  .directional-local-panel .scaling-controls{grid-template-columns:1fr}.directional-local-panel .scaling-controls>*{grid-column:1}
  .movement-equation .blog-math{font-size:19px}.rule-batch-action{justify-content:flex-start}

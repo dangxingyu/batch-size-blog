@@ -38,7 +38,7 @@ h3, .rule-candidates h3, .directional-comparison h3 { font-size: 16px; line-heig
 .figure-axis-quantity .blog-math, .figure-x-axis .blog-math { line-height: 1.2; }
 .figure-legend .blog-math { font-size: 14px; line-height: 1.2; }
 .figure-legend, .legend { gap: 6px 14px; }
-:is(#rule-atlas, #ranking-chart, #pair-chart, #cnr-paper-chart, #scaling-chart, #movement-quadratic, #branch-trajectory-chart, #sim-loss) text { font-size: 13px; }
+:is(#rule-atlas, #ranking-chart, #pair-chart, #cnr-paper-chart, #scaling-chart, #branch-trajectory-chart, #sim-loss) text { font-size: 13px; }
 .control { margin-bottom: 14px; }
 .control label, .batch-controls label { margin-bottom: 6px; font-size: 14px; line-height: 1.4; }
 .control output, .batch-controls output { font-size: 14px; }
@@ -81,11 +81,8 @@ input[type=range] { margin-block: 8px; }
 .directional-local-panel > .component-intro p { line-height: 1.5; }
 .directional-local-panel > .component-intro p + p { margin-top: 8px; }
 .directional-local-panel .movement-visuals { gap: 12px 18px; }
-.directional-local-panel .movement-quadratic { padding-right: 16px; }
-.directional-local-panel .movement-quadratic h4,
 .directional-local-panel .figure-axis-heading { min-height: 34px; margin-bottom: 6px; font-size: 14px; line-height: 1.35; }
 .directional-local-panel .figure-axis-name { font-size: 14px; }
-.directional-local-panel #movement-quadratic { height: 340px; }
 .directional-local-panel #scaling-chart { height: 220px; }
 .directional-local-panel .figure-x-axis { margin-block: 4px 8px; font-size: 14px; }
 .directional-local-panel .figure-x-axis .blog-math { font-size: 16px; }
@@ -103,7 +100,6 @@ input[type=range] { margin-block: 8px; }
 .directional-local-panel .scaling-findings li + li { margin-top: 6px; }
 @container article (min-width: 700px) {
   .directional-local-panel .movement-visuals { grid-template-columns: minmax(230px, .8fr) minmax(0, 1.6fr); }
-  .directional-local-panel .movement-quadratic { border-right: 1px solid var(--line); border-bottom: 0; padding-bottom: 0; }
   .directional-local-panel .scaling-controls { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr); }
   .directional-local-panel .scaling-controls .movement-readout { grid-column: 3; grid-row: 1; }
 }
@@ -115,8 +111,6 @@ input[type=range] { margin-block: 8px; }
   .cnr-workspace { grid-template-columns: minmax(0, 1fr); gap: 12px; }
   .cnr-settings { border-left: 0; border-top: 1px solid var(--line); padding: 12px 0 0; }
   .directional-local-panel .movement-visuals { grid-template-columns: minmax(0, 1fr); gap: 12px; }
-  .directional-local-panel .movement-quadratic { border-right: 0; border-bottom: 1px solid var(--line); padding: 0 0 12px; }
-  .directional-local-panel #movement-quadratic { max-width: 340px; margin-inline: auto; }
   .directional-local-panel .scaling-controls { grid-template-columns: minmax(0, 1fr); }
   .directional-local-panel .scaling-controls > .control:has(#scale-batch) { grid-column: 1; grid-row: 2; }
   .directional-local-panel .scaling-controls .movement-readout { grid-column: 1; grid-row: 3; }
