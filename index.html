@@ -17,9 +17,9 @@
   <link rel="stylesheet" href="batch-size/vendor/katex/katex.min.css?v=d4ab5b8e"><link rel="stylesheet" href="batch-size/style.css"><link rel="stylesheet" href="batch-size/editorial.css?v=85b91fdd"><link rel="stylesheet" href="batch-size/playable.css?v=407f9138"><link rel="stylesheet" href="batch-size/directional-local.css?v=d5ca5c0a"><link rel="stylesheet" href="batch-size/branching.css?v=0134537c"><link rel="stylesheet" href="batch-size/reader-type.css?v=190950bb">
   <link rel="stylesheet" href="batch-size/shared-landscape.css?v=04598ebd"><link rel="stylesheet" href="batch-size/cnr-colors.css?v=49bcee3b"><link rel="stylesheet" href="batch-size/exponent-controls.css?v=1f7d0de3"><link rel="stylesheet" href="batch-size/branch-comparison.css?v=2e730a7e">
   <link rel="stylesheet" href="batch-size/ucsd-theme.css?v=140f47f1">
-  <link rel="stylesheet" href="batch-size/article-navigation.css?v=2062bbd6">
+  <link rel="stylesheet" href="batch-size/article-navigation.css?v=709d9eeb">
   <link rel="stylesheet" href="batch-size/compact.css?v=e62c538d">
-  <link rel="stylesheet" href="batch-size/compact-evidence.css?v=28afd436">
+  <link rel="stylesheet" href="batch-size/compact-evidence.css?v=1f4e925f">
   <link rel="stylesheet" href="batch-size/compact-geometry.css?v=d4094210">
   <link rel="stylesheet" href="batch-size/cnr-animation.css?v=602b6614">
   <link rel="stylesheet" href="batch-size/quadratic-model.css?v=634908a1">
@@ -32,7 +32,7 @@
   <script defer src="batch-size/vendor/katex/katex.min.js?v=103a5376"></script><script defer src="batch-size/math-render.js?v=eedea646"></script>
   <script defer src="batch-size/data/branch-curves.js?v=3dfe50c3"></script><script defer src="batch-size/data/paper-data.js"></script><script defer src="batch-size/data/scaling-rules.js?v=f0dbd6db"></script><script defer src="batch-size/data/signsgd-cnr.js?v=563cb921"></script><script defer src="batch-size/data/signsgd-cnr-dense.js?v=220040bb"></script><script defer src="batch-size/physics.js?v=265839ef"></script><script defer src="batch-size/phase-compute.js"></script><script defer src="batch-size/simulation-camera.js?v=f23b5471"></script><script defer src="batch-size/rule-axis.js?v=1ddda4b1"></script><script defer src="batch-size/app.js?v=bc0bff91"></script><script defer src="batch-size/playable.js?v=b2e379bf"></script><script defer src="batch-size/scaling-rules.js?v=586f5dd9"></script><script defer src="batch-size/cnr-playable.js?v=222d97fc"></script><script defer src="batch-size/branching.js?v=58d1862b"></script>
   <script defer src="batch-size/cnr-animation.js?v=f3d2401e"></script>
-  <script defer src="batch-size/article-navigation.js"></script>
+  <script defer src="batch-size/article-navigation.js?v=2746bb6b"></script>
 </head>
 <body id="top">
 <a class="skip" href="#main">Skip to article</a>
@@ -160,7 +160,11 @@
   <p>Under HyperBall, Muon outperforms Shampoo at 128K tokens per update, while Shampoo outperforms Muon at 2M.<a class="citation-ref" id="cite-7" href="#note-7" role="doc-noteref" aria-label="Citation 7: Our paper, Section 4"><sup>7</sup></a></p>
 </div>
   <div id="optimizer-comparison" class="experiment light-panel">
-    <div class="panel-top"><div><h3>Optimizer rankings.</h3><p class="ranking-instruction">Change the batch size and watch the winner change.</p></div><div class="segmented" id="family-tabs" aria-label="Weight norm control"><button class="active" data-family="standard_wd" aria-pressed="true">Weight decay</button><button data-family="hyperball" aria-pressed="false">HyperBall</button></div></div>
+    <div class="panel-top"><div><h3>Optimizer rankings.</h3></div><div class="segmented" id="family-tabs" aria-label="Weight norm control"><button class="active" data-family="standard_wd" aria-pressed="true">Weight decay</button><button data-family="hyperball" aria-pressed="false">HyperBall</button></div></div>
+    <aside class="widget-memo" id="ranking-instruction" aria-label="Try this comparison">
+      <strong class="widget-memo-label">Try it</strong>
+      <p>Change the batch size and watch the winner change.</p>
+    </aside>
     <div class="ranking-grid"><div><div class="figure-axis-heading comparison-heading"><div><span class="figure-axis-name" id="ranking-axis-title">Validation loss</span><span class="figure-axis-quantity" id="ranking-axis-quantity"><math><mi>L</mi></math><span class="figure-axis-unit">nats</span></span></div><div id="ranking-view-tabs" class="segmented" role="group" aria-label="Optimizer comparison vertical axis"><button data-ranking-view="loss" class="active" aria-pressed="true">Validation loss</button><button data-ranking-view="gap" aria-pressed="false">Loss gap</button></div></div><div class="chart-top"><label class="check"><input id="matrix-only" type="checkbox" aria-label="matrix optimizers only" checked> matrix optimizers only</label></div><svg id="ranking-chart" viewBox="0 0 650 310" role="img" aria-labelledby="ranking-chart-title"><title id="ranking-chart-title">Validation loss versus batch size</title></svg><p class="figure-x-axis"><span>Batch size</span><math><msup><mi>B</mi><mo>′</mo></msup></math><span class="figure-axis-unit">tokens / update</span></p><div class="legend figure-legend" id="rank-legend"></div></div><div class="leaderboard"><div class="board-head"><span>At <strong id="board-batch">128K</strong> tokens / update</span><span>Loss</span></div><div id="rank-list" aria-live="polite"></div><p id="ranking-insight" class="insight"></p></div></div>
 
     <div class="batch-controls"><label for="rank-batch">Batch size <output id="rank-batch-output">128K tokens</output></label><input id="rank-batch" type="range" min="0" max="3" step="1" value="0"><div class="range-ticks" id="rank-ticks"><button data-index="0">128K</button><button data-index="1">512K</button><button data-index="2">1M</button><button data-index="3">2M</button></div></div>

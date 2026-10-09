@@ -15,6 +15,7 @@
     note.before(placeholder);
     return { note, placeholder, citation: document.getElementById(note.dataset.citation) };
   }) : [];
+  const memos = [...layout.querySelectorAll('.widget-memo')];
   const wide = matchMedia('(min-width: 1280px)');
   const inlineLists = new Map();
   let mode, layoutFrame = 0, outlineFrame = 0, currentSection;
@@ -87,14 +88,23 @@
     }
     if (desktop && rail) {
       const origin = rail.getBoundingClientRect().top;
+      // Keep citations clear of the invitations anchored beside their widgets.
+      const reserved = memos.map(memo => {
+        const rect = memo.getBoundingClientRect();
+        return { top: rect.top - origin, bottom: rect.bottom - origin };
+      }).sort((a, b) => a.top - b.top);
       let bottom = 0;
       for (const { note, citation } of notes) {
-        const top = Math.max(0, citation ? citation.getBoundingClientRect().top - origin : bottom, bottom);
+        const noteHeight = note.getBoundingClientRect().height;
+        let top = Math.max(0, citation ? citation.getBoundingClientRect().top - origin : bottom, bottom);
+        for (const space of reserved) {
+          if (top < space.bottom + 20 && top + noteHeight + 20 > space.top) top = space.bottom + 20;
+        }
         const offset = `${Math.round(top)}px`;
         if (note.style.top !== offset) note.style.top = offset;
-        bottom = top + note.getBoundingClientRect().height + 20;
+        bottom = top + noteHeight + 20;
       }
-      const height = `${Math.ceil(bottom)}px`;
+      const height = `${Math.ceil(Math.max(bottom, ...reserved.map(space => space.bottom)))}px`;
       if (rail.style.minHeight !== height) rail.style.minHeight = height;
     }
     updateOutline();
@@ -114,6 +124,7 @@
     const observer = new ResizeObserver(scheduleLayout);
     if (content) observer.observe(content);
     notes.forEach(({ note }) => observer.observe(note));
+    memos.forEach(memo => observer.observe(memo));
   }
   document.fonts?.ready.then(scheduleLayout);
   layout.classList.add('notes-ready');

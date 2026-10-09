@@ -70,9 +70,48 @@
   .directional-local-panel .scaling-controls .movement-readout { grid-column: 1; grid-row: 3; }
 }
 
+/* A short invitation to interact, in the same margin as the citations. */
+#optimizer-comparison { position: relative; }
+.widget-memo {
+  box-sizing: border-box;
+  padding: 14px 16px 16px;
+  margin: 0 0 16px;
+  border: 1px solid #e5d58c;
+  border-top: 3px solid #d9b94e;
+  border-radius: 3px;
+  background: #fff5c9;
+  color: #343126;
+  box-shadow: 0 3px 9px rgb(38 41 49 / 7%);
+}
+.widget-memo-label {
+  display: block;
+  margin-bottom: 6px;
+  color: #70602c;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.widget-memo > p { margin: 0; font-size: 15px; line-height: 1.5; }
+:root[data-theme=dark] .widget-memo {
+  background: #eddfa9;
+  border-color: #cabc87;
+  border-top-color: #d9b94e;
+  box-shadow: 0 3px 9px rgb(0 0 0 / 14%);
+}
+@media (min-width: 1280px) {
+  .widget-memo {
+    position: absolute;
+    top: 16px;
+    left: calc(100% + 25px);
+    width: 192px;
+    margin: 0;
+  }
+}
+
 @media print {
   .article-layout { display: block; padding: 0; }
   .article-outline { display: none; }
+  .widget-memo { position: static; width: auto; margin-bottom: 16px; box-shadow: none; }
   .article-sidenotes { display: block; padding: 24px var(--page-gutter); }
   .notes-ready .article-sidenotes .citation-note { position: static; margin-bottom: 18px; }
 }

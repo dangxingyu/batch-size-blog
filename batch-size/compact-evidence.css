@@ -111,7 +111,6 @@
 
 /* Rankings, the leaderboard and the pairwise comparison form one instrument. */
 #optimizer-comparison .panel-top > div:first-child { min-width: 0; }
-#optimizer-comparison .ranking-instruction { margin: 4px 0 0; color: var(--muted); font-size: 13px; line-height: 1.4; white-space: normal; }
 #optimizer-comparison .ranking-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
 #optimizer-comparison .leaderboard { min-width: 0; padding: 10px 0 0; border-left: 0; border-top: 1px solid var(--line); }
 #optimizer-comparison .board-head { margin-bottom: 6px; gap: 6px; font-size: 12px; }
