@@ -71,7 +71,7 @@
 }
 
 /* A short invitation to interact, in the same margin as the citations. */
-#optimizer-comparison { position: relative; }
+#optimizer-comparison, .widget-memo-anchor { position: relative; }
 .widget-memo {
   box-sizing: border-box;
   padding: 14px 16px 16px;
