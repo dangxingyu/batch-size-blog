@@ -539,8 +539,7 @@ function drawMovementQuadratic(alpha,ratio){
     const y=v=>top+67-26*v*v,points=Array.from({length:81},(_,k)=>-1.2+2.6*k/80);
     if(i)markup+=`<line data-movement-separator x1="16" x2="${w-16}" y1="${top-14}" y2="${top-14}" stroke="${token('--line')}"/>`;
     markup+=svgText(16,top+14,`${i?'Low':'High'} CNR · ${cnr}`,`font-size="14" fill="${color}" font-weight="600"`);
-    markup+=`<path d="${line(points,v=>x(v),y)}" fill="none" stroke="${token('--grid-strong')}" stroke-width="1.5"/><line x1="24" x2="${w-24}" y1="${top+67}" y2="${top+67}" stroke="${token('--line')}"/><circle cx="${x(1)}" cy="${y(1)}" r="4" fill="${token('--ink')}"/>`;
-    markup+=svgText(x(1)+7,y(1)-10,'w = 1','font-size="13"')+svgText(x(0),top+82,'0','font-size="13" text-anchor="middle"');
+    markup+=`<path d="${line(points,v=>x(v),y)}" fill="none" stroke="${token('--grid-strong')}" stroke-width="1.5"/><circle cx="${x(1)}" cy="${y(1)}" r="3" fill="${token('--ink')}"/>`;
     const arrow=(end,cy,stroke,dashed)=>`<path data-movement-arrow="${dashed?'baseline':'scaled'}" d="M${x(1)} ${cy}H${x(end)}" fill="none" stroke="${stroke}" stroke-width="${dashed?1.5:3}" ${dashed?'stroke-dasharray="4 3"':''}/><path d="M${x(end)+5} ${cy-4}L${x(end)} ${cy}L${x(end)+5} ${cy+4}" fill="none" stroke="${stroke}" stroke-width="1.5"/>`;
     const local=Array.from({length:21},(_,k)=>end+(1-end)*k/20);
     markup+=`<path d="${line(local,v=>x(v),y)}" fill="none" stroke="${color}" stroke-width="3"/><circle cx="${x(end)}" cy="${y(end)}" r="4" fill="${color}"/>`;
