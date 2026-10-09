@@ -314,8 +314,8 @@
 </div></section>
 
 <section id="conclusion" class="closing wrap"><h2>Choose the optimizer and <span>batch size together.</span></h2><div class="closing-grid">
- <div><p>Compare optimizers at the batch sizes you intend to use, and tune each one independently. A ranking at one batch size may not hold at another.</p></div>
- <div><p>Curvature and noise help explain why batch size changes scaling rules and optimizer rankings. Turning these directional differences into a practical rule for full training runs remains open.</p></div>
+ <div><p>Batch size changes the balance between reducing initialization error and controlling gradient noise. That balance can favor a different optimizer after retuning, and it can shift differently across directions.</p></div>
+ <div><p>These results point toward designing optimizers and their scaling rules together, with hyperparameters that can scale differently across directions as batch size increases.</p></div>
  </div></section>
 </main>
 <footer class="wrap"><a class="wordmark" href="https://dangxingyu.github.io/">Xingyu Dang<span class="wordmark-context">Research</span></a><a href="#top">Back to top ↑</a></footer>
