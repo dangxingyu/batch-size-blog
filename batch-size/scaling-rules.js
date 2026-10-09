@@ -93,7 +93,7 @@
     node('rule-mean').textContent = decimal(meanGap(r));
     node('rule-loss-rank').textContent = `${window.RuleAtlasAxis.lossRank(s.rules.map(rule=>rule.losses[state.index]),r.losses[state.index])} / ${s.rules.length}`;
     const rank = String(r.rank).replace('.5','½');
-    node('rule-verdict').textContent = `Scale-up grid rank ${rank} of ${s.rules.length}. `+(r.id===s.bestAtBatch[state.index]?'This rule attains the lowest grid loss at the selected batch.':r.id===s.commonRuleId?'The best common rule does not win this batch.':`The best grid rule at this batch has loss ${decimal(s.gridMinimum[state.index])} nats.`);
+    node('rule-verdict').textContent = `Scale-up grid rank ${rank} of ${s.rules.length}. `+(r.id===s.bestAtBatch[state.index]?'This rule has the lowest loss in the grid at this batch size.':r.id===s.commonRuleId?'The best rule on average is not the best at this batch size.':`The best grid rule at this batch has loss ${decimal(s.gridMinimum[state.index])} nats.`);
     s.coords.forEach(c => {
       const v = variables[c.key], choice = r.choices[c.key];
       const factor = choice==='sqrt'?'<msqrt><mi>κ</mi></msqrt>':choice==='linear'?'<mi>κ</mi>':'';

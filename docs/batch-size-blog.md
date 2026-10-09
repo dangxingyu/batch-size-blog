@@ -113,7 +113,7 @@ The branch curves and vertical endpoint-penalty bars share one comparison layout
   Whiskers are observed min–max ranges. The pair chart's ±0.002-nat band is a tuning
   acceptance threshold, not a confidence interval.
 - `physics.js` supplies exact diagonal quadratic moments, stable-range numerical
-  learning-rate searches, reproducible trajectories, and the stationary SignSGD
+  learning rate searches, reproducible trajectories, and the stationary SignSGD
   response. The interactive illustrations do not replace the paper's theorem.
 - `phase-compute.js` is the shared 104-cell numerical kernel. `phase-worker.js` is
   created when the map approaches the viewport. It yields between rows and cancels
@@ -152,7 +152,7 @@ The branch curves and vertical endpoint-penalty bars share one comparison layout
   contours directly, with a 2×–3× backing resolution for clear lines and labels. The inset keeps the full path and current viewport.
   Overview restores the complete trajectory; shared URLs retain that choice.
   Reduced-motion startup selects Overview. Click-to-place uses the current scale.
-- Learning-rate results are reused in a 24-entry cache keyed by batch, curvature,
+- Learning rate results are reused in a 24-entry cache keyed by batch, curvature,
   noise, and initial point; reseeding retains the same tuning. Slider inputs coalesce
   within a browser frame. Playback defaults to 2×, offers 1× and 4×, and is preserved
   in shared setup URLs. Playback speed does not change the simulated samples.
@@ -208,11 +208,11 @@ The scaling-rule workspace places the curve atlas beside the complete rule build
 
 MathML remains the formula source. `math-render.js` converts the small MathML vocabulary used by the essay to TeX, and `check-math-render.mjs` rejects any article or script MathML element outside that vocabulary, because one unsupported element stops every later formula from rendering. The renderer then uses locally hosted KaTeX 0.19.0 for both static prose and dynamic controls. KaTeX HTML supplies consistent radicals, fractions, and scripts; its parallel MathML output preserves accessibility. KaTeX 0.19.0 supplies the vendored minified JS/CSS and WOFF2 fonts in `vendor/katex/`, with the upstream license. For LM retention coefficients, the inspector shows κ = 2, 4, or 8, and κ ≈ 16 at 2M. The exact update ratio 13,000/813 remains in the measurement protocol and source data.
 
-The directional figures label their normalized quantities directly: tuned learning rate relative to batch 1, and local expected movement per sample relative to batch 1. Learning-rate multipliers remain on a log axis; movement multipliers use a linear axis with a labelled 1× reference and round ticks. KaTeX uses explicit 24px quantity formulas (22px on narrow screens), 20px x-axis notation, and 17px legend formulas, with the KaTeX root inheriting those sizes. Momentum, initialization, search resolution and repeated CNR definitions live in the protocols. The scaling prescription stays beside its exponent control.
+The directional figures label their normalized quantities directly: tuned learning rate relative to batch 1, and local expected movement per sample relative to batch 1. Learning rate multipliers remain on a log axis; movement multipliers use a linear axis with a labelled 1× reference and round ticks. KaTeX uses explicit 24px quantity formulas (22px on narrow screens), 20px x-axis notation, and 17px legend formulas, with the KaTeX root inheriting those sizes. Momentum, initialization, search resolution and repeated CNR definitions live in the protocols. The scaling prescription stays beside its exponent control.
 
 The scaling-rule atlas defaults to Validation loss, with Loss gap available as the second view. A brief takeaway and exploration guide replace the measurement-count banner. It starts with a linear Detail range that fits the selected rule and the best-loss baseline over all batches. The toolbar reports the selected rule's loss rank at the current batch as x / N. Rank 1 is best, and equal losses share a rank. Selection and manual Target batch changes update this statistic without changing the measured values. The main plot supports curve selection and keyboard navigation; Full range shows every original endpoint. Reset restores the current dataset's best common rule and Detail range, retaining the chosen batch and loss view. Detail clips offscreen geometry rather than changing data or placing outliers on the boundary. The overview plot and automatic batch playback have been removed. `node scripts/check-scaling-rule-view.mjs` verifies all rule/view combinations, selected-point loss ranks, and full-range retention.
 
-The no-scaling note reports original LLM-grid ranks by mean regret over 256K–2M: no scaling is 12th of 216, the original-grid counterpart of the paper's bound-minimization recipe is 22nd, and its SDE counterpart is 160th. These use the auxiliary learning-rate and moment choices in the paper's `scripts/plot_muonw_transfer_comparison.py`, with auxiliary weight decay fixed as in the original grid. The paper's plotted SDE curve instead includes a rerun with scaled auxiliary weight decay. They differ from the interactive Bound/SDE presets, which select each Muon prescription's best auxiliary completion (11th and 104th, respectively). The note recommends no scaling as a baseline to validate, rather than claiming it beats every theoretical completion or transfers across settings.
+The no-scaling note reports original LLM-grid ranks by mean regret over 256K–2M: no scaling is 12th of 216, the original-grid counterpart of the paper's bound-minimization recipe is 22nd, and its SDE counterpart is 160th. These use the auxiliary learning rate and moment choices in the paper's `scripts/plot_muonw_transfer_comparison.py`, with auxiliary weight decay fixed as in the original grid. The paper's plotted SDE curve instead includes a rerun with scaled auxiliary weight decay. They differ from the interactive Bound/SDE presets, which select each Muon prescription's best auxiliary completion (11th and 104th, respectively). The note recommends no scaling as a baseline to validate, rather than claiming it beats every theoretical completion or transfers across settings.
 
 The three prescription cards compare SDE matching, bound minimization, and Power Lines (fixed matrix learning rate and linearly scaled matrix weight decay). Fixed Muon momentum is our extension of the Power Lines parameter-averaging identity. The auxiliary AdamW weight-decay note refers specifically to the additional scaling sweep at 1M/2M tokens. The rule builder displays each coordinate's formula next to its selector; only the shared LLM retention exponent remains below the rows.
 
@@ -258,14 +258,14 @@ Expected-loss bars retain a neutral full-length track and a small origin marker 
   underflowed losses use the numerical floor 1e-15. A dashed vertical marker
   ends at the 4,096-sample comparison budget.
 - The directional narrative defines CNR and expected movement per sample, with
-  the shared learning-rate rule in a simple pseudo formula. Detailed update and
+  the shared learning rate rule in a simple pseudo formula. Detailed update and
   stationary-sign derivations remain in the protocol drawers. Beside the local
   movement chart, two quadratic slices display the same high/low-CNR ratios.
   Each direction is normalized to its own batch-1 movement; a shared adaptive
   arrow scale keeps both visible. These are frozen-coordinate local increments,
   not training trajectories or new data.
 
-The SignSGD learning-rate panel uses a wide chart with the CNR slider and fitted exponent in a compact sidebar. Its SVG height adapts to its rendered width (190–260px), retaining all independently tuned dots and the same log axes. Narrow layouts stack the chart and settings.
+The SignSGD learning rate panel uses a wide chart with the CNR slider and fitted exponent in a compact sidebar. Its SVG height adapts to its rendered width (190–260px), retaining all independently tuned dots and the same log axes. Narrow layouts stack the chart and settings.
 The local movement panel aligns the quadratic illustration and response chart above one shared controls row. Direction readouts use the same method colors; one exponent slider and its preset buttons share a single control group. Both panels preserve the existing definitions and numerical results.
 
 The geometry playground keeps playback actions and progress in a horizontal strip beside the starting-direction presets, directly beneath the batch, curvature, and noise sliders. The toolbar stacks below the presets on narrow screens; the idle action reads “Run.”

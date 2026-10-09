@@ -87,7 +87,7 @@
     el('branch-curve-legend').innerHTML=`<div class="branch-legend-group branch-legend-baselines" role="group" aria-label="Reference and comparison branches">${control}${entry('Fully scaled to 2M',colors.full,'fully scaled')}${entry('Random 768',colors.random,'random-768 held',true)}</div><div class="branch-legend-group branch-legend-ranks" role="group" aria-label="Sharpest directions retained">${ranks.map((k,i)=>k===128&&!top128Available?'':entry(`Top-${k}`,rankColors[i],`top-${k} held`)).join('')}</div>`;
     el('branch-curve-legend').querySelectorAll('[data-branch-arm]').forEach(button=>button.addEventListener('click',()=>{el('held').value=button.dataset.branchArm;el('held').dispatchEvent(new Event('change'));}));
     el('branch-curve-state').textContent=`Checkpoint ${fmt(anchor)}`;
-    el('branch-curve-caption').textContent=!selected[arm]?endpointExists(arm)?`${armLabel}: the endpoint penalty is available below; its raw loss curve has not been imported.`:`${armLabel} was not run at this checkpoint; no curve is inferred.`:'';
+    el('branch-curve-caption').textContent=!selected[arm]?endpointExists(arm)?`${armLabel}: only the final loss penalty is available for this branch.`:`${armLabel} was not run at this checkpoint.`:'';
     el('branch-back').hidden=!closeView;
     el('branch-close').setAttribute('aria-pressed',String(closeView));el('branch-all').setAttribute('aria-pressed',String(!closeView));
     chart.setAttribute('aria-label',`${closeView?'All measured branch loss curves from':'Base run and all measured ranks at every checkpoint; selected checkpoint'} ${fmt(anchor)}. ${selected[arm]?armLabel+' highlighted.':armLabel+(endpointExists(arm)?' curve unavailable; endpoint penalty available.':' was not run.')}`);

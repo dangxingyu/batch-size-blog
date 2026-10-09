@@ -30,7 +30,7 @@
     const linearColor=token('--cnr-linear-color'),sqrtColor=token('--cnr-sqrt-color');
     const tunedColor=scalingColor(selected.fittedExponent,sqrtColor,linearColor);
     document.querySelector('.cnr-paper-panel').style.setProperty('--cnr-tuned-color',tunedColor);
-    let markup=`<title>Independently tuned SignSGD learning-rate ratios against batch ratio kappa, CNR ${cnrLabel}, fixed momentum 0.9 and 4,096 samples</title>`;
+    let markup=`<title>Independently tuned SignSGD learning rate ratios against batch ratio kappa, CNR ${cnrLabel}, fixed momentum 0.9 and 4,096 samples</title>`;
     for(const ratio of [1,10,100]){
       markup+=`<line x1="${f.l}" x2="${f.w-f.r}" y1="${y(ratio)}" y2="${y(ratio)}" stroke="${token('--line')}" stroke-dasharray="2 5"/>`+svgText(f.l-12,y(ratio)+5,ratio+'×','font-size="16" text-anchor="end"');
     }
@@ -44,13 +44,13 @@
     };
     markup+=drawCurve(data.groups[selected.measuredIndex]);
     $('cnr-paper-chart').innerHTML=markup+researchAxes(f);
-    $('cnr-paper-chart').setAttribute('aria-label',`Tuned learning-rate ratios against batch ratio kappa at CNR ${cnrLabel}`);
+    $('cnr-paper-chart').setAttribute('aria-label',`Tuned learning rate ratios against batch ratio kappa at CNR ${cnrLabel}`);
     $('cnr-paper-chart').dataset.cnr=selected.cnr;$('cnr-paper-chart').dataset.interpolated='false';
     $('paper-cnr-output').textContent=cnrLabel;
     $('paper-cnr').setAttribute('aria-valuetext',`CNR ${cnrLabel}, independently tuned`);
     $('cnr-series-label').textContent='Tuned';
     $('cnr-fit-exponent').textContent=selected.fittedExponent.toFixed(3);
-    $('cnr-paper-insight').textContent=selected.cnr<.005?'Low CNR: tuned learning rates scale approximately with the square root of batch size.':selected.cnr<.1?'At this intermediate CNR, the fitted scaling lies between square-root and linear.':'High CNR: the fitted scaling moves closer to linear, compensating for fewer updates.';
+    $('cnr-paper-insight').textContent=selected.cnr<.005?'Low CNR: tuned learning rates scale approximately with the square root of batch size.':selected.cnr<.1?'Here, the tuned rates grow faster than square-root scaling but slower than linear scaling.':'At high CNR, the tuned learning rate grows almost in proportion to batch size.';
     document.querySelectorAll('[data-cnr-index]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.cnrIndex===selected.measuredIndex));
   }
   const slider=$('paper-cnr');
