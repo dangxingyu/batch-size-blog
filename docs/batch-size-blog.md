@@ -28,7 +28,7 @@ short yellow accent, followed by the byline from Overleaf revision
 The byline uses a horizontal three-column author list, with a smaller affiliation and clickable
 email beneath each name; it wraps on narrow screens and uses theme-aware colors. Author contact
 details were verified against public profiles because the Overleaf block still carries placeholder
-comments: Xingyu Dang — Princeton University, xd7812@cs.princeton.edu
+comments: Xingyu Dang — Princeton University, xingyu.dang@princeton.edu
 (https://www.cs.princeton.edu/people/grad); Kaiyue Wen — Stanford University, kaiyuew@stanford.edu
 (https://profiles.stanford.edu/kaiyue-wen); Sadhika Malladi — University of California, San Diego,
 samalladi@ucsd.edu (https://sadhikamalladi.github.io/index.html).
